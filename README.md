@@ -1,1 +1,69 @@
 # ISPCalling
+
+# installation Guide 
+# apache2 installation 
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install apache2
+sudo service apache2 start 
+
+# installtion php 7.2 version 
+sudo apt-get install software-properties-common python-software-properties
+sudo add-apt-repository -y ppa:ondrej/php
+sudo apt-get update
+sudo apt-get install php7.2 php7.2-cli php7.2-common
+
+#check version need 7.2.*
+php -v
+
+# install another php extensions 
+sudo apt install openssl php7.2-common php7.2-curl php7.2-json php7.2-mbstring php7.2-mysql php7.2-xml php7.2-zip
+
+
+# installing composer 
+sudo apt-get update
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === '795f976fe0ebd8b75f26a6dd68f78fd3453ce79f32ecb33e7fd087d39bfeb978342fb73ac986cd4f54edd0dc902601dc') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+
+# check composer is installed or not using below command 
+composer
+
+
+# installing git 
+sudo apt-get install git 
+
+# set name  and email 
+git config --global user.name "John Doe"
+git config --global user.email johndoe@example.com
+
+
+
+# installing mysql 
+sudo apt-get update
+sudo apt install mysql-server
+sudo mysql_secure_installation
+
+# start mysql currently access vai sudo need to accesss as root user 
+sudo mysql -u root -p 
+# enter password and login 
+
+# run below queries 
+SELECT user,authentication_string,plugin,host FROM mysql.user;
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+
+FLUSH PRIVILEGES;
+quit 
+
+# then check below command 
+mysql -u root -p 
+# password 
+
+# not confirm node is require or not. t ocheck this first the next step and then if got any error then install node 
+
+
+# git clone in /var/www/html 
+git clone https://github.com/smartdevsolutions20/ISPCalling.git
+# add username and passowrd 
+# got to .env file and update db changes and smtp details for sending mail 
