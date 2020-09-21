@@ -1,0 +1,38 @@
+@extends('layouts.app')
+
+@section('content')
+<table id="example" class="display" style="width:100%">
+	<thead>
+		<tr>
+			<th>callsid</th>
+			<th>fromNumber</th>
+			<th>toNumber</th>
+			<th>callduration</th>
+			<th>callstatus</th>
+			<th>callRecordingLink</th>
+			<th>branchId</th>
+			<th>group1</th>
+			<th>group2</th>
+			<th>group3</th>
+			<th>group4</th>
+			<th>created_at</th>
+		</tr>
+	</thead>
+	<tfoot>
+		<tr>
+			<th>callsid</th>
+			<th>fromNumber</th>
+			<th>toNumber</th>
+			<th>callduration</th>
+			<th>callstatus</th>
+			<th>callRecordingLink</th>
+			<th>branchId</th>
+			<th>group1</th>
+			<th>group2</th>
+			<th>group3</th>
+			<th>group4</th>
+			<th>created_at</th>
+		</tr>
+	</tfoot>
+</table>
+@endsection
