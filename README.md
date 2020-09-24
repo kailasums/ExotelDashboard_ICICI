@@ -17,7 +17,7 @@ sudo apt-get install php7.2 php7.2-cli php7.2-common
 php -v
 
 # install another php extensions 
-sudo apt install openssl php7.2-common php7.2-curl php7.2-json php7.2-mbstring php7.2-mysql php7.2-xml php7.2-zip
+sudo apt install openssl php7.2-common php7.2-curl php7.2-json php7.2-mbstring php7.2-mysql php7.2-xml php7.2-zip php7.2-gd
 
 
 # installing composer 
@@ -67,3 +67,8 @@ mysql -u root -p
 git clone https://github.com/smartdevsolutions20/ISPCalling.git
 # add username and passowrd 
 # got to .env file and update db changes and smtp details for sending mail 
+# update the flag which level is not allowed to login 
+# php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider"
+# update rename projectENVFILE to .env
+# replace db credentials from .env file
+

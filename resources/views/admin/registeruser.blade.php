@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header">{{ __('Bulk Register') }}</div>
                 <div class="card-body">
-                {{ Form::open(array('url' => 'admin/uploadFile', 'method' => 'POST')) }}
+                {{ Form::open(array('url' => 'admin/uploadFile', 'enctype'=>'multipart/form-data', 'method' => 'POST')) }}
                     {{@csrf_field()}}
 
                     {{Form::file('file') }}

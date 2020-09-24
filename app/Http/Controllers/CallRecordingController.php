@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
+use Carbon\Carbon;
 use App\CallRecording;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class CallRecordingController extends Controller
 {
@@ -39,9 +40,21 @@ class CallRecordingController extends Controller
         try{
             $requestDatas = $request->input();
             $requestDatas['created_at'] = Carbon::now();
+            
+            if($requestDatas['type']=='incoming') {
+                $userData = User::where('phoneNumber',$requestDatas['toNumber'])->first();
+            } else {
+                $userData = User::where('phoneNumber',$requestDatas['fromNumber'])->first();
+            }
+
+            $requestDatas['group1'] = $userData['group1'];
+            $requestDatas['group2'] = $userData['group2'];
+            $requestDatas['group3'] = $userData['group3'];
+            $requestDatas['group4'] = $userData['group4'];
             $data = CallRecording::create($requestDatas);
             $response['status'] = 200;
             $response['data'] = $data;
+            
             return response()->json($response);
         } catch(\Exception $e) {
             $response['status'] = 500;

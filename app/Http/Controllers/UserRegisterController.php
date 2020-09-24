@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\User;
+use Excel;
 use Illuminate\Support\Facades\Hash;
+//use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\UsersImport;
+use App\Imports\HierachyImport;
 
 class UserRegisterController extends Controller
 {
@@ -15,8 +19,33 @@ class UserRegisterController extends Controller
         return view('admin.registeruser');
     }
 
-    public function uploadFile(){
+    public function uploadFile(Request $request){
+        ini_set('max_execution_time', 0);
+        
+        $fileDetails = $request->file('file');
+        echo "here1";
+        echo env('HIERACHY_IMPORT_DATA_FILE');
+        switch($fileDetails->getClientOriginalName()){
+            case env('USER_IMPORT_DATA_FILE'):
+                Excel::import(new UsersImport, $fileDetails->store('temp'));        
+            break;
 
+            case env('HIERACHY_IMPORT_DATA_FILE'):
+                echo "here2";
+                $path1 = $request->file('file')->store('temp'); 
+                $path=storage_path('app').'/'.$path1;
+                $realPath = $fileDetails->getRealPath();
+                $data =Excel::import(new HierachyImport, $path );   
+                
+                //$data = Excel::load($realPath)->get();
+                
+                dd($data);
+
+
+            break;
+        }
+        
+        
         // if ($request->input('submit') != null ){
 
         //     $file = $request->file('file');

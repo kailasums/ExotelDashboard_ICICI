@@ -18,5 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('call-recording', 'CallRecordingController@store');
+Route::post('call-recording/incoming', 'CallRecordingController@store');
+Route::post('call-recording/outgoing', 'CallRecordingController@store');
 Route::get('call-recording/list', 'CallRecordingController@show');

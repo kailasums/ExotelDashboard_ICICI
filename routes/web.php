@@ -24,6 +24,7 @@ Route::post('/login/admin', 'Auth\LoginController@login')->name('admin-login');
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/admin/register-user', 'UserRegisterController@index');
+Route::post('/admin/uploadFile', 'UserRegisterController@uploadFile');
 Route::get('/bulkRegister', 'UserRegisterController@bulkregisterUser');
 
 Route::resource('post', 'PostController');
