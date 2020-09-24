@@ -13,11 +13,15 @@ class CreateRegionMasterTable extends Migration
      */
     public function up()
     {
-        Schema::table('region_masters', function (Blueprint $table) {
+        Schema::create('region_masters', function (Blueprint $table) {
             $table->increments('region_id');
             $table->string('region_name',255)->nullable(false);
             $table->unsignedBigInteger('zone_id');
             $table->timestamps();
+            // $table->foreign('zone_id')
+            // ->references('zone_id')
+            // ->on('zone_masters')
+            // ->onDelete('cascade');
         });
     }
 

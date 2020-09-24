@@ -67,4 +67,8 @@ mysql -u root -p
 git clone https://github.com/smartdevsolutions20/ISPCalling.git
 # add username and passowrd 
 # got to .env file and update db changes and smtp details for sending mail 
+# update the flag which level is not allowed to login 
+# php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider"
+# update rename projectENVFILE to .env
+# replace db credentials from .env file
 

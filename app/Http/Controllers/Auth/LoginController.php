@@ -88,14 +88,16 @@ class LoginController extends Controller
         if ($this->attemptLogin($request)) {
             $path =  $request->path();
             $user = Auth::user();
-            $restrictLogin = explode(",",env("RESTRICT_LOGIN"));
+            $restrictLogin = explode(",",env("NO_PORTAL_ACCESS"));
             
-            if(in_array($user->level,$restrictLogin)) {
+            if(in_array($user->designation,$restrictLogin)) {
                 $request->request->add(['level_login_failed' => true]);
                 $this->logout($request);  
             } else if(!$user->isAdmin && $path === 'login') {
                 return $this->sendLoginResponse($request);
             } else if($user->isAdmin && $path === 'login/admin') {
+                return $this->sendLoginResponse($request);
+            } else if(!$user->isAdmin && $path === 'login') {
                 return $this->sendLoginResponse($request);
             } else {
                 $request->request->add(['role_login_failed' => true]);
@@ -179,7 +181,7 @@ class LoginController extends Controller
         $this->guard()->logout();
         $request->session()->invalidate();
         if($user->isAdmin) {
-            return $this->loggedOut($request) ?redirect('/login/admin'): redirect('/login/admin');
+            return $this->loggedOut($request) ?redirect('/admin/login'): redirect('/admin/login');
         } 
         return $this->loggedOut($request) ?redirect('/login'): redirect('/login');
     }

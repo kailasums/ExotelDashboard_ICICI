@@ -36,4 +36,37 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+      /**
+     * Get the post that owns the comment.
+     */
+    public function region()
+    {
+        return $this->belongsTo(RegionMaster::class,'group1','region_id');
+    }
+
+        /**
+     * Get the post that owns the comment.
+     */
+    public function branch()
+    {
+        return $this->belongsTo(BranchMaster::class,'group2','branch_id');
+    }
+
+        /**
+     * Get the post that owns the comment.
+     */
+    public function zone()
+    {
+        return $this->belongsTo(ZoneMaster::class,'group3','zone_id');
+    }
+
+        /**
+     * Get the post that owns the comment.
+     */
+    public function megaZone()
+    {
+        return $this->belongsTo(MegaZoneMaster::class,'group4','mega_zone_id');
+    }
+    
 }

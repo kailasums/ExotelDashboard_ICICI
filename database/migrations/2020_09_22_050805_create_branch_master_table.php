@@ -13,7 +13,7 @@ class CreateBranchMasterTable extends Migration
      */
     public function up()
     {
-        Schema::table('branch_masters', function (Blueprint $table) {
+        Schema::create('branch_masters', function (Blueprint $table) {
             $table->increments('branch_id');
             $table->string('branch_name',255)->nullable(false);
             $table->unsignedBigInteger('region_id');

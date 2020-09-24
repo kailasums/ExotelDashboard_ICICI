@@ -13,7 +13,7 @@ class CreateZoneTable extends Migration
      */
     public function up()
     {
-        Schema::table('zone_masters', function (Blueprint $table) {
+        Schema::create('zone_masters', function (Blueprint $table) {
             $table->increments('zone_id');
             $table->string('zone_name',255)->nullable(false);
             $table->unsignedBigInteger('mega_zone_id');

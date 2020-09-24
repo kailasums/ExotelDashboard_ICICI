@@ -7,4 +7,6 @@ $(document).ready(function () {
         });
     }
     showDatatable("api/call-recording/list","example");
+
+    
 });
