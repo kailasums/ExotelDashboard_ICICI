@@ -68,10 +68,14 @@ mysql -u root -p
 node -v
 npm -v 
 
+# installing npm package 
+npm install 
 
 # git clone in /var/www/html 
  git clone https://github.com/smartdevsolutions20/ISPCalling.git
 
+# composer install 
+composer install 
 # update database user name and password for migration
  php artisan migrate 
 
