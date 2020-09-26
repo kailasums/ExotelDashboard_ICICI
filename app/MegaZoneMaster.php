@@ -13,14 +13,14 @@ class MegaZoneMaster extends Model
      */
     protected $table = 'mega_zone_masters';
 
-    protected $primaryKey = 'mega_zone_id';
+    protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'mega_zone_id', 'mega_zone_name','created_at','updated_at'
+        'mega_zone_name','created_at','updated_at'
     ];
 
     /**
@@ -28,7 +28,7 @@ class MegaZoneMaster extends Model
      */
     public function zones()
     {
-        return $this->hasMany(ZoneMaster::class,'mega_zone_id','mega_zone_id');
+        return $this->hasMany(ZoneMaster::class,'mega_zone_id','id');
     }
 
          /**
@@ -36,6 +36,6 @@ class MegaZoneMaster extends Model
      */
     public function users()
     {
-        return $this->hasMany(User::class,'group1','mega_zone_id');
+        return $this->hasMany(User::class,'group1','id');
     }
 }

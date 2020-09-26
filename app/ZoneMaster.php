@@ -19,7 +19,7 @@ class ZoneMaster extends Model
      * @var array
      */
     protected $fillable = [
-        'zone_id', 'zone_name', 'mega_zone_id','created_at','updated_at'
+        'id', 'zone_name', 'mega_zone_id','created_at','updated_at'
     ];
 
       /**
@@ -27,7 +27,7 @@ class ZoneMaster extends Model
      */
     public function megaZone()
     {
-        return $this->belongsTo(MegaZoneMaster::class,'mega_zone_id','mega_zone_id');
+        return $this->belongsTo(MegaZoneMaster::class,'mega_zone_id','id');
     }
 
       /**
@@ -35,14 +35,14 @@ class ZoneMaster extends Model
      */
     public function regions()
     {
-        return $this->hasMany(RegionMaster::class,'zone_id','zone_id');
+        return $this->hasMany(RegionMaster::class,'zone_id','id');
     }
            /**
      * Get the post that owns the comment.
      */
     public function users()
     {
-        return $this->hasMany(User::class,'group2','zone_id');
+        return $this->hasMany(User::class,'group2','id');
     }
     
 }

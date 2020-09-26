@@ -89,7 +89,7 @@ class LoginController extends Controller
         if ($this->attemptLogin($request)) {
             $path =  $request->path();
             $user = Auth::user();
-            Session::set('user', $user);
+            Session::put('user', $user);
             $restrictLogin = explode(",",env("NO_PORTAL_ACCESS"));
             
             if(in_array($user->designation,$restrictLogin)) {
@@ -182,7 +182,7 @@ class LoginController extends Controller
         $user = Auth::user();
         $this->guard()->logout();
         $request->session()->invalidate();
-        if($user->isAdmin) {
+        if($user->is_admin) {
             return $this->loggedOut($request) ?redirect('/admin/login'): redirect('/admin/login');
         } 
         return $this->loggedOut($request) ?redirect('/login'): redirect('/login');

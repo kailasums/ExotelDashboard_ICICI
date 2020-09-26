@@ -17,7 +17,7 @@
                             {!! Form::select('branch', $branchs, ''); !!}
                             </li>
                             <li>
-                                {!! Form::select('branch', $branchs, ''); !!}
+                                {!! Form::select('user', $pb, ''); !!}
                             </li>
                             <li><select name="call_direction" id="call_direction"><option value="incoming">Incoming</option><option value="outgoing">Outgoing</option></select></li>
                       </ul>
