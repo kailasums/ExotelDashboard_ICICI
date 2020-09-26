@@ -95,11 +95,12 @@ class LoginController extends Controller
             if(in_array($user->designation,$restrictLogin)) {
                 $request->request->add(['level_login_failed' => true]);
                 $this->logout($request);  
-            } else if(!$user->isAdmin && $path === 'login') {
+
+            } else if(!($user->is_admin === 'yes') && $path === 'login') {
                 return $this->sendLoginResponse($request);
-            } else if($user->isAdmin && $path === 'login/admin') {
+            } else if(($user->is_admin === 'yes') && $path === 'login/admin') {
                 return $this->sendLoginResponse($request);
-            } else if(!$user->isAdmin && $path === 'login') {
+            } else if(!(($user->is_admin === 'yes')) && $path === 'login') {
                 return $this->sendLoginResponse($request);
             } else {
                 $request->request->add(['role_login_failed' => true]);
@@ -145,11 +146,9 @@ class LoginController extends Controller
         }
         $user = Auth::user();
 
-        if($user->isAdmin) {
-            
+        if((($user->is_admin === 'yes'))) {
             return property_exists($this, 'redirectTo') ? '/admin/register-user' : '/admin/register-user';
         } else {
-            
             return property_exists($this, 'redirectTo') ?  $this->redirectTo : '/home';
         }
         return property_exists($this, 'redirectTo') ? $this->redirectTo : '/home';

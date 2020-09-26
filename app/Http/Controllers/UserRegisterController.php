@@ -21,7 +21,6 @@ class UserRegisterController extends Controller
 
     public function uploadFile(Request $request){
         $import = new UserHierachyImport();
-        //$import->onlySheets('sheet1', 'Sheet2');
 
         Excel::import($import, '/var/www/html/ISPCalling/HIERACHY_IMPORT_DATA.xlsx');
     }
