@@ -20,8 +20,8 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('phone_number',15)->umique();
-            $table->enum('is_admin',['yes','no'])->default('no');
-            $table->enum('is_callable',['yes','no'])->default('no');
+            $table->enum('is_admin',['YES','NO'])->default('NO');
+            $table->enum('is_callable',['YES','NO'])->default('NO');
             $table->enum('level',['level0','level1','level2','level3','level4','level5'])->default('level0');
             $table->integer('group1');
             $table->integer('group2');

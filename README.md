@@ -77,7 +77,7 @@ npm install
 # composer install 
 composer install 
 # update database user name and password for migration
- php artisan migrate 
+  php artisan migrate 
 
 # creating admin user after migration  
   php artisan db:seed

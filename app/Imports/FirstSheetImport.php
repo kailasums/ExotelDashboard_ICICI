@@ -8,17 +8,17 @@ class FirstSheetImport implements ToCollection
 {
     public function collection(Collection $rows)
     {
+        
         $data = [];
-        for($i=1; $i<=50000;$i++){
-            echo "processing Row $i";
-            if($rows[$i][0] ){
-                $data[$rows[$i][3]][$rows[$i][2]][$rows[$i][1]] = $rows[$i][0];
-            }else{
-               continue;
+        foreach ($rows as $row) 
+        {
+            $data[$row[3]][$row[2]][$row[1]] = $row[0];
+            if(count($data)  > 10 ){
+            break;
             }
         }
 
-        dd($data);
-        echo "==================================================<br/>";
+        var_dump($data);
+        return ;
     }
 }

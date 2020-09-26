@@ -4,11 +4,17 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\User;
-use Excel;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Hash;
 //use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\UserHierachyImport;
-use App\Imports\HierachyImport;
+// use App\Imports\UserHierachyImport;
+// use App\Imports\HierachyImport;
+
+// Use model For groups and user 
+use App\MegaZoneMaster,
+App\RegionMaster,
+App\BranchMaster,
+App\ZoneMaster;
 
 class UserRegisterController extends Controller
 {
@@ -20,139 +26,82 @@ class UserRegisterController extends Controller
     }
 
     public function uploadFile(Request $request){
-        $import = new UserHierachyImport();
-
-        Excel::import($import, '/var/www/html/ISPCalling/HIERACHY_IMPORT_DATA.xlsx');
-    }
-
-    public function uploadFile1(Request $request){
         ini_set('max_execution_time', 0);
+
+        //Store File at specific location 
         
-        $fileDetails = $request->file('file');
-        echo "here1";
-        echo env('HIERACHY_IMPORT_DATA_FILE');
-        switch($fileDetails->getClientOriginalName()){
-            case env('USER_IMPORT_DATA_FILE'):
-                Excel::import(new UsersImport, $fileDetails->store('temp'));        
-            break;
-
-            case env('HIERACHY_IMPORT_DATA_FILE'):
-                $path1 = $request->file('file')->store('temp'); 
-                $path=storage_path('app').'/'.$path1;
-                $realPath = $fileDetails->getRealPath();
-                $data =Excel::import(new HierachyImport, $path );   
-                
-                //$data = Excel::load($realPath)->get();
-                
-                dd($data);
-
-
-            break;
+        //Processing Data Shhet 1 Which is 
+        $groupData  = (new FastExcel)->sheet(1)->import('/var/www/html/ISPCalling/HIERACHY_IMPORT_DATA.xlsx');
+        $hierachyData = [];
+        forEach($groupData as $group){    
+            if($group['group1'] && $group['group2'] && $group['group3'] && $group['group4']){
+                $hierachyData[$group['group4']][$group['group3']][$group['group2']][] =  $group['group1'];
+            }
         }
         
-        
-        // if ($request->input('submit') != null ){
+        forEach($hierachyData as $megaZoneMaster => $zoneDetails ){
+            //check Mega exist Or not 
+            $megaZoneid = $this->getIdByName(new MegaZoneMaster,'mega_zone_name', $megaZoneMaster);
+            forEach($zoneDetails as $zoneName => $regoinDetails){
+                $zoneId = $this->getIdByName(new ZoneMaster,'zone_name', $zoneName ,'mega_zone_id',$megaZoneid);
+                foreach($regoinDetails as $regoinName => $branchDetails){
+                    $regoinId = $this->getIdByName(new RegionMaster,'region_name', $regoinName ,'zone_id',$zoneId);
+                    foreach($branchDetails as $key => $branchCode){
+                        $branchId = $this->getIdByName(new BranchMaster,'branch_code', $branchCode ,'region_id',$regoinId);
+                    }
+                }
+            }
+        }
 
-        //     $file = $request->file('file');
-      
-        //     // File Details 
-        //     $filename = $file->getClientOriginalName();
-        //     $extension = $file->getClientOriginalExtension();
-        //     $tempPath = $file->getRealPath();
-        //     $fileSize = $file->getSize();
-        //     $mimeType = $file->getMimeType();
-      
-        //     // Valid File Extensions
-        //     $valid_extension = array("csv");
-      
-        //     // 2MB in Bytes
-        //     $maxFileSize = 2097152; 
-      
-        //     // Check file extension
-        //     if(in_array(strtolower($extension),$valid_extension)){
-      
-        //       // Check file size
-        //       if($fileSize <= $maxFileSize){
-      
-        //         // File upload location
-        //         $location = 'uploads';
-      
-        //         // Upload file
-        //         $file->move($location,$filename);
-      
-        //         // Import CSV to Database
-        //         $filepath = public_path($location."/".$filename);
-      
-        //         // Reading file
-        //         $file = fopen($filepath,"r");
-      
-        //         $importData_arr = array();
-        //         $i = 0;
-      
-        //         while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
-        //            $num = count($filedata );
-                   
-        //            // Skip first row (Remove below comment if you want to skip the first row)
-        //            /*if($i == 0){
-        //               $i++;
-        //               continue; 
-        //            }*/
-        //            for ($c=0; $c < $num; $c++) {
-        //               $importData_arr[$i][] = $filedata [$c];
-        //            }
-        //            $i++;
-        //         }
-        //         fclose($file);
-      
-        //         // Insert to MySQL database
-        //         foreach($importData_arr as $importData){
-      
-        //           $insertData = array(
-        //              "username"=>$importData[1],
-        //              "name"=>$importData[2],
-        //              "gender"=>$importData[3],
-        //              "email"=>$importData[4]);
-        //              User::insertData($insertData);
-      
-        //         }
-      
-        //         Session::flash('message','Import Successful.');
-        //       }else{
-        //         Session::flash('message','File too large. File must be less than 2MB.');
-        //       }
-      
-        //     }else{
-        //        Session::flash('message','Invalid File Extension.');
-        //     }
-      
-        //   }
-          
-        //   // Redirect to index
-        //   return redirect('/admin/register-user');
-        // }
+        dd($hierachyData);
+
+        $users  = (new FastExcel)->sheet(2)->import('/var/www/html/ISPCalling/HIERACHY_IMPORT_DATA.xlsx');
         
     }
 
-    public function  bulkregisterUser(){
-      ini_set('max_execution_time', 0);
-      $c = DB::table('users',1)->count();
-      $insertData = [];
-      $a = rand(10,100);
-      for($j=$c; $j<$c+100000; $j++){
-        $i = $j * $a;
-        $i = $i . time();
-            $insertData = [
-                "username"=>"Krushna".$i,
-                       "name"=>"Krush".$i,
-                       "gender"=>"male",
-                       "email"=>"batekrushna$i@gmail.com",
-                       "password"=>Hash::make("batekrushna$i")
-                      ];
+    /**
+     * get Id by name bases on Model Name 
+     */
+    private function getIdByName($modelname,$key,$name, $parentKeyName = '',$parentId = 0 ){
+        $details = $modelname::where($key, $name)->get()->toArray();
+        
+        if(count($details) == 0 ){
+            $insertDetails = [];
+            $insertDetails[$key] = $name;
+            if($parentKeyName != '' && $parentId != 0){
+                $insertDetails[$parentKeyName] = $parentId;
+            }
+            $res = $modelname::create($insertDetails);
+            $megaZoneId = $res->id;
+        }else{
+            $megaZoneId = $details[0]['id'];
+        }
+        return $megaZoneId;
+    }
 
-                       User::create($insertData);
+
+    
+
+    // public function  bulkregisterUser(){
+    //   ini_set('max_execution_time', 0);
+    //   $c = DB::table('users',1)->count();
+    //   $insertData = [];
+    //   $a = rand(10,100);
+    //   for($j=$c; $j<$c+100000; $j++){
+    //     $i = $j * $a;
+    //     $i = $i . time();
+    //         $insertData = [
+    //             "username"=>"Krushna".$i,
+    //                    "name"=>"Krush".$i,
+    //                    "gender"=>"male",
+    //                    "email"=>"batekrushna$i@gmail.com",
+    //                    "password"=>Hash::make("batekrushna$i")
+    //                   ];
+
+    //                    User::create($insertData);
                        
-      }
-    }
+    //   }
+    // }
 
 
 }
