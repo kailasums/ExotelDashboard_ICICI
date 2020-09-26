@@ -7,7 +7,7 @@ use App\User;
 use Excel;
 use Illuminate\Support\Facades\Hash;
 //use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\UsersImport;
+use App\Imports\UserHierachyImport;
 use App\Imports\HierachyImport;
 
 class UserRegisterController extends Controller
@@ -20,6 +20,13 @@ class UserRegisterController extends Controller
     }
 
     public function uploadFile(Request $request){
+        $import = new UserHierachyImport();
+        //$import->onlySheets('sheet1', 'Sheet2');
+
+        Excel::import($import, '/var/www/html/ISPCalling/HIERACHY_IMPORT_DATA.xlsx');
+    }
+
+    public function uploadFile1(Request $request){
         ini_set('max_execution_time', 0);
         
         $fileDetails = $request->file('file');
@@ -31,7 +38,6 @@ class UserRegisterController extends Controller
             break;
 
             case env('HIERACHY_IMPORT_DATA_FILE'):
-                echo "here2";
                 $path1 = $request->file('file')->store('temp'); 
                 $path=storage_path('app').'/'.$path1;
                 $realPath = $fileDetails->getRealPath();

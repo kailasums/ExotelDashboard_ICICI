@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\MegaZoneMaster;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MegaZoneMasterController extends Controller
 {
@@ -14,7 +15,9 @@ class MegaZoneMasterController extends Controller
      */
     public function index()
     {
-        //
+        $a = DB::table('mega_zone_masters')->insert(['mega_zone_name'=>'mumbai']);
+        $b = MegaZoneMaster::create(['mega_zone_name'=>'mumbai']);
+        echo \json_encode($a);exit();
     }
 
     /**
@@ -24,7 +27,7 @@ class MegaZoneMasterController extends Controller
      */
     public function create()
     {
-        //
+      
     }
 
     /**

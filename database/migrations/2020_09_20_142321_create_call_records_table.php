@@ -14,18 +14,20 @@ class CreateCallRecordsTable extends Migration
     public function up()
     {
         Schema::create('call_records', function (Blueprint $table) {
-            $table->increments('callsid');
-            $table->string('fromNumber',10)->nullable(false);
-            $table->string('toNumber',10)->nullable(false);
-            $table->integer('callduration')->nullable(false);
-            $table->enum('callstatus',['failed', 'completed','busy','no_answer']);
-            $table->string('callRecordingLink');
-            $table->string('branchId');
+            $table->id();
+            $table->string('from_number',15)->nullable(false);
+            $table->string('to_number',15)->nullable(false);
+            $table->string('call_duration')->nullable(false);
+            $table->enum('call_status',['failed', 'completed','busy','no_answer']);
+            $table->enum('call_directions',['incoming', 'outcoming']);
+            $table->string('call_recording_link');
+            $table->string('branch_id');
             $table->integer('group1');
-            $table->string('group2',255);
-            $table->string('group3',255);
-            $table->string('group4',255);
+            $table->integer('group2');
+            $table->integer('group3');
+            $table->integer('group4');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

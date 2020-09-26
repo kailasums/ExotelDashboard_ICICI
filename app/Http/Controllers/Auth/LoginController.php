@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
-use Auth;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
@@ -88,6 +89,7 @@ class LoginController extends Controller
         if ($this->attemptLogin($request)) {
             $path =  $request->path();
             $user = Auth::user();
+            Session::set('user', $user);
             $restrictLogin = explode(",",env("NO_PORTAL_ACCESS"));
             
             if(in_array($user->designation,$restrictLogin)) {

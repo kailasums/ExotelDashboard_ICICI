@@ -2,13 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\BranchMaster;
 use App\User;
 use Carbon\Carbon;
 use App\CallRecording;
+use App\RegionMaster;
+use App\ZoneMaster;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CallRecordingController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth')->except(['store']);
+    }
+    
+
     /**
      * Display a listing of the resource.
      *
@@ -112,6 +122,34 @@ class CallRecordingController extends Controller
     public function update(Request $request, CallRecording $callRecording)
     {
         //
+    }
+
+      /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\CallRecording  $callRecording
+     * @return \Illuminate\Http\Response
+     */
+    public function pieChart(Request $request, CallRecording $callRecording)
+    {
+        $data = DB::table('call_records')
+        ->select(
+         DB::raw('callStatus as callStatus'),
+         DB::raw('count(*) as number'))
+        ->groupBy('callStatus')
+        ->get();
+        $array[] = ['Call_Status', 'Number'];
+        foreach($data as $key => $value)
+        {
+          $array[++$key] = [$value->callStatus, $value->number];
+        }
+        $callRecords = json_encode($array);
+        $zones = ZoneMaster::pluck('zone_name','zone_id');
+        $regions = RegionMaster::pluck('region_name','region_id');
+        $branchs = BranchMaster::pluck('branch_name','branch_id');
+        return view('callRecord.google-pie-chart')->with(compact('callRecords','zones','regions','branchs') );
+    
     }
 
     /**

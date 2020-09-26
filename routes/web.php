@@ -29,4 +29,5 @@ Route::get('/bulkRegister', 'UserRegisterController@bulkregisterUser');
 
 Route::resource('post', 'PostController');
 Route::get('call-recording', 'CallRecordingController@index');
+Route::get('pie-chart', 'CallRecordingController@pieChart');
 

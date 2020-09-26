@@ -20,7 +20,7 @@ class MegaZoneMaster extends Model
      * @var array
      */
     protected $fillable = [
-        'mega_zone_name','created_at','updated_at'
+        'mega_zone_id', 'mega_zone_name','created_at','updated_at'
     ];
 
     /**

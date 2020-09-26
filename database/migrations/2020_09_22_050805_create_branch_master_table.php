@@ -16,7 +16,7 @@ class CreateBranchMasterTable extends Migration
         Schema::create('branch_masters', function (Blueprint $table) {
             $table->increments('branch_id');
             $table->string('branch_name',255)->nullable(false);
-            $table->unsignedBigInteger('region_id');
+            $table->integer('region_id');
             $table->timestamps();
         });
     }

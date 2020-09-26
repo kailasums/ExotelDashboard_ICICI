@@ -36,7 +36,8 @@ class HierachyImport implements ToCollection
         
         $data = [];
         for($i=1; $i<=10000;$i++){
-                $data[$rows[$i][3]][$rows[$i][2]][$rows[$i][1]] = $rows[$i][0];
+            
+            //$data[$rows[$i][3]][$rows[$i][2]][$rows[$i][1]] = $rows[$i][0];
                 
             if($rows[$i][0] ){
                 //dd("2");
@@ -47,26 +48,28 @@ class HierachyImport implements ToCollection
             }
            // if($i == 13){exit();}
         }
-        foreach($data as $megaZoneName => $ZoneDetails){
+        $i = 0;
+        
+        $arrMegaZone = array_keys($data);
+        for($i = 0; $i < count($arrMegaZone);$i++){
+            $megaZoneName = $arrMegaZone[$i];
+            
             $record = MegaZoneMaster::where('mega_zone_name', $megaZoneName)->get()->toArray();
-            print_r($record);
-            $d = [];
+            if($i === 1){
+                exit();
+            }
             if(count($record) == 0){
                 try{
                     $megaZoneMaster = new MegaZoneMaster;
                     $megaZoneMaster->mega_zone_name = $megaZoneName;
                     $a = $megaZoneMaster->save();
-                    $record = MegaZoneMaster::where('mega_zone_name', $megaZoneName)->get()->toArray();
-                    dd($record);
-                    
-                }catch(Exception $e){
-                    dd($e);
+                    //$record = MegaZoneMaster::where('mega_zone_name', $megaZoneName)->get()->toArray();   
+                }catch(Exception $e){   
                 }
-                
             }else{
-                $d  = $record[0];    
+                //$d  = $record[0];    
             }
         }
-    }
-    
+        
+    }   
 }
