@@ -17,7 +17,7 @@
                             {!! Form::select('branch', $branchs, ''); !!}
                             </li>
                             <li>
-                                {!! Form::select('user', $pb, ''); !!}
+                                {!! Form::select('user', $users, ''); !!}
                             </li>
                             <li><select name="call_direction" id="call_direction"><option value="incoming">Incoming</option><option value="outgoing">Outgoing</option></select></li>
                       </ul>
@@ -32,8 +32,8 @@
         </div>
     </div>
     <script type="text/javascript">
-        var analytics = <?php echo $callRecords; ?>
-
+        var analytics = <?php echo $callRecords; ?>;
+    
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
 

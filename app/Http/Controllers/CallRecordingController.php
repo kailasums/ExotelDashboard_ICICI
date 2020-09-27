@@ -136,34 +136,103 @@ class CallRecordingController extends Controller
      */
     public function pieChart(Request $request)
     {
+        $queryParam = $request->all();
         $user  =  Session::get('user');
-        $data = CallRecording::select(
+        $dataQuery = CallRecording::select(
                 DB::raw('call_status as callStatus'),
                 DB::raw('count(*) as number')
             )
             ->groupBy('call_status')
             ->where('created_at','>=', Carbon::today())
-            ->where([ 'group1' => $user->group1])->get();
+            ->where([ 'group1' => $user->group1]);
+        if (isset($queryParam['zone'])) {
+            $dataQuery = $dataQuery->where('group2',$queryParam['zone']);
+        }
+        if (isset($queryParam['region'])) {
+            $dataQuery = $dataQuery->where('group3',$queryParam['region']);
+        }
+        if (isset($queryParam['branch'])) {
+            $dataQuery = $dataQuery->where('group4',$queryParam['branch']);
+        }
+
+        if (isset($queryParam['call_direction'])) {
+            $dataQuery = $dataQuery->where('call_directions',$queryParam['call_direction']);
+        } else {
+            $dataQuery = $dataQuery->where('call_directions','incoming');
+        }
+        
+        if(isset($queryParam['user'])) {
+            $dataQuery = $dataQuery->where('call_directions',$queryParam['call_direction']);
+        }
+        $data = $dataQuery->get();
+
+           
        
         $array[] = ['Call_Status', 'Number'];
         foreach ($data as $key => $value) {
             $array[++$key] = [$value->callStatus, $value->number];
         }
         $callRecords = json_encode($array);
-        $zoneQuery = ZoneMaster::where('mega_zone_id',$user->group1);
-        $zones = $zoneQuery->pluck('zone_name', 'id');
-        $zoneParam = $zoneQuery->pluck('id')->toArray();
-        $regionQuery = RegionMaster::whereIn('zone_id',$zoneParam);
-        $regions = $regionQuery->pluck('region_name', 'id');
-        $regionParam = $regionQuery->pluck('id')->toArray();
-        $branchQuery = BranchMaster::whereIn('region_id',$regionParam);
-        $branchs = $branchQuery->pluck('branch_name', 'id');
-        $branchParam = $branchQuery->pluck('id')->toArray();
-        $pb = User::where(['group1'=>$user->group1,'is_callable'=>'yes'])->pluck('name','id');
 
-        return view('callRecord.google-pie-chart')->with(compact('callRecords', 'zones', 'regions', 'branchs','pb'));
+        $zoneData = isset($queryParam['zone'])? $this->_zoneData($queryParam):$this->_zoneData($user->group1);
+        $zones = $zoneData['zones'];
+
+        $regionData = isset($queryParam['region'])? $this->_regionData($queryParam):$this->_regionData($zoneData['zoneParam']);
+        $regions =  $regionData['region'];
+
+        $branchData = isset($queryParam['branch'])? $this->_branchData($queryParam):$this->_branchData($regionData['regionParam']);
+        $branchs =  $branchData['branch'];
+
+        $users = isset($queryParam['user'])? $this->_userData($queryParam):$this->_userData($branchData['branchParam']);
+      
+        if($request->ajax()) {
+            return compact('callRecords', 'zones', 'regions', 'branchs','users');
+        }
+        return view('callRecord.google-pie-chart')->with(compact('callRecords', 'zones', 'regions', 'branchs','users'));
     }
 
+    public function _zoneData($param) {
+       if(isset($param['zone'])) {
+        $query = ZoneMaster::where('id',$param['zone']);
+       } else {
+        $query = ZoneMaster::where('mega_zone_id',$param);
+       }
+       $data['zones'] = $query->pluck('zone_name', 'id');
+       $data['zoneParam'] = $query->pluck('id')->toArray();
+       return $data;
+    }
+
+    public function _regionData($param) {
+        if(isset($param['region'])) {
+         $query = RegionMaster::where('id',$param['region']);
+        } else {
+         $query = RegionMaster::whereIn('zone_id',$param);
+        }
+        $data['region'] = $query->pluck('region_name', 'id');
+        $data['regionParam'] = $query->pluck('id')->toArray();
+        return $data;
+    }
+
+    public function _branchData($param) {
+        if(isset($param['branch'])) {
+         $query = BranchMaster::where('id',$param['branch']);
+        } else {
+         $query = BranchMaster::whereIn('region_id',$param);
+        }
+        $data['branch'] = $query->pluck('branch_name', 'id');
+        $data['branchParam'] = $query->pluck('id')->toArray();
+        return $data;
+    }
+
+    public function _userData($param) {
+        if(isset($param['user'])) {
+         $query = User::where('id',$param['user']);
+        } else {
+         $query = User::whereIn('group4',$param);
+        }
+        $user= $query->pluck('name', 'id');
+        return $user;
+    }
     /**
      * Remove the specified resource from storage.
      *

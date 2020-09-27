@@ -1,73 +1,86 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en-US">
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Admin {{ __('Login') }}</div>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('admin-login') }}">
-                        @csrf
 
-                        <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+    <title>Login</title>
+    <!--<link rel="shortcut icon" href="/images/favicon.png" type="image/ico"/>-->
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+    <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/main.css') }}" rel="stylesheet">
+</head>
 
-                        <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+<body>
+    <div class="wrap">
 
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
 
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
+        <section id="middle">
+            <div class="site-login">
+                <div class="login-inner-box">
+                    <div class="login-screen-logo text-center">
+                        <img src="images/logo.png" />
+                    </div>
+                    <h1>Login</h1>
+                    <div class="login-fields">
+                        <form method="POST" action="{{ route('admin-login') }}">
+                            @csrf
+                            <div class="animated form-group field-loginform-email required">
+                                <label class='control-label bmd-label-static' for='email-addr'><strong
+                                        class='mandatory'>*</strong> Email</label><input type="text"
+                                    id="loginform-email" class="form-control @error('email') is-invalid @enderror" name="email" autofocus
+                                    aria-required="true">
+                                <div class='error invite-via-email-response-error' style='width:100%'>
+                                    @error('email')
+                                    <p class="help-block help-block-error">{{$message}}</p>
+                                    @enderror
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
+                            <div class="animated form-group field-loginform-password required">
+                                <label class='control-label bmd-label-static' for='email-addr'><strong
+                                        class='mandatory'>*</strong> Password</label><input type="password"
+                                    id="loginform-password" class="form-control @error('password') is-invalid @enderror" name="password" value=""
+                                    aria-required="true">
+                                <div class='error invite-via-email-response-error' style='width:100%'>
+                                    @error('password')
+                                    <p class="help-block help-block-error">{{$message}}</p>
+                                    @enderror
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                            <div class="remember-me form-group field-loginform-rememberme">
+                                <div class="checkbox">
+                                    <label for="loginform-rememberme">
+                                        <input type="hidden" name="rememberMe" value="0"><input
+                                            type="checkbox" id="loginform-rememberme" name="rememberMe"
+                                            value="1" checked>
+                                        Remember Me
+                                    </label>
+                                    <p class="help-block help-block-error"></p>
+
+                                </div>
+                            </div>
+                            <div class="form-group btn-group text-center">
+                                <button type="submit" class="btn" name="login-button">Login</button> </div>
+
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <!-- <p class="text-center">© 2020 Tata Sky. All Rights Reserved.</p> -->
+        </section>
     </div>
-</div>
-@endsection
+
+    <script src="{{URL::asset('js/jquery.js')}}"></script>
+    <script src="{{URL::asset('js/inline-script.js')}}"></script>
+    <script src="{{URL::asset('js/tether.min.js')}}"></script>
+    <script src="{{URL::asset('js/bootstrap-material-design.iife.min.js')}}"></script>
+    <script src="{{URL::asset('js/jquery.slimscroll.js')}}"></script>
+</body>
+
+</html>

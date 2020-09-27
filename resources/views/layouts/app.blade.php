@@ -23,6 +23,7 @@
     <script type="text/javascript" src="{{URL::asset('js/custom.js')}}"></script>
     
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @yield('assets')
 </head>
 <body>
     <div id="app">
@@ -81,6 +82,7 @@
             @yield('content')
         </main>
     </div>
+    @yield('extra-script')
     <script type="text/javascript" src="{{URL::asset('js/custom.js')}}"></script>
 </body>
 </html>

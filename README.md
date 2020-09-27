@@ -81,7 +81,9 @@ composer install
 
 # creating admin user after migration  
   php artisan db:seed
-
+# file available public from storage 
+ php artisan storage:link
+ 
 # update the flag which level is not allowed to login 
 # If facing issue in file upload 
 #  php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider"

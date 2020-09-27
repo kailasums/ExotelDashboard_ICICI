@@ -149,6 +149,7 @@ class LoginController extends Controller
         if((($user->is_admin === 'YES'))) {
             return property_exists($this, 'redirectTo') ? '/admin/register-user' : '/admin/register-user';
         } else {
+            
             return property_exists($this, 'redirectTo') ?  $this->redirectTo : '/home';
         }
         return property_exists($this, 'redirectTo') ? $this->redirectTo : '/home';
@@ -181,7 +182,7 @@ class LoginController extends Controller
         $user = Auth::user();
         $this->guard()->logout();
         $request->session()->invalidate();
-        if($user->is_admin) {
+        if($user->is_admin=='YES') {
             return $this->loggedOut($request) ?redirect('/admin/login'): redirect('/admin/login');
         } 
         return $this->loggedOut($request) ?redirect('/login'): redirect('/login');
