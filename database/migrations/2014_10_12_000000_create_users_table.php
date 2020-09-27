@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->integer('group2');
             $table->integer('group3');
             $table->integer('group4');
+            $table->string('designation');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

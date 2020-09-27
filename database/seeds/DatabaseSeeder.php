@@ -23,7 +23,9 @@ class DatabaseSeeder extends Seeder
             'group2' => 1,
             'group3' => 1,
             'group4' => 1,
-            'is_admin' => 'YES'
+            'is_admin' => 'YES',
+            'designation' => 'superAdmin'
+
         ]);
     }
 }

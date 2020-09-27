@@ -64,22 +64,22 @@ class UserRegisterController extends Controller
                     }
                     
                     $arrMegaZone = $arrBranchCode = $arrZone = $arrRegoin = [];
-                    forEach($hierachyData as $megaZoneMaster => $zoneDetails ){
-                        //check Mega exist Or not 
-                        $megaZoneid = $this->getIdByName(new MegaZoneMaster,'mega_zone_name', $megaZoneMaster);
+                    // forEach($hierachyData as $megaZoneMaster => $zoneDetails ){
+                    //     //check Mega exist Or not 
+                    //     $megaZoneid = $this->getIdByName(new MegaZoneMaster,'mega_zone_name', $megaZoneMaster);
                         
-                        forEach($zoneDetails as $zoneName => $regoinDetails){
-                            $zoneId = $this->getIdByName(new ZoneMaster,'zone_name', $zoneName ,'mega_zone_id',$megaZoneid);
+                    //     forEach($zoneDetails as $zoneName => $regoinDetails){
+                    //         $zoneId = $this->getIdByName(new ZoneMaster,'zone_name', $zoneName ,'mega_zone_id',$megaZoneid);
                             
-                            foreach($regoinDetails as $regoinName => $branchDetails){
-                                $regoinId = $this->getIdByName(new RegionMaster,'region_name', $regoinName ,'zone_id',$zoneId);
+                    //         foreach($regoinDetails as $regoinName => $branchDetails){
+                    //             $regoinId = $this->getIdByName(new RegionMaster,'region_name', $regoinName ,'zone_id',$zoneId);
                                 
-                                foreach($branchDetails as $key => $branchCode){
-                                    $branchId = $this->getIdByName(new BranchMaster,'branch_code', $branchCode ,'region_id',$regoinId);
-                                }
-                            }
-                        }
-                    }
+                    //             foreach($branchDetails as $key => $branchCode){
+                    //                 $branchId = $this->getIdByName(new BranchMaster,'branch_code', $branchCode ,'region_id',$regoinId);
+                    //             }
+                    //         }
+                    //     }
+                    // }
                     
                     $arrMegaZone = MegaZoneMaster::all()->pluck('id','mega_zone_name');
                     $arrZone = ZoneMaster::all()->pluck('id','zone_name');
@@ -103,8 +103,10 @@ class UserRegisterController extends Controller
                         //check user exist or not
                          
                         if(in_array($user['Email'], $arrAllEmailIDs )){
+                            
                             $userRecord['id'] = $arrEmail[$user['Email']]['id'];
-                            $userRecord = $arrEmail[$user['Email']]; 
+                            $userRecord['email'] = $user['Email'];
+
                         }else{
                             $userRecord = [];
                             $userRecord['id'] = '';
