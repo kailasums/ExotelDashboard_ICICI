@@ -17,7 +17,7 @@ Route::get('/', function () {
     return redirect('login');
 });
 
-Auth::routes();
+Auth::routes(['register' => false]);
 
 Route::get('/admin/login', 'Auth\LoginController@showAdminLoginForm');
 Route::post('/login/admin', 'Auth\LoginController@login')->name('admin-login');

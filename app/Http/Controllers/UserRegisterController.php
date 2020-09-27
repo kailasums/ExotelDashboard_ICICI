@@ -6,23 +6,32 @@ use Illuminate\Http\Request;
 use App\User;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Hash;
-//use Maatwebsite\Excel\Facades\Excel;
-// use App\Imports\UserHierachyImport;
-// use App\Imports\HierachyImport;
+use Illuminate\Support\Facades\Storage;
 
 // Use model For groups and user 
 use App\MegaZoneMaster,
 App\RegionMaster,
 App\BranchMaster,
-App\ZoneMaster;
+App\ZoneMaster,
+App\FileUpload;
+
 
 class UserRegisterController extends Controller
 {
     /**
+     * constructot to check path auth
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
      * User Register vai csv file 
      */
     public function index(){
-        return view('admin.registeruser');
+        $fileData = FileUpload::all();
+        return view('admin.registeruser', ["fileUpload" => $fileData]);
     }
 
     public function uploadFile(Request $request){
@@ -31,107 +40,143 @@ class UserRegisterController extends Controller
             if ($request->isMethod('post')) {
                 //check file is present or not
                 if($request->hasFile('file')){
-                    //Store file to specific location 
-                    $fileName = time().'_'.$req->file->getClientOriginalName();
-                    $filePath = $req->file('file')->storeAs('uploads', $fileName, 'public');
 
+                    $fileDetails = $request->file('file');
+                    $this->storeFile($fileDetails); // store file to specific location
+
+                    //file Details store in Database 
+                    $fileUpload = [];
+                    $fileUpload['file_name'] = $fileDetails->getClientOriginalName();
+                    $fileUpload['upload_status'] = 'completed';
+                    $fileuploadStatus = FileUpload::create($fileUpload);
+
+                    //check sheet is exixt or not 
+                    $filePath = storage_path().'/app/public/'.$fileDetails->getClientOriginalName();
+                    
                     //Processing Data Shhet 1 Which is 
-                    $groupData  = (new FastExcel)->sheet(1)->import($fileDetails->store('temp'));
+                    $groupData  = (new FastExcel)->sheet(2)->import($filePath);
+
                     $hierachyData = [];
                     forEach($groupData as $group){    
-                        if($group['group1'] && $group['group2'] && $group['group3'] && $group['group4']){
-                            $hierachyData[$group['group4']][$group['group3']][$group['group2']][] =  $group['group1'];
+                        if($group['Group4'] && $group['Group4'] != null) {
+                            $hierachyData[$group['Group4']][$group['Group3']][$group['Group2']][] =  $group['Group1'];
                         }
                     }
+                    
                     $arrMegaZone = $arrBranchCode = $arrZone = $arrRegoin = [];
-                    forEach($hierachyData as $megaZoneMaster => $zoneDetails ){
-                        //check Mega exist Or not 
-                        $megaZoneid = $this->getIdByName(new MegaZoneMaster,'mega_zone_name', $megaZoneMaster);
-                        $arrMegaZone[trim($megaZoneMaster)] = $megaZoneid;
-
-                        forEach($zoneDetails as $zoneName => $regoinDetails){
-                            $zoneId = $this->getIdByName(new ZoneMaster,'zone_name', $zoneName ,'mega_zone_id',$megaZoneid);
-                            $arrZone[trim($zoneName)] = $zoneId;
-
-                            foreach($regoinDetails as $regoinName => $branchDetails){
-                                $regoinId = $this->getIdByName(new RegionMaster,'region_name', $regoinName ,'zone_id',$zoneId);
-                                $arrZone[trim($regoinName)] = $regoinId;
-
-                                foreach($branchDetails as $key => $branchCode){
-                                    $branchId = $this->getIdByName(new BranchMaster,'branch_code', $branchCode ,'region_id',$regoinId);
-                                    $arrZone[trim($branchCode)] =$branchId;
-                                }
-                            }
-                        }
-                    }
-
+                    // forEach($hierachyData as $megaZoneMaster => $zoneDetails ){
+                    //     //check Mega exist Or not 
+                    //     $megaZoneid = $this->getIdByName(new MegaZoneMaster,'mega_zone_name', $megaZoneMaster);
+                        
+                    //     forEach($zoneDetails as $zoneName => $regoinDetails){
+                    //         $zoneId = $this->getIdByName(new ZoneMaster,'zone_name', $zoneName ,'mega_zone_id',$megaZoneid);
+                            
+                    //         foreach($regoinDetails as $regoinName => $branchDetails){
+                    //             $regoinId = $this->getIdByName(new RegionMaster,'region_name', $regoinName ,'zone_id',$zoneId);
+                                
+                    //             foreach($branchDetails as $key => $branchCode){
+                    //                 $branchId = $this->getIdByName(new BranchMaster,'branch_code', $branchCode ,'region_id',$regoinId);
+                    //             }
+                    //         }
+                    //     }
+                    // }
+                    
+                    $arrMegaZone = MegaZoneMaster::all()->pluck('id','mega_zone_name');
+                    $arrZone = ZoneMaster::all()->pluck('id','zone_name');
+                    $arrRegoin = RegionMaster::all()->pluck('id','region_name');
+                    $arrBranchCode = BranchMaster::all()->pluck('id','branch_code');
+                    
                     //get all user users's email id to check exist or not 
                     $arrEmail = User::all()->keyBy('email')->toArray();
                     $arrAllEmailIDs = array_keys($arrEmail); 
                     
-                    $users  = (new FastExcel)->sheet(2)->import($fileDetails->store('temp'));
+                    $users  = (new FastExcel)->sheet(1)->import($filePath);
                     $arrUpdateDateEmailAddress = [];
-                    foreach($users  as  $key => $user ){
-                        //get user By email Address 
-
-                        //check user exist or not 
-                        if(in_array($arrAllEmailIDs, $user['email'])){
-                            $userRecord = $arrEmail[$user['email']]; 
+                    foreach($users as  $key => $user ){
+                        if(env("IS_SEND_MAIL_REGISTRAION")  === 'YES'){
+                            $password = rand(11111111,99999999);
+                            //send mail to user
+                            $this->senduserCreationMail($user['Email'],  $password );
+                        }else{
+                            $password = env("DEFAULT_PASSWORD");
+                        }
+                        //check user exist or not
+                         
+                        if(in_array($user['Email'], $arrAllEmailIDs )){
+                            $userRecord['id'] = $arrEmail[$user['Email']]['id'];
+                            $userRecord = $arrEmail[$user['Email']]; 
                         }else{
                             $userRecord = [];
+                            $userRecord['id'] = '';
+                            
                         }
                         //add or update new record in array for user 
-                        $userRecord['name'] = $user['name'];
-                        $userRecord['phone_number'] = $user['phone_number'];
-                        $userRecord['email'] = $user['email'];
-                        $userRecord['designation'] = $user['designation'];
+                        $userRecord['name'] = $user['Name'];
+                        $userRecord['phone_number'] = ($user['Mobile'] != '') ? $user['Mobile'] : rand(11111111111,22222222222).toString() ;
+                        $userRecord['email'] = $user['Email'];
+                        $userRecord['designation'] = $user['Designation'];
+                        $userRecord['password'] = Hash::make($password);
 
+                        $userRecord['level'] =  'level1';
                         //Assign group name using aove 4 array 
-                        if($user['group1'] != ''){
-                            $userRecord['group1'] = $arrBranchCode[$user['group1']];
+                        
+                        if($user['Group1'] != ''){
+                            $userRecord['group1'] = $arrBranchCode[trim($user['Group1'])];
                         }else{
                             $userRecord['group1'] = 0;
                         }
 
-                        if($user['group2'] != ''){
-                            $userRecord['group2'] = $arrRegoin[$user['group2']];
+                        if($user['Group2'] != ''){
+                            $userRecord['group2'] = $arrRegoin[$user['Group2']];
                         }else{
                             $userRecord['group2'] = 0;
                         }
 
 
-                        if($user['group3'] != ''){
-                            $userRecord['group3'] = $arrZone[$user['group3']];
+                        if($user['Group3'] != ''){
+                            $userRecord['group3'] = $arrZone[$user['Group3']];
                         }else{
                             $userRecord['group3'] = 0;
                         }
 
-                        if($user['group4'] != ''){
-                            $userRecord['group4'] = $arrMegaZone[$user['group4']];
+                        if($user['Group4'] != ''){
+                            $userRecord['group4'] = $arrMegaZone[$user['Group4']];
                         }else{
                             $userRecord['group4'] = 0;
                         }
-
-                        if($userRecord[id] != ''){
-                            $userDetails = User::where('id', $userRecord['id'])->update($userRecord) ;
+                        
+                        if($userRecord['id'] != ''){
+                            try{
+                                $userDetails = User::where('id', $userRecord['id'])->update($userRecord);
+                            }catch(Exception $e){
+                                continue;
+                            }
                         }else{
-                            $userDetails = User::create($userRecord);
+                            try{
+                                $userDetails = User::create($userRecord);
+                            }catch(Exception $e){
+                                continue;
+                            } 
                         }       
+
                         array_push($arrUpdateDateEmailAddress,$userRecord['email']);
                     }
 
 
                     //check if any email is exist or not and update delted at for that email 
-                    $arrRemovingEmailAdres = array_diff(arrAllEmailIDs,$arrUpdateDateEmailAddress);
-                    foreach($arrRemovingEmailAdres as $key =>$emailAdress){
-
+                    $arrRemovingEmailAdress = array_diff(arrAllEmailIDs,$arrUpdateDateEmailAddress);
+                    foreach($arrRemovingEmailAdress as $key => $emailAdress){
+                        if($arrEmail[$emailAdress]->is_admin !== 'YES'){
+                            $users = User::where('email', $emailAdress)
+                                    ->delete();
+                        }
                     }
+                    return redirect('/admin/register-user');
                 }else{
-                    redirect()->route('admin/register-user');
+                    return redirect('/admin/register-user');
                 }
-
             }else{
-                redirect()->route('admin/register-user');
+                return redirect('/admin/register-user');
             }
         }catch(Exception $e){
 
@@ -139,8 +184,32 @@ class UserRegisterController extends Controller
         
     }
 
+    /**
+     * send user registration mail 
+     */
 
-    
+     private function senduserCreationMail($email, $password){
+
+     }
+    /**
+     * file Storage which is uploaded by user 
+     */
+
+    private function storeFile($fileDetails){
+        try{
+            // Store file to specific location 
+            $filename = $fileDetails->getClientOriginalName();
+            $fileLocation = Storage::disk('local')->putFileAs(
+                'public/',
+                $fileDetails,
+                $filename
+            ); // file stored at location storage/app/public/
+            
+            return true;
+        }catch(Exception $e){
+            return false;
+        }
+    }
     /**
      * get Id by name bases on Model Name 
      */
@@ -148,8 +217,11 @@ class UserRegisterController extends Controller
         $details = $modelname::where($key, $name)->get()->toArray();
         
         if(count($details) == 0 ){
+            if($name === ''){
+                return false;
+            }
             $insertDetails = [];
-            $insertDetails[$key] = $name;
+            $insertDetails[$key] = trim($name);
             if($parentKeyName != '' && $parentId != 0){
                 $insertDetails[$parentKeyName] = $parentId;
             }

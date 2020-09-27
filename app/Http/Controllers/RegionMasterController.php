@@ -46,10 +46,10 @@ class RegionMasterController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\ReligionMaster  $religionMaster
+     * @param  \App\RegionMaster  $regionMaster
      * @return \Illuminate\Http\Response
      */
-    public function show(ReligionMaster $religionMaster)
+    public function show(RegionMaster $regionMaster)
     {
         //
     }
@@ -57,10 +57,10 @@ class RegionMasterController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\ReligionMaster  $religionMaster
+     * @param  \App\RegionMaster  $regionMaster
      * @return \Illuminate\Http\Response
      */
-    public function edit(ReligionMaster $religionMaster)
+    public function edit(RegionMaster $regionMaster)
     {
         //
     }
@@ -69,10 +69,10 @@ class RegionMasterController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ReligionMaster  $religionMaster
+     * @param  \App\RegionMaster  $regionMaster
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ReligionMaster $religionMaster)
+    public function update(Request $request, RegionMaster $regionMaster)
     {
         //
     }
@@ -80,10 +80,10 @@ class RegionMasterController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\ReligionMaster  $religionMaster
+     * @param  \App\RegionMaster  $regionMaster
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ReligionMaster $religionMaster)
+    public function destroy(RegionMaster $regionMaster)
     {
         //
     }

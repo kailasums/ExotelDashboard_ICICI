@@ -24,7 +24,7 @@
             <div class="site-login">
                 <div class="login-inner-box">
                     <div class="login-screen-logo text-center">
-                        <img src="images/logo.png" />
+                        <img src="{{URL::asset('images/logo.png')}}" />
                     </div>
                     <h1>Login</h1>
                     <div class="login-fields">

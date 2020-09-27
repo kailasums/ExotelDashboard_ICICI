@@ -8,21 +8,24 @@
                     <div class="panel-heading">
                       <ul>
                             <li>
-                            {!! Form::select('zone', $zones, ''); !!}
+                            {!! Form::select('zone',  $zones, ''); !!}
                             </li>
                             <li>
-                            {!! Form::select('region', $regions, ''); !!}
+                            {!! Form::select('region', (object) array_merge( [''=>'Select'], (array) $regions), ''); !!}
                             </li>
                             <li>
-                            {!! Form::select('branch', $branchs, ''); !!}
+                            {!! Form::select('branch', (object) array_merge( [''=>'Select'], (array) $branchs), ''); !!}
                             </li>
                             <li>
-                                {!! Form::select('user', $users, ''); !!}
+                                {!! Form::select('user', (object) array_merge( [''=>'Select'], (array) $users), ''); !!}
                             </li>
                             <li><select name="call_direction" id="call_direction"><option value="incoming">Incoming</option><option value="outgoing">Outgoing</option></select></li>
                       </ul>
                     </div>
                     <div class="panel-body" align="center">
+                        <ul>
+                            
+                        </ul>
                         <div id="pie_chart" style="width:750px; height:450px;">
 
                         </div>
