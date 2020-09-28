@@ -22,12 +22,16 @@ Auth::routes(['register' => false]);
 Route::get('/admin/login', 'Auth\LoginController@showAdminLoginForm');
 Route::post('/login/admin', 'Auth\LoginController@login')->name('admin-login');
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/admin/register-user', 'UserRegisterController@index');
-Route::post('/admin/uploadFile', 'UserRegisterController@uploadFile');
-Route::get('/bulkRegister', 'UserRegisterController@bulkregisterUser');
+Route::group(['middleware' => [ 'superadmin']], function() {
+    Route::get('/admin/register-user', 'UserRegisterController@index');
+    Route::post('/admin/uploadFile', 'UserRegisterController@uploadFile');
+});
 
-Route::resource('post', 'PostController');
+Route::group(['middleware' => ['user']], function() {
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('pie-chart', 'CallRecordingController@pieChart');
+});
+
 Route::get('call-recording', 'CallRecordingController@index');
-Route::get('pie-chart', 'CallRecordingController@pieChart');
+
 

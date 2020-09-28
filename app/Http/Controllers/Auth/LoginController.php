@@ -91,7 +91,7 @@ class LoginController extends Controller
             $user = Auth::user();
             Session::put('user', $user);
             $restrictLogin = explode(",",env("NO_PORTAL_ACCESS"));
-            
+                    
             if(in_array($user->designation,$restrictLogin)) {
                 $request->request->add(['level_login_failed' => true]);
                 $this->logout($request);  
@@ -147,6 +147,7 @@ class LoginController extends Controller
         $user = Auth::user();
 
         if((($user->is_admin === 'YES'))) {
+            
             return property_exists($this, 'redirectTo') ? '/admin/register-user' : '/admin/register-user';
         } else {
             

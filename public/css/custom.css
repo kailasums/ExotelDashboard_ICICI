@@ -1953,11 +1953,6 @@ table .empty {
 
 /**/
 
-.login-fields .checkbox input[type="checkbox"] {
-    opacity: 0;
-    visibility: hidden;
-}
-
 .login-fields .checkbox input[type="checkbox"]+.checkbox-decorator:before {
     content: "";
     width: 16px;

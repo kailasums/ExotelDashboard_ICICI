@@ -22,12 +22,19 @@
                             <li><select name="call_direction" id="call_direction"><option value="incoming">Incoming</option><option value="outgoing">Outgoing</option></select></li>
                       </ul>
                     </div>
-                    <div class="panel-body" align="center">
-                        <ul>
-                            
+                    <div>
+                        <ul class="d-inline-block align-items-top">
+                            @foreach($callRecords as $callRecord)
+                                <li class="d-block">
+                                    @foreach($callRecord as $call)
+                                    {{$call}} 
+                                    @endforeach
+                                </li>
+                            @endforeach
                         </ul>
-                        <div id="pie_chart" style="width:750px; height:450px;">
-
+                        <div class="panel-body d-inline-block align-items-top" align="center">
+                            <div  id="pie_chart" style="width:500px; height:450px;">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -35,7 +42,7 @@
         </div>
     </div>
     <script type="text/javascript">
-        var analytics = <?php echo $callRecords; ?>;
+        var analytics = <?php echo json_encode($callRecords); ?>;
     
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);

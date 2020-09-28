@@ -13,6 +13,7 @@ use App\CallRecording;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class CallRecordingController extends Controller
 {
@@ -51,6 +52,16 @@ class CallRecordingController extends Controller
 	public function store(Request $request)
 	{
 		try {
+			$validator = Validator::make($request->all(), [
+				'to_number' => 'required',
+				'from_number' => 'required'
+			]);
+
+			if ($validator->fails()) {
+				$response['status'] = 422;
+				$response['error'] = $validator->getMessageBag();
+				return response()->json($response);
+			}
 			$requestDatas = $request->input();
 			$requestDatas['created_at'] = Carbon::now();
 
@@ -61,9 +72,9 @@ class CallRecordingController extends Controller
 				$userData = User::where('phone_number', $requestDatas['from_number'])->first();
 				$requestDatas['call_directions'] = 'outgoing';
 			}
-			dd($userData);
+			
 			if (!$userData) {
-				$response['status'] = 422;
+				$response['status'] = 400;
 				$response['error'] = "No Records match with phone number";
 				return response()->json($response);
 			}
@@ -143,65 +154,67 @@ class CallRecordingController extends Controller
 	 */
 	public function pieChart(Request $request)
 	{
-			$queryParam = $request->all();
-			$user  =  Session::get('user');
-			$dataQuery = CallRecording::group($user->group4)
-				->select(
-					DB::raw('call_status as callStatus'),
-					DB::raw('count(*) as number')
-				)
-				->groupBy('call_status')
-				->where('created_at', '>=', Carbon::today());
 
-			if (isset($queryParam['zone'])) {
-				$dataQuery = $dataQuery->where('group3', $queryParam['zone']);
-			}
-			if (isset($queryParam['region'])) {
-				$dataQuery = $dataQuery->where('group2', $queryParam['region']);
-			}
-			if (isset($queryParam['branch'])) {
-				$dataQuery = $dataQuery->where('group1', $queryParam['branch']);
-			}
+		$queryParam = $request->all();
+		$user  =  Session::get('user');
+		$dataQuery = CallRecording::group($user->group4)
+			->select(
+				DB::raw('call_status as callStatus'),
+				DB::raw('count(*) as number')
+			)
+			->groupBy('call_status')
+			->where('created_at', '>=', Carbon::today());
 
-			if (isset($queryParam['call_direction'])) {
-				$dataQuery = $dataQuery->where('call_direction', $queryParam['call_direction']);
+		if (isset($queryParam['zone'])) {
+			$dataQuery = $dataQuery->where('group3', $queryParam['zone']);
+		}
+		if (isset($queryParam['region'])) {
+			$dataQuery = $dataQuery->where('group2', $queryParam['region']);
+		}
+		if (isset($queryParam['branch'])) {
+			$dataQuery = $dataQuery->where('group1', $queryParam['branch']);
+		}
+
+		if (isset($queryParam['call_direction'])) {
+			$dataQuery = $dataQuery->where('call_direction', $queryParam['call_direction']);
+		} else {
+			$dataQuery = $dataQuery->where('call_direction', 'incoming');
+		}
+
+		if (isset($queryParam['user'])) {
+			$userId = User::find($queryParam['user']);
+			if ($queryParam['call_direction'] === 'incoming') {
+				$dataQuery = $dataQuery->where('from_number', $userId->phone_number);
 			} else {
-				$dataQuery = $dataQuery->where('call_direction', 'incoming');
+				$dataQuery = $dataQuery->where('to_number', $userId->phone_number);
 			}
+		}
 
-			if (isset($queryParam['user'])) {
-				$userId = User::find($queryParam['user']);
-				if ($queryParam['call_direction'] === 'incoming') {
-					$dataQuery = $dataQuery->where('from_number', $userId->phone_number);
-				} else {
-					$dataQuery = $dataQuery->where('to_number', $userId->phone_number);
-				}
-			}
+		$data = $dataQuery->get();
 
-			$data = $dataQuery->get();
-
-			$array[] = ['Call_Status', 'Number'];
-			foreach ($data as $key => $value) {
-				$array[++$key] = [$value->callStatus, $value->number];
-			}
-			$callRecords = json_encode($array);
-
-			$zoneData = isset($queryParam['zone']) ? $this->_zoneData($queryParam) : $this->_zoneData($user->group1);
-			$zones = $zoneData['zones'];
-
-			$regionData = isset($queryParam['region']) ? $this->_regionData($queryParam) : $this->_regionData($zoneData['zoneParam']);
-			$regions =  $regionData['region'];
-
-			$branchData = isset($queryParam['branch']) ? $this->_branchData($queryParam) : $this->_branchData($regionData['regionParam']);
-			$branchs =  $branchData['branch'];
-
-			$users = isset($queryParam['user']) ? $this->_userData($queryParam) : $this->_userData($branchData['branchParam']);
-
-			if ($request->ajax()) {
-				return compact('callRecords', 'zones', 'regions', 'branchs', 'users');
-			}
-			return view('callRecord.google-pie-chart')->with(compact('callRecords', 'zones', 'regions', 'branchs', 'users'));
+		$array[] = ['Call_Status', 'Number'];
+		foreach ($data as $key => $value) {
+			$array[++$key] = [$value->callStatus, $value->number];
+		}
 		
+
+		$zoneData = isset($queryParam['zone']) ? $this->_zoneData($queryParam) : $this->_zoneData($user->group1);
+		$zones = $zoneData['zones'];
+
+		$regionData = isset($queryParam['region']) ? $this->_regionData($queryParam) : $this->_regionData($zoneData['zoneParam']);
+		$regions =  $regionData['region'];
+
+		$branchData = isset($queryParam['branch']) ? $this->_branchData($queryParam) : $this->_branchData($regionData['regionParam']);
+		$branchs =  $branchData['branch'];
+
+		$users = isset($queryParam['user']) ? $this->_userData($queryParam) : $this->_userData($branchData['branchParam']);
+
+		if ($request->ajax()) {
+			$callRecords = json_encode($array);
+			return compact('callRecords', 'zones', 'regions', 'branchs', 'users');
+		}
+		$callRecords = $array;
+		return view('callRecord.google-pie-chart')->with(compact('callRecords', 'zones', 'regions', 'branchs', 'users'));
 	}
 
 	public function _zoneData($param)
@@ -235,7 +248,7 @@ class CallRecordingController extends Controller
 		} else {
 			$query = BranchMaster::whereIn('region_id', $param);
 		}
-		$data['branch'] = $query->pluck('branch_name', 'id');
+		$data['branch'] = $query->pluck('branch_code', 'id');
 		$data['branchParam'] = $query->pluck('id')->toArray();
 		return $data;
 	}

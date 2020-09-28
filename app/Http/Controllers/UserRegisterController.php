@@ -86,40 +86,39 @@ class UserRegisterController extends Controller
                     $arrRegoin = RegionMaster::all()->pluck('id','region_name');
                     $arrBranchCode = BranchMaster::all()->pluck('id','branch_code');
                     
+                    $arrAllEmailIDs = [];
                     //get all user users's email id to check exist or not 
                     $arrEmail = User::all()->keyBy('email')->toArray();
                     $arrAllEmailIDs = array_keys($arrEmail); 
-                    
+
                     $users  = (new FastExcel)->sheet(1)->import($filePath);
                     $arrUpdateDateEmailAddress = [];
                     foreach($users as  $key => $user ){
-                        if(env("IS_SEND_MAIL_REGISTRAION")  === 'YES'){
-                            $password = rand(11111111,99999999);
-                            //send mail to user
-                            $this->senduserCreationMail($user['Email'],  $password );
-                        }else{
-                            $password = env("DEFAULT_PASSWORD");
+                        if($user['Email'] == ''){
+                            continue;
                         }
+    
+                        $password = env("DEFAULT_PASSWORD", rand(1111111111,9999999999));
                         //check user exist or not
-                         
+                        $userRecord = [];
                         if(in_array($user['Email'], $arrAllEmailIDs )){
-                            
                             $userRecord['id'] = $arrEmail[$user['Email']]['id'];
                             $userRecord['email'] = $user['Email'];
-
                         }else{
                             $userRecord = [];
                             $userRecord['id'] = '';
-                            
+                            if(env("IS_SEND_MAIL_REGISTRAION")  === 'YES'){
+                                //$this->senduserCreationMail($user['Email'],  $password );
+                            }    
                         }
                         //add or update new record in array for user 
                         $userRecord['name'] = $user['Name'];
-                        $userRecord['phone_number'] = ($user['Mobile'] != '') ? $user['Mobile'] : rand(11111111111,22222222222).toString() ;
+                        $userRecord['phone_number'] = $user['Mobile'];
                         $userRecord['email'] = $user['Email'];
                         $userRecord['designation'] = $user['Designation'];
                         $userRecord['password'] = Hash::make($password);
 
-                        $userRecord['level'] =  'level1';
+                        $userRecord['level'] =  $user['Levels'];
                         //Assign group name using aove 4 array 
                         
                         if($user['Group1'] != ''){
@@ -166,13 +165,14 @@ class UserRegisterController extends Controller
 
 
                     //check if any email is exist or not and update delted at for that email 
-                    $arrRemovingEmailAdress = array_diff(arrAllEmailIDs,$arrUpdateDateEmailAddress);
+                    $arrRemovingEmailAdress = array_diff($arrAllEmailIDs,$arrUpdateDateEmailAddress);
                     foreach($arrRemovingEmailAdress as $key => $emailAdress){
-                        if($arrEmail[$emailAdress]->is_admin !== 'YES'){
+                        if($arrEmail[$emailAdress]['is_admin'] !== 'YES'){
                             $users = User::where('email', $emailAdress)
                                     ->delete();
                         }
                     }
+
                     return redirect('/admin/register-user');
                 }else{
                     return redirect('/admin/register-user');
@@ -191,7 +191,18 @@ class UserRegisterController extends Controller
      */
 
      private function senduserCreationMail($email, $password){
-
+        $details = [
+            'title' => 'You are registered with our system',
+            'body' => "Hi, \n You are registered with this system. \n Your username is your email address and password is  $password"
+        ];
+        
+        try{
+            \Mail::to($email)->send(new \App\Mail\MyTestMail($details));
+            return true;
+        }catch(Exception $e){
+            return true;
+        }
+        
      }
     /**
      * file Storage which is uploaded by user 

@@ -54,18 +54,22 @@
                             </div>
                             <div class="remember-me form-group field-loginform-rememberme">
                                 <div class="checkbox">
-                                    <label for="loginform-rememberme">
-                                        <input type="hidden" name="rememberMe" value="0"><input
-                                            type="checkbox" id="loginform-rememberme" name="rememberMe"
-                                            value="1" checked>
-                                        Remember Me
-                                    </label>
+                                <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+
+                                <label class="form-check-label" for="remember">
+                                    {{ __('Remember Me') }}
+                                </label>
                                     <p class="help-block help-block-error"></p>
 
                                 </div>
                             </div>
                             <div class="form-group btn-group text-center">
                                 <button type="submit" class="btn" name="login-button">Login</button> </div>
+                                @if (Route::has('password.request'))
+                                    <a class="btn-link" href="{{ route('password.request') }}">
+                                        {{ __('Forgot Your Password?') }}
+                                    </a>
+                                @endif
 
                         </form>
                     </div>

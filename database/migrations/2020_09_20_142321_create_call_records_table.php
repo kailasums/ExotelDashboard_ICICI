@@ -17,11 +17,10 @@ class CreateCallRecordsTable extends Migration
             $table->id();
             $table->string('from_number',15)->nullable(false);
             $table->string('to_number',15)->nullable(false);
-            $table->string('call_duration')->nullable(false);
+            $table->string('call_duration')->nullable(false)->default(0);
             $table->enum('call_status',['failed', 'completed','busy','no_answer']);
-            $table->enum('call_directions',['incoming', 'outcoming']);
+            $table->enum('call_direction',['incoming', 'outgoing']);
             $table->string('call_recording_link');
-            $table->string('branch_id');
             $table->integer('group1');
             $table->integer('group2');
             $table->integer('group3');

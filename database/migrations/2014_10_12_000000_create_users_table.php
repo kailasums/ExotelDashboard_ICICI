@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('phone_number',15)->default('');
             $table->enum('is_admin',['YES','NO'])->default('NO');
             $table->enum('is_callable',['YES','NO'])->default('NO');
-            $table->enum('level',['level0','level1','level2','level3','level4','level5'])->default('level0');
+            $table->enum('level',['LEVEL0','LEVEL1','LEVEL2','LEVEL3','LEVEL4'])->default('level0');
             $table->integer('group1');
             $table->integer('group2');
             $table->integer('group3');
