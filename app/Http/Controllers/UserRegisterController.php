@@ -40,8 +40,14 @@ class UserRegisterController extends Controller
             if ($request->isMethod('post')) {
                 //check file is present or not
                 if($request->hasFile('file')){
-
                     $fileDetails = $request->file('file');
+
+                    $extensions = array("xlsx");
+                    $result = array($fileDetails->getClientOriginalExtension());
+
+                    if(!in_array($result[0],$extensions)){
+                        return redirect('/admin/register-user')->with('error',"wrong file format.");
+                    }
                     $this->storeFile($fileDetails); // store file to specific location
 
                     //file Details store in Database 
@@ -64,22 +70,22 @@ class UserRegisterController extends Controller
                     }
                     
                     $arrMegaZone = $arrBranchCode = $arrZone = $arrRegoin = [];
-                    forEach($hierachyData as $megaZoneMaster => $zoneDetails ){
-                        //check Mega exist Or not 
-                        $megaZoneid = $this->getIdByName(new MegaZoneMaster,'mega_zone_name', $megaZoneMaster);
+                    // forEach($hierachyData as $megaZoneMaster => $zoneDetails ){
+                    //     //check Mega exist Or not 
+                    //     $megaZoneid = $this->getIdByName(new MegaZoneMaster,'mega_zone_name', $megaZoneMaster);
                         
-                        forEach($zoneDetails as $zoneName => $regoinDetails){
-                            $zoneId = $this->getIdByName(new ZoneMaster,'zone_name', $zoneName ,'mega_zone_id',$megaZoneid);
+                    //     forEach($zoneDetails as $zoneName => $regoinDetails){
+                    //         $zoneId = $this->getIdByName(new ZoneMaster,'zone_name', $zoneName ,'mega_zone_id',$megaZoneid);
                             
-                            foreach($regoinDetails as $regoinName => $branchDetails){
-                                $regoinId = $this->getIdByName(new RegionMaster,'region_name', $regoinName ,'zone_id',$zoneId);
+                    //         foreach($regoinDetails as $regoinName => $branchDetails){
+                    //             $regoinId = $this->getIdByName(new RegionMaster,'region_name', $regoinName ,'zone_id',$zoneId);
                                 
-                                foreach($branchDetails as $key => $branchCode){
-                                    $branchId = $this->getIdByName(new BranchMaster,'branch_code', $branchCode ,'region_id',$regoinId);
-                                }
-                            }
-                        }
-                    }
+                    //             foreach($branchDetails as $key => $branchCode){
+                    //                 $branchId = $this->getIdByName(new BranchMaster,'branch_code', $branchCode ,'region_id',$regoinId);
+                    //             }
+                    //         }
+                    //     }
+                    // }
                     
                     $arrMegaZone = MegaZoneMaster::all()->pluck('id','mega_zone_name');
                     $arrZone = ZoneMaster::all()->pluck('id','zone_name');
@@ -173,9 +179,9 @@ class UserRegisterController extends Controller
                         }
                     }
 
-                    return redirect('/admin/register-user');
+                    return redirect('/admin/register-user')->with('success',"Documents uploaded successfully.");;
                 }else{
-                    return redirect('/admin/register-user');
+                    return redirect('/admin/register-user')->with('error',"file required.");
                 }
             }else{
                 return redirect('/admin/register-user');
