@@ -11,7 +11,7 @@ class MegaZoneMaster extends Model
      *
      * @var string
      */
-    protected $table = 'mega_zone_masters';
+    protected $table = 'megazone_masters';
 
     protected $primaryKey = 'id';
     /**
@@ -20,7 +20,7 @@ class MegaZoneMaster extends Model
      * @var array
      */
     protected $fillable = [
-        'mega_zone_name','created_at','updated_at'
+        'megazone_name','created_at','updated_at'
     ];
 
     /**
@@ -28,7 +28,7 @@ class MegaZoneMaster extends Model
      */
     public function zones()
     {
-        return $this->hasMany(ZoneMaster::class,'mega_zone_id','id');
+        return $this->hasMany(ZoneMaster::class,'megazone_id','id');
     }
 
          /**

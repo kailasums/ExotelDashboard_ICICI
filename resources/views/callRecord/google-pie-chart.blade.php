@@ -8,7 +8,7 @@
                     <div class="panel-heading">
                       <ul>
                             <li>
-                            {!! Form::select('zone',  $zones, ''); !!}
+                            {!! Form::select('zone', (object) array_merge( [''=>'Select'], (array) $zones), ''); !!}
                             </li>
                             <li>
                             {!! Form::select('region', (object) array_merge( [''=>'Select'], (array) $regions), ''); !!}

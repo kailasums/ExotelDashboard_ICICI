@@ -54,16 +54,16 @@ class HierachyImport implements ToCollection
         for($i = 0; $i < count($arrMegaZone);$i++){
             $megaZoneName = $arrMegaZone[$i];
             
-            $record = MegaZoneMaster::where('mega_zone_name', $megaZoneName)->get()->toArray();
+            $record = MegaZoneMaster::where('megazone_name', $megaZoneName)->get()->toArray();
             if($i === 1){
                 exit();
             }
             if(count($record) == 0){
                 try{
                     $megaZoneMaster = new MegaZoneMaster;
-                    $megaZoneMaster->mega_zone_name = $megaZoneName;
+                    $megaZoneMaster->megazone_name = $megaZoneName;
                     $a = $megaZoneMaster->save();
-                    //$record = MegaZoneMaster::where('mega_zone_name', $megaZoneName)->get()->toArray();   
+                    //$record = MegaZoneMaster::where('megazone_name', $megaZoneName)->get()->toArray();   
                 }catch(Exception $e){   
                 }
             }else{

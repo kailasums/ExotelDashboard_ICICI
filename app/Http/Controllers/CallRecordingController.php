@@ -222,7 +222,7 @@ class CallRecordingController extends Controller
 		if (isset($param['zone'])) {
 			$query = ZoneMaster::where('id', $param['zone']);
 		} else {
-			$query = ZoneMaster::where('mega_zone_id', $param);
+			$query = ZoneMaster::where('megazone_id', $param);
 		}
 		$data['zones'] = $query->pluck('zone_name', 'id');
 		$data['zoneParam'] = $query->pluck('id')->toArray();

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ZoneMaster extends Model
 {
+    use SoftDeletes;
     /**
      * The table associated with the model.
      *
@@ -20,7 +21,7 @@ class ZoneMaster extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'zone_name', 'mega_zone_id','created_at','updated_at'
+        'id', 'zone_name', 'megazone_id','created_at','updated_at'
     ];
 
       /**
@@ -28,7 +29,7 @@ class ZoneMaster extends Model
      */
     public function megaZone()
     {
-        return $this->belongsTo(MegaZoneMaster::class,'mega_zone_id','id');
+        return $this->belongsTo(MegaZoneMaster::class,'megazone_id','id');
     }
 
       /**

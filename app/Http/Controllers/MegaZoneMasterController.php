@@ -20,8 +20,8 @@ class MegaZoneMasterController extends Controller
      */
     public function index()
     {
-        $a = DB::table('mega_zone_masters')->insert(['mega_zone_name'=>'mumbai']);
-        $b = MegaZoneMaster::create(['mega_zone_name'=>'mumbai']);
+        $a = DB::table('megazone_masters')->insert(['megazone_name'=>'mumbai']);
+        $b = MegaZoneMaster::create(['megazone_name'=>'mumbai']);
         echo \json_encode($a);exit();
     }
 

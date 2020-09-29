@@ -5,10 +5,17 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             
-            <div id="success-data"> 
+<div id="success-data"> 
   @if (\Session::has('success'))
         <div class="alert alert-success">
           {{ \Session::get('success') }}
+        </div>
+       @endif
+</div>
+<div id="error-data"> 
+  @if (\Session::has('error'))
+        <div class="alert alert-error">
+          {{ \Session::get('error') }}
         </div>
        @endif
 </div>
