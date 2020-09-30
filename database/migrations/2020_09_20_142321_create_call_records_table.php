@@ -13,7 +13,7 @@ class CreateCallRecordsTable extends Migration
      */
     public function up()
     {
-        Schema::create('call_records', function (Blueprint $table) {
+        Schema::create('call_logs', function (Blueprint $table) {
             $table->id();
             $table->string('from_number',15)->nullable(false);
             $table->string('to_number',15)->nullable(false);
@@ -37,7 +37,7 @@ class CreateCallRecordsTable extends Migration
      */
     public function down()
     {
-        Schema::table('call_records', function (Blueprint $table) {
+        Schema::table('call_logs', function (Blueprint $table) {
             //
         });
     }

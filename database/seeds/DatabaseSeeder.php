@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             'group3' => 1,
             'group4' => 1,
             'is_admin' => 'YES',
+            'can_make_calls' => 'NO',
+            'portal_access' => 'YES',
             'designation' => 'superAdmin'
 
         ]);

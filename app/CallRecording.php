@@ -14,7 +14,7 @@ class CallRecording extends Model
      *
      * @var string
      */
-    protected $table = 'call_records';
+    protected $table = 'call_logs';
 
     /** 
      * The attributes that are mass assignable.
