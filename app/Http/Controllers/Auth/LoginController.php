@@ -95,7 +95,6 @@ class LoginController extends Controller
             if(in_array($user->designation,$restrictLogin)) {
                 $request->request->add(['level_login_failed' => true]);
                 $this->logout($request);  
-
             } else if(!($user->is_admin === 'YES') && $path === 'login') {
                 return $this->sendLoginResponse($request);
             } else if(($user->is_admin === 'YES') && $path === 'login/admin') {

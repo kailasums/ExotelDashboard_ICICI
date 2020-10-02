@@ -34,4 +34,5 @@ Route::group(['middleware' => ['user']], function() {
 
 Route::get('call-recording', 'CallRecordingController@index');
 
-
+Route::get('reset-password', 'HomeController@resetPassword');
+Route::post('reset-password', 'HomeController@updatepassword');

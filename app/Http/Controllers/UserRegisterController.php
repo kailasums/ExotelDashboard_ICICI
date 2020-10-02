@@ -7,7 +7,7 @@ use App\User;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
+use Carbon\Carbon;
 // Use model For groups and user 
 use App\MegaZoneMaster,
 App\RegionMaster,
@@ -30,11 +30,50 @@ class UserRegisterController extends Controller
      * User Register vai csv file 
      */
     public function index(){
-        $fileData = FileUpload::all();
+        $fileData = FileUpload::orderBy('created_at', 'desc')
+                                ->limit(1);
         return view('admin.registeruser', ["fileUpload" => $fileData]);
     }
 
     public function uploadFile(Request $request){
+        ini_set('max_execution_time', 0);
+        try{
+            if ($request->isMethod('post')) {
+                if($request->hasFile('file')){
+                    $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])-get()->toArray();
+                    if(count($processingFileCount) > 0 ){
+                        return redirect('/admin/register-user')->with('error',"Already 1 file is pending to process.");
+                    }
+
+                    $extensions = array("xlsx");
+                    $result = array($fileDetails->getClientOriginalExtension());
+                    
+                    
+                    if(!in_array($result[0],$extensions)){
+                        return redirect('/admin/register-user')->with('error',"wrong file format.");
+                    }  //File format check 
+                    
+                    $this->storeFile($fileDetails); // store file to specific location
+
+                    $fileUpload = [];
+                    $fileUpload['file_name'] = $fileDetails->getClientOriginalName();
+                    $fileUpload['upload_status'] = 'pending';
+                    $fileuploadStatus = FileUpload::create($fileUpload);
+
+                    // pass file to queue Job
+
+                    return redirect('/admin/register-user')->with('success',"Documents uploaded successfully.");
+                }else{
+                    return redirect('/admin/register-user')->with('error',"file required.");
+                }
+            }else{
+                return redirect('/admin/register-user');
+            }
+        }catch(Exception $e){
+
+        }
+    }
+    public function uploadFileProcessob(Request $request){
         ini_set('max_execution_time', 0);
         try{
             if ($request->isMethod('post')) {
@@ -100,11 +139,14 @@ class UserRegisterController extends Controller
 
                     $users  = (new FastExcel)->sheet(1)->import($filePath);
                     $arrUpdateDateEmailAddress = [];
+                    $arrNoPortalAccess = explode(",",env('NO_PORTAL_ACCESS'));
+                    $arrCanMakeCall = explode(",",env('CAN_MAKE_CALLABLE'));
+                    
+                    $arrExportShhetUsers = [];
+
                     foreach($users as  $key => $user ){
-                        if($user['Email'] == ''){
-                            continue;
-                        }
-    
+                        $errorFlag = false;
+                        $arrTempDateEmailAddress = [];
                         $password = env("DEFAULT_PASSWORD", rand(1111111111,9999999999));
                         //check user exist or not
                         $userRecord = [];
@@ -118,14 +160,18 @@ class UserRegisterController extends Controller
                                 //$this->senduserCreationMail($user['Email'],  $password );
                             }    
                         }
+
                         //add or update new record in array for user 
                         $userRecord['name'] = $user['Name'];
-                        $userRecord['phone_number'] = $user['Mobile'];
+                        $userRecord['phone_number'] = $user['MobileNumber'];
                         $userRecord['email'] = $user['Email'];
                         $userRecord['designation'] = $user['Designation'];
                         $userRecord['password'] = Hash::make($password);
+                        $userRecord['is_admin'] = "No";
+                        $userRecord['can_make_calls'] = in_array($user['Designation'], $arrCanMakeCall) ? "YES" : "NO";
+                        $userRecord['portal_access'] = in_array($user['Designation'], $arrNoPortalAccess) ? "NO" : "YES";
 
-                        $userRecord['level'] =  $user['Levels'];
+                        $userRecord['level'] =  $this->getLevelByDesignation($user['Designation']);
                         //Assign group name using aove 4 array 
                         
                         if($user['Group1'] != ''){
@@ -140,7 +186,6 @@ class UserRegisterController extends Controller
                             $userRecord['group2'] = 0;
                         }
 
-
                         if($user['Group3'] != ''){
                             $userRecord['group3'] = $arrZone[$user['Group3']];
                         }else{
@@ -153,19 +198,40 @@ class UserRegisterController extends Controller
                             $userRecord['group4'] = 0;
                         }
                         
-                        if($userRecord['id'] != ''){
-                            try{
-                                $userDetails = User::where('id', $userRecord['id'])->update($userRecord);
-                            }catch(Exception $e){
-                                continue;
-                            }
+                        if($userRecord['email'] !== ''){
+                            $arrTempDateEmailAddress['remark'] = 'email is not present.';
+                            $errorFlag = true;
+                        }
+
+                        if($userRecord['phoneNumber'] !== ''){
+                            $arrTempDateEmailAddress['remark'] = 'phoneNumber is not present.';
+                            $errorFlag = true;
+                        }
+
+                        if($userRecord['designation'] !== ''){
+                            $arrTempDateEmailAddress['remark'] = 'designation is not present.';
+                            $errorFlag = true;
+                        }
+
+                        if($errorFlag){
+                            $arrTempDateEmailAddress['error'] = "YES";
                         }else{
-                            try{
-                                $userDetails = User::create($userRecord);
-                            }catch(Exception $e){
-                                continue;
-                            } 
-                        }       
+                            if($userRecord['id'] != ''){
+                                try{
+                                    $userDetails = User::where('id', $userRecord['id'])->update($userRecord);
+                                }catch(Exception $e){
+                                    continue;
+                                }
+                            }else{
+                                try{
+                                    $userDetails = User::create($userRecord);
+                                }catch(Exception $e){
+                                    continue;
+                                } 
+                            }
+                            $arrTempDateEmailAddress['error'] = "NO";
+                            $arrTempDateEmailAddress['remark'] = "";
+                        }
 
                         array_push($arrUpdateDateEmailAddress,$userRecord['email']);
                     }

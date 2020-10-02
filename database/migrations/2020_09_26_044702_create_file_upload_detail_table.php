@@ -16,7 +16,7 @@ class CreateFileUploadDetailTable extends Migration
         Schema::create('file_upload_details', function (Blueprint $table) {
             $table->id();
             $table->string('file_name',255)->nullable(false);
-            $table->enum('upload_status',['completed', 'failed']);
+            $table->enum('upload_status',['completed','completed-with-error','pending','processing', 'failed']);
             $table->timestamps();
             $table->softDeletes();
         });
