@@ -24,5 +24,10 @@ $factory->define(User::class, function (Faker $faker) {
         'email_verified_at' => now(),
         'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
         'remember_token' => Str::random(10),
+        'phone_number' => rand(1111111111111,899999999999999),
+        'group1'=> rand(1,10),
+        'group2'=>rand(1,10),
+        'group3'=> rand(1,10),
+        'group4'=>rand(1,10)
     ];
 });

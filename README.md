@@ -49,7 +49,7 @@ sudo mysql_secure_installation
 sudo mysql -u root -p 
 # enter password and login 
 
-# run below queries 
+# run below queries (If u r not able to access mysql by normal uer )
 SELECT user,authentication_string,plugin,host FROM mysql.user;
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
 
@@ -60,15 +60,30 @@ quit
 mysql -u root -p 
 # password 
 
-# not confirm node is require or not. t ocheck this first the next step and then if got any error then install node 
+# installing node 
+ sudo apt-get update
+ sudo apt-get install nodejs
+ sudo apt-get install npm 
+# check node version installed or not 
+node -v
+npm -v 
 
+# installing npm package 
+npm install 
 
 # git clone in /var/www/html 
-git clone https://github.com/smartdevsolutions20/ISPCalling.git
-# add username and passowrd 
-# got to .env file and update db changes and smtp details for sending mail 
-# update the flag which level is not allowed to login 
-# php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider"
-# update rename projectENVFILE to .env
-# replace db credentials from .env file
+ git clone https://github.com/smartdevsolutions20/ISPCalling.git
 
+# composer install 
+composer install 
+# update database user name and password for migration
+  php artisan migrate 
+
+# creating admin user after migration  
+  php artisan db:seed
+# file available public from storage 
+ php artisan storage:link
+ 
+# update the flag which level is not allowed to login 
+# If facing issue in file upload 
+#  php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider"

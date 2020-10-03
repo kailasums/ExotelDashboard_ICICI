@@ -14,10 +14,11 @@ class CreateBranchMasterTable extends Migration
     public function up()
     {
         Schema::create('branch_masters', function (Blueprint $table) {
-            $table->increments('branch_id');
-            $table->string('branch_name',255)->nullable(false);
-            $table->unsignedBigInteger('region_id');
+            $table->increments('id');
+            $table->integer('branch_code')->nullable(false);
+            $table->integer('region_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

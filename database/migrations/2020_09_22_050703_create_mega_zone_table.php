@@ -13,10 +13,11 @@ class CreateMegaZoneTable extends Migration
      */
     public function up()
     {
-        Schema::create('mega_zone_masters', function (Blueprint $table) {
-            $table->increments('mega_zone_id');
-            $table->string('mega_zone_name',255)->nullable(false);
+        Schema::create('megazone_masters', function (Blueprint $table) {
+            $table->id();
+            $table->string('megazone_name',255)->nullable(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -27,7 +28,7 @@ class CreateMegaZoneTable extends Migration
      */
     public function down()
     {
-        Schema::table('mega_zone_masters', function (Blueprint $table) {
+        Schema::table('megazone_masters', function (Blueprint $table) {
             //
         });
     }

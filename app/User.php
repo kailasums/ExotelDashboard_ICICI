@@ -3,12 +3,13 @@
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable ,SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','group1','group2','group3','group4','level','isAdmin'
+        'name', 'email', 'password','group1','group2','group3','group4','level','is_admin','can_make_call','portal_access', 'designation', 'phone_number'
     ];
 
     /**
@@ -66,7 +67,7 @@ class User extends Authenticatable
      */
     public function megaZone()
     {
-        return $this->belongsTo(MegaZoneMaster::class,'group4','mega_zone_id');
+        return $this->belongsTo(MegaZoneMaster::class,'group4','megazone_id');
     }
     
 }

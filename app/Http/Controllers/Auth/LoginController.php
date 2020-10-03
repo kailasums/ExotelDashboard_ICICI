@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
-use Auth;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
@@ -88,16 +89,17 @@ class LoginController extends Controller
         if ($this->attemptLogin($request)) {
             $path =  $request->path();
             $user = Auth::user();
+            Session::put('user', $user);
             $restrictLogin = explode(",",env("NO_PORTAL_ACCESS"));
-            
+                    
             if(in_array($user->designation,$restrictLogin)) {
                 $request->request->add(['level_login_failed' => true]);
                 $this->logout($request);  
-            } else if(!$user->isAdmin && $path === 'login') {
+            } else if(!($user->is_admin === 'YES') && $path === 'login') {
                 return $this->sendLoginResponse($request);
-            } else if($user->isAdmin && $path === 'login/admin') {
+            } else if(($user->is_admin === 'YES') && $path === 'login/admin') {
                 return $this->sendLoginResponse($request);
-            } else if(!$user->isAdmin && $path === 'login') {
+            } else if(!(($user->is_admin === 'YES')) && $path === 'login') {
                 return $this->sendLoginResponse($request);
             } else {
                 $request->request->add(['role_login_failed' => true]);
@@ -143,7 +145,7 @@ class LoginController extends Controller
         }
         $user = Auth::user();
 
-        if($user->isAdmin) {
+        if((($user->is_admin === 'YES'))) {
             
             return property_exists($this, 'redirectTo') ? '/admin/register-user' : '/admin/register-user';
         } else {
@@ -180,7 +182,7 @@ class LoginController extends Controller
         $user = Auth::user();
         $this->guard()->logout();
         $request->session()->invalidate();
-        if($user->isAdmin) {
+        if($user->is_admin=='YES') {
             return $this->loggedOut($request) ?redirect('/admin/login'): redirect('/admin/login');
         } 
         return $this->loggedOut($request) ?redirect('/login'): redirect('/login');

@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BranchMaster extends Model
 {
+    use SoftDeletes;
     /**
      * The table associated with the model.
      *
@@ -19,7 +21,7 @@ class BranchMaster extends Model
      * @var array
      */
     protected $fillable = [
-        'branch_id', 'branch_code', 'religion_id','created_at','updated_at'
+        'branch_id', 'branch_code', 'region_id','created_at','updated_at'
     ];
 
     /**
@@ -27,7 +29,7 @@ class BranchMaster extends Model
      */
     public function region()
     {
-        return $this->belongsTo(RegionMaster::class,'region_id','region_id');
+        return $this->belongsTo(RegionMaster::class,'region_id','id');
     }
 
       /**
@@ -35,7 +37,7 @@ class BranchMaster extends Model
      */
     public function users()
     {
-        return $this->hasMany(User::class,'group4','branch_id');
+        return $this->hasMany(User::class,'group4','id');
     }
 
 }
