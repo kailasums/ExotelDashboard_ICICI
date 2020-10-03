@@ -48,13 +48,15 @@ class HomeController extends Controller
             //Current password and new password are same
             return redirect()->back()->with("error","Confirm Password does not matches New Password. Please type correct password.");
         }
-        $validatedData = $request->validate([
-            'current-password' => 'required',
-            'new-password' => 'required|string|min:6|confirmed',
-        ]);
+        
+        // $validatedData = $request->validate([
+        //     'current-password' => 'required',
+        //     'new-password' => 'required|string|min:6|confirmed',
+        // ]);
+        // dd($validatedData);
         //Change Password
         $user = Auth::user();
-        $user->password = bcrypt($request->get('new-password'));
+        $user->password = Hash::make($request->get('new-password'));
         $user->save();
         return redirect()->back()->with("success","Password changed successfully !");
     }

@@ -18,6 +18,7 @@ class CreateRegionMasterTable extends Migration
             $table->string('region_name',255)->nullable(false);
             $table->integer('zone_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

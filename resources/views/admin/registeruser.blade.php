@@ -14,12 +14,25 @@
                 <div class="bg">
                     <div class="attribute-set-create">
                         <h1 class="border-title">Import Users</h1>
+                        <div id="success-data"> 
+  @if (\Session::has('success'))
+        <div class="alert alert-success">
+          {{ \Session::get('success') }}
+        </div>
+       @endif
+</div>
+<div id="error-data"> 
+  @if (\Session::has('error'))
+        <div class="alert alert-error">
+          {{ \Session::get('error') }}
+        </div>
+       @endif
+</div>
                         <div class="attribute-set-form">
 
-                            <form id="upload-csv-file-form" action="/backend/web/index.php?r=import-users%2Findex"
+                            <form id="upload-csv-file-form" action="/admin/upload-file"
                                 method="post" enctype="multipart/form-data">
-                                <input type="hidden" name="_csrf-backend"
-                                    value="FqU9LNo7NPUFPIy7-qBHxFkQIqd9dGbDu1bkv9lnbJNuxG99rUkZt0dv69KrygvyL1lw7SUnCvrMY9PnrhQoqw==">
+                                {{@csrf_field()}}
                                 <div class="form-group csv-file-attachment left-form field-importusers-csvfilepath"
                                     style="display:block;">
                                     <div class='profile-upload upload-field no-preview'><span><label
@@ -28,7 +41,7 @@
                                         <div class='input-file-div upload-version'><input type="hidden"
                                                 name="ImportUsers[CsvFilePath]" value=""><input type="file"
                                                 id="importusers-csvfilepath" class="file-loading"
-                                                name="ImportUsers[CsvFilePath]" accept="csv"
+                                                name="file" accept="csv"
                                                 data-krajee-fileinput="fileinput_bdcecb6a">
                                             <!--[if lt IE 10]><br><div class="alert alert-warning"><strong>Note:</strong> Your browser does not support file preview and multiple file upload. Try an alternative or more recent browser to access these features.</div><script>document.getElementById("importusers-csvfilepath").className.replace(/\bfile-loading\b/,"");;</script><![endif]-->
                                             <div class="help-block"></div>
@@ -65,18 +78,33 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr data-key="2">
-                                            <td width="25%">uat mapping1.csv</td>
-                                            <td width="30%">08/Mar/2018</td>
-                                            <td width="25%"><span class="green">Completed</span></td>
-                                            <td>
-                                                <div class="actions"><a id="deletebtn"
-                                                        class=" grid-button userscsvDeletebtn red"
-                                                        href="javascript:void(0)" title="Delete Csv Template"
-                                                        data-userscsvID="2"><i class="icn-cross"></i>Delete</a>
-                                                </div>
-                                            </td>
-                                        </tr>
+
+                                    <?php 
+                                    if(count($fileUploadRecord) > 0 ){
+                                        for($i = 0 ; $i < count($fileUploadRecord); $i++){
+                                            ?>
+                                            <tr data-key="2">
+                                                <td width="25%"><?php echo ($fileUploadRecord[$i]['file_name'] ? $fileUploadRecord[$i]['file_name'] : '');?></td>
+                                                <td width="30%"><?php echo ($fileUploadRecord[$i]['created_at'] ? $fileUploadRecord[$i]['created_at'] : '');?></td>
+                                                <td width="25%"><?php echo ($fileUploadRecord[$i]['upload_status'] ? $fileUploadRecord[$i]['upload_status'] : '');?></td>
+                                                <td>
+                                                    <div class="actions">
+                                                        <?php 
+                                                            if($fileUploadRecord[$i]['upload_status'] === 'completed'){
+                                                                ?>
+
+                                                                <?php
+                                                            }
+                                                        ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <?php     
+                                        }
+                                    }
+                                    
+                                    ?>
+                                        
                                     </tbody>
                                 </table>
                             </div>

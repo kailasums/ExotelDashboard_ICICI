@@ -3,7 +3,20 @@
 @section('content')
 <section id="middle">
 	<div class="user-create">
-    
+	
+	@if (\Session::has('success'))
+        <div class="alert alert-success">
+          {{ \Session::get('success') }}
+        </div>
+       @endif
+</div>
+<div id="error-data"> 
+  @if (\Session::has('error'))
+        <div class="alert alert-error">
+          {{ \Session::get('error') }}
+        </div>
+       @endif
+</div>
 	<div class="site-login change-pwd">
 	<div class="login-inner-box">
         <h1>Change Password</h1>

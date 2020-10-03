@@ -17,6 +17,7 @@ class CreateMegaZoneTable extends Migration
             $table->id();
             $table->string('megazone_name',255)->nullable(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

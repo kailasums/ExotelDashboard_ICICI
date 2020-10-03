@@ -3,17 +3,21 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Jobs\SendFileToProcess;
 use App\User;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Excel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+
 // Use model For groups and user 
 use App\MegaZoneMaster,
 App\RegionMaster,
 App\BranchMaster,
 App\ZoneMaster,
-App\FileUpload;
+App\FileUpload,
+App\UsersLog;
 
 
 class UserRegisterController extends Controller
@@ -31,8 +35,8 @@ class UserRegisterController extends Controller
      */
     public function index(){
         $fileData = FileUpload::orderBy('created_at', 'desc')
-                                ->limit(1);
-        return view('admin.registeruser', ["fileUpload" => $fileData]);
+                                ->limit(1)->get()->toArray();
+        return view('admin.registeruser', ["fileUploadRecord" => $fileData]);
     }
 
     public function uploadFile(Request $request){
@@ -40,11 +44,12 @@ class UserRegisterController extends Controller
         try{
             if ($request->isMethod('post')) {
                 if($request->hasFile('file')){
-                    $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])-get()->toArray();
-                    if(count($processingFileCount) > 0 ){
-                        return redirect('/admin/register-user')->with('error',"Already 1 file is pending to process.");
-                    }
-
+                    $fileDetails = $request->file('file');
+                    // $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])->get()->toArray();
+                    // if(count($processingFileCount) > 0 ){
+                    //     return redirect('/admin/register-user')->with('error',"Already 1 file is pending to process.");
+                    // }
+                    
                     $extensions = array("xlsx");
                     $result = array($fileDetails->getClientOriginalExtension());
                     
@@ -52,7 +57,7 @@ class UserRegisterController extends Controller
                     if(!in_array($result[0],$extensions)){
                         return redirect('/admin/register-user')->with('error',"wrong file format.");
                     }  //File format check 
-                    
+                    //UsersLog::truncate();
                     $this->storeFile($fileDetails); // store file to specific location
 
                     $fileUpload = [];
@@ -60,19 +65,21 @@ class UserRegisterController extends Controller
                     $fileUpload['upload_status'] = 'pending';
                     $fileuploadStatus = FileUpload::create($fileUpload);
 
-                    // pass file to queue Job
+                    dispatch(new SendFileToProcess($fileuploadStatus));
 
                     return redirect('/admin/register-user')->with('success',"Documents uploaded successfully.");
                 }else{
                     return redirect('/admin/register-user')->with('error',"file required.");
                 }
             }else{
-                return redirect('/admin/register-user');
+                return redirect('/admin/register-user')->with('error',"no data Present.");;
             }
         }catch(Exception $e){
-
+            return redirect('/admin/register-user')->with('error',"something went wrong.$e");
         }
     }
+
+
     public function uploadFileProcessob(Request $request){
         ini_set('max_execution_time', 0);
         try{
@@ -132,10 +139,10 @@ class UserRegisterController extends Controller
                     $arrRegoin = RegionMaster::all()->pluck('id','region_name');
                     $arrBranchCode = BranchMaster::all()->pluck('id','branch_code');
                     
-                    $arrAllEmailIDs = [];
-                    //get all user users's email id to check exist or not 
-                    $arrEmail = User::all()->keyBy('email')->toArray();
-                    $arrAllEmailIDs = array_keys($arrEmail); 
+
+
+                    
+                     
 
                     $users  = (new FastExcel)->sheet(1)->import($filePath);
                     $arrUpdateDateEmailAddress = [];
@@ -259,6 +266,23 @@ class UserRegisterController extends Controller
         
     }
 
+    public function exportLog(){
+        $sheets = [
+            UsersLog::all()
+        ];
+
+        (new FastExcel($sheets))->export('file.xlsx');
+    }
+
+
+    public function exportPassword(){
+        $sheets = new SheetCollection([
+            UsersLog::all()->allowedFields('email','password')
+        ]);
+        
+        (new FastExcel($sheets))->export('userPassword.xlsx');
+    }
+
     /**
      * send user registration mail 
      */
@@ -288,7 +312,7 @@ class UserRegisterController extends Controller
             $fileLocation = Storage::disk('local')->putFileAs(
                 'public/',
                 $fileDetails,
-                $filename
+                env("IMPORTFILESTORAGENAME")//$filename
             ); // file stored at location storage/app/public/
             
             return true;
@@ -300,23 +324,28 @@ class UserRegisterController extends Controller
      * get Id by name bases on Model Name 
      */
     private function getIdByName($modelname,$key,$name, $parentKeyName = '',$parentId = 0 ){
-        $details = $modelname::where($key, $name)->get()->toArray();
+        try{
+            $details = $modelname::where($key, $name)->get()->toArray();
         
-        if(count($details) == 0 ){
-            if($name === ''){
-                return false;
+            if(count($details) == 0 ){
+                if($name === ''){
+                    return false;
+                }
+                $insertDetails = [];
+                $insertDetails[$key] = trim($name);
+                if($parentKeyName != '' && $parentId != 0){
+                    $insertDetails[$parentKeyName] = $parentId;
+                }
+                $res = $modelname::create($insertDetails);
+                $megaZoneId = $res->id;
+            }else{
+                $megaZoneId = $details[0]['id'];
             }
-            $insertDetails = [];
-            $insertDetails[$key] = trim($name);
-            if($parentKeyName != '' && $parentId != 0){
-                $insertDetails[$parentKeyName] = $parentId;
-            }
-            $res = $modelname::create($insertDetails);
-            $megaZoneId = $res->id;
-        }else{
-            $megaZoneId = $details[0]['id'];
+            return $megaZoneId;
+        }catch(Exception $e){
+            return 0;
         }
-        return $megaZoneId;
+        
     }
 
 
