@@ -52,8 +52,48 @@ class SendFileToProcess implements ShouldQueue
                 //Start Processing File 
                 $filePath = storage_path().'/app/public/'.env("IMPORTFILESTORAGENAME");
 
+
                 //Process Heirachy 1 by 1 
                 $groupData  = (new FastExcel)->sheet(2)->import($filePath);
+                if(count($groupData) < 0){
+                    $fileUploadProcessingRecord = [];
+                    $fileUploadProcessingRecord['upload_status'] = 'failed';
+                    $fileUploadProcessingRecord['remark'] = 'Hierachy data not present.';
+                    $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
+                    return false;
+                }
+
+                $arrHierarchyColumn = ['Group1','Group2','Group3','Group4'];
+                $arrDataKeys = array_keys($groupData[0]);
+                $diff = array_diff($arrHierarchyColumn,$arrDataKeys);
+                if(count($diff) > 0 ){
+                    $fileUploadProcessingRecord = [];
+                    $fileUploadProcessingRecord['upload_status'] = 'failed';
+                    $fileUploadProcessingRecord['remark'] = join(",",$diff).' not present in Hierarchy.';
+                    $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
+                    return false;
+                }
+                //check fields are present or not in hierachy 
+                $exportUserList  = (new FastExcel)->sheet(1)->import($filePath);
+                if(count($exportUserList) < 0){
+                    $fileUploadProcessingRecord = [];
+                    $fileUploadProcessingRecord['upload_status'] = 'failed';
+                    $fileUploadProcessingRecord['remark'] = 'User data not present.';
+                    $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
+                    return false;
+                }
+                //check fields are present or not in user
+                $arrUserColumn = ['Name','Number','Email','Group1','Group2','Group3','Group4', 'Designation'];
+                $arrDataKeys = array_keys($exportUserList[0]);
+                $diff = array_diff($arrUserColumn,$arrDataKeys);
+                if(count($diff) > 0 ){
+                    $fileUploadProcessingRecord = [];
+                    $fileUploadProcessingRecord['upload_status'] = 'failed';
+                    $fileUploadProcessingRecord['remark'] = join(",",$diff).' not present in users List.';
+                    $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
+                    return false;
+                }
+
                 $this->addHierachyData($groupData);
                 
                 //users Data Processing 
@@ -62,7 +102,6 @@ class SendFileToProcess implements ShouldQueue
                 $arrEmail = User::all()->keyBy('email')->toArray();
                 
 
-                $exportUserList  = (new FastExcel)->sheet(1)->import($filePath);
                 $arrUpdateDateEmailAddress = [];
                 
                 $this->addUserData($exportUserList,$arrEmail);
@@ -73,13 +112,39 @@ class SendFileToProcess implements ShouldQueue
                 
                 return true;
             }catch(Exception $e){
-                
+                $fileUploadProcessingRecord = [];
+                $fileUploadProcessingRecord['upload_status'] = 'failed';
+                $fileUploadProcessingRecord['remark'] = $e;
+                $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
+                return false;
             }
         }catch(Exception $e){
-
+            $fileUploadProcessingRecord = [];
+            $fileUploadProcessingRecord['upload_status'] = 'failed';
+            $fileUploadProcessingRecord['remark'] = $e;
+            $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
+            return false;
         }
     }
 
+    private function checkgrouplevelWise($userDetails){
+        if(isset($userDetails['level']) ){
+            $levelGroup = explode(",",env("GROUPS".$userDetails['level']));
+            
+            forEach($levelGroup as $group){
+                
+                if($userDetails[$group] === 0){
+                    print_r($userDetails);
+                    echo $userDetails[$group];
+                    dd($group);
+                    return false;
+                }
+            }
+            return true;
+        }else{
+            return false;
+        }
+    }
     /**
      * Export user data 
      */
@@ -189,7 +254,13 @@ class SendFileToProcess implements ShouldQueue
                 $errorFlag = true;
             }
             
-            //check group values
+            //check level Groups 
+            $checkGroupsLveleWise = $this->checkgrouplevelWise($userRecord);
+            if(!$checkGroupsLveleWise){
+                $arrTempDateEmailAddress['remark'] = 'group are not mapped for user.';
+                $errorFlag = true;
+            }
+            
             if($errorFlag){
                 $arrTempDateEmailAddress['status'] = "error";
             }else{
@@ -244,7 +315,7 @@ class SendFileToProcess implements ShouldQueue
      */
 
     private function addHierachyData($groupData){
-        return true;
+        //return true;
         $hierachyData = [];
         forEach($groupData as $group){    
             if($group['Group4'] && $group['Group4'] != null) {

@@ -1,60 +1,89 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container" style="margin-top: 50px;">
-        <div class="row">
-            <div class="col-md-10 col-md-offset-1">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                      <ul>
-                            <li>
-                            {!! Form::select('zone', (object) array_merge( [''=>'Select'], (array) $zones), ''); !!}
-                            </li>
-                            <li>
-                            {!! Form::select('region', (object) array_merge( [''=>'Select'], (array) $regions), ''); !!}
-                            </li>
-                            <li>
-                            {!! Form::select('branch', (object) array_merge( [''=>'Select'], (array) $branchs), ''); !!}
-                            </li>
-                            <li>
-                                {!! Form::select('user', (object) array_merge( [''=>'Select'], (array) $users), ''); !!}
-                            </li>
-                            <li><select name="call_direction" id="call_direction"><option value="incoming">Incoming</option><option value="outgoing">Outgoing</option></select></li>
-                      </ul>
-                    </div>
-                    <div>
-                        <ul class="d-inline-block align-items-top">
-                            @foreach($callRecords as $callRecord)
-                                <li class="d-block">
-                                    @foreach($callRecord as $call)
-                                    {{$call}} 
-                                    @endforeach
-                                </li>
-                            @endforeach
-                        </ul>
-                        <div class="panel-body d-inline-block align-items-top" align="center">
-                            <div  id="pie_chart" style="width:500px; height:450px;">
-                            </div>
+<div class="container" style="margin-top: 50px;">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <ul>
+                        <li>
+                            {!! Form::select('zone', (object) array_merge( [''=>'Select'], (array) $zone), ''); !!}
+                        </li>
+                        <li>
+                            {!! Form::select('region', (object) array_merge( [''=>'Select'], (array) $region), ''); !!}
+                        </li>
+                        <li>
+                            {!! Form::select('branch', (object) array_merge( [''=>'Select'], (array) $branch), ''); !!}
+                        </li>
+                        <li>
+                            {!! Form::select('user', (object) array_merge( [''=>'Select'], (array) $user), ''); !!}
+                        </li>
+                        <li>
+                            {!! Form::select('call_direction', (object) array_merge( [''=>'Select'], (array) $call_direction), 'incoming'); !!}
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="panel-body d-inline-block align-items-top" align="center">
+                        <div id="pie_chart" style="width:500px; height:450px;">
                         </div>
                     </div>
                 </div>
             </div>
+            <div>
+                <ul>
+                    <li>
+                        <div class="input-group date"><input type="date" id="datepickerFilter1" class="form-control" name="StartDate" value="" data-date-container="#datepicker" data-provide="#datepicker"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
+                        <div class="input-group date"><input type="date" id="datepickerFilter2" class="form-control" name="EndDate" value="{{date('Y-m-d')}}" data-date-container="#datepicker1" data-provide="#datepicker1"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
+                        <div id="datepicker">
+                    </li>
+                    <li>
+                        {!! Form::select('zone_summary', (object) array_merge( [''=>'Select'], (array) $zone), ''); !!}
+                    </li>
+                    <li>
+                        {!! Form::select('region_summary', (object) array_merge( [''=>'Select'], (array) $region), ''); !!}
+                    </li>
+                    <li>
+                        {!! Form::select('branch_summary', (object) array_merge( [''=>'Select'], (array) $branch), ''); !!}
+                    </li>
+                    <li>
+                        {!! Form::select('user_summary', (object) array_merge( [''=>'Select'], (array) $user), ''); !!}
+                    </li>
+                    <li>
+                        {!! Form::select('call_direction_summary', (object) array_merge( [''=>'Select'], (array) $call_direction), 'incoming'); !!}
+                    </li>
+                </ul>
+                <table id="example" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>phone_number</th>
+                            <th>name</th>
+                            <th>total_call</th>
+                            <th>total_duration</th>
+                            <th>avg_duration</th>
+                            <th>incompleted</th>
+                            <th>busy</th>
+                            <th>failed</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>id</th>
+                            <th>phone_number</th>
+                            <th>name</th>
+                            <th>total_call</th>
+                            <th>total_duration</th>
+                            <th>avg_duration</th>
+                            <th>incompleted</th>
+                            <th>busy</th>
+                            <th>failed</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
-    <script type="text/javascript">
-        var analytics = <?php echo json_encode($callRecords); ?>;
-    
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart()
-        {
-            var data = google.visualization.arrayToDataTable(analytics);
-            var options = {
-                title : 'Percentage of Call Record Status'
-            };
-            var chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
-            chart.draw(data, options);
-        }
-    </script>
+</div>
 @endsection

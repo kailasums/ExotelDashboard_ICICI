@@ -12,21 +12,21 @@
  */
 var kvInitHtml5;
 (function ($) {
-    "use strict";
-    /**
+  'use strict'
+  /**
      * Initialize HTML5 Input Widgets
      * @param idCap string, the id of the caption element
      * @param idInp string, the id of the input element
      */
-    kvInitHtml5 = function (idCap, idInp) {
-        var $caption = $(idCap), $input = $(idInp);
-        $(document).on('change', idCap, function () {
-            $input.val(this.value);
-        }).on('input change', idInp, function (e) {
-            $caption.val(this.value);
-            if (e.type === 'change') {
-                $caption.trigger('change');
-            }
-        });
-    };
-})(window.jQuery);
+  kvInitHtml5 = function (idCap, idInp) {
+    var $caption = $(idCap); var $input = $(idInp)
+    $(document).on('change', idCap, function () {
+      $input.val(this.value)
+    }).on('input change', idInp, function (e) {
+      $caption.val(this.value)
+      if (e.type === 'change') {
+        $caption.trigger('change')
+      }
+    })
+  }
+})(window.jQuery)

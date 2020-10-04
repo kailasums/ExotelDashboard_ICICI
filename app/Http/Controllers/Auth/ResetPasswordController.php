@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
 class ResetPasswordController extends Controller
@@ -44,6 +45,7 @@ class ResetPasswordController extends Controller
             return new JsonResponse(['message' => trans($response)], 200);
         }
         $user = Auth::user();
+        Session::put('user', $user);
         if($user->is_admin ==='YES') {
             return redirect('/admin/register-user')
             ->with('status', trans($response));

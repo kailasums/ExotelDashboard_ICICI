@@ -1,8 +1,4 @@
-@extends('layouts.common-layout')
-
-
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <script type="text/javascript">
     window.fileinput_bdcecb6a = { "showUpload": false, "showRemove": true, "browseLabel": "Browse", "removeLabel": " ", "mainClass": "input-group-lg", "initialCaption": " ", "overwriteInitial": true, "uploadUrl": "\/backend\/web\/index.php?r=import-users%2Fupload-csv", "dropZoneEnabled": false, "showUploadedThumbs": false, "language": "en", "purifyHtml": true };
@@ -15,24 +11,27 @@
                     <div class="attribute-set-create">
                         <h1 class="border-title">Import Users</h1>
                         <div id="success-data"> 
-                        @if (\Session::has('success'))
+                        <?php if(\Session::has('success')): ?>
                                 <div class="alert alert-success">
-                                {{ \Session::get('success') }}
+                                <?php echo e(\Session::get('success')); ?>
+
                                 </div>
-                            @endif
+                            <?php endif; ?>
                         </div>
                         <div id="error-data"> 
-                        @if (\Session::has('error'))
+                        <?php if(\Session::has('error')): ?>
                                 <div class="alert alert-danger">
-                                {{ \Session::get('error') }}
+                                <?php echo e(\Session::get('error')); ?>
+
                                 </div>
-                            @endif
+                            <?php endif; ?>
                         </div>
                         <div class="attribute-set-form">
 
                             <form id="upload-csv-file-form" action="/admin/upload-file"
                                 method="post" enctype="multipart/form-data">
-                                {{@csrf_field()}}
+                                <?php echo e(@csrf_field()); ?>
+
                                 <div class="form-group csv-file-attachment left-form field-importusers-csvfilepath"
                                     style="display:block;">
                                     <div class='profile-upload upload-field no-preview'><span><label
@@ -131,6 +130,8 @@
             </div>
         </div>
     </section>
-@endsection
+<?php $__env->stopSection(); ?>
 
 
+
+<?php echo $__env->make('layouts.common-layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/ISPCalling/resources/views/admin/registeruser.blade.php ENDPATH**/ ?>

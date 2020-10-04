@@ -32,12 +32,15 @@ Route::group(['middleware' => [ 'superadmin']], function() {
 Route::group(['middleware' => ['user']], function() {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('pie-chart', 'CallRecordingController@pieChart');
+    Route::get('drop-down', 'CallRecordingController@dropDownOption');
 });
 
 Route::get('call-recording', 'CallRecordingController@index');
 
 Route::get('reset-password', 'HomeController@resetPassword');
 Route::post('reset-password', 'HomeController@updatepassword');
+Route::get('call-logs', 'CallRecordingController@backCallLogs');
+
 
 Route::get('email-test', function(){
   

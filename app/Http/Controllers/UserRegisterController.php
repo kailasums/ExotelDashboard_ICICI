@@ -35,7 +35,7 @@ class UserRegisterController extends Controller
      */
     public function index(){
         $fileData = FileUpload::orderBy('created_at', 'desc')
-                                ->limit(1)->get()->toArray();
+                                ->limit(3)->get()->toArray();
         return view('admin.registeruser', ["fileUploadRecord" => $fileData]);
     }
 
@@ -45,17 +45,21 @@ class UserRegisterController extends Controller
             if ($request->isMethod('post')) {
                 if($request->hasFile('file')){
                     $fileDetails = $request->file('file');
-                    // $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])->get()->toArray();
-                    // if(count($processingFileCount) > 0 ){
-                    //     return redirect('/admin/register-user')->with('error',"Already 1 file is pending to process.");
-                    // }
+                    if(env("USER_UPLOAD_FILENAME") !== $fileDetails->getClientOriginalName()){
+                        return redirect('/admin/register-user')->with('error',trans('uploadfile.filenNameNotMatch'));
+                    }
+                    
+                    $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])->get()->toArray();
+                    if(count($processingFileCount) > 0 ){
+                        return redirect('/admin/register-user')->with('error',trans('uploadfile.filePendingToUpload'));
+                    }
                     
                     $extensions = array("xlsx");
                     $result = array($fileDetails->getClientOriginalExtension());
                     
                     
                     if(!in_array($result[0],$extensions)){
-                        return redirect('/admin/register-user')->with('error',"wrong file format.");
+                        return redirect('/admin/register-user')->with('error',trans('uploadfile.fileFormatNotMatch'));
                     }  //File format check 
                     //UsersLog::truncate();
                     $this->storeFile($fileDetails); // store file to specific location
@@ -67,9 +71,9 @@ class UserRegisterController extends Controller
 
                     dispatch(new SendFileToProcess($fileuploadStatus));
 
-                    return redirect('/admin/register-user')->with('success',"Documents uploaded successfully.");
+                    return redirect('/admin/register-user')->with('success',trans('uploadfile.success'));
                 }else{
-                    return redirect('/admin/register-user')->with('error',"file required.");
+                    return redirect('/admin/register-user')->with('error',trans('uploadfile.fileRequire'));
                 }
             }else{
                 return redirect('/admin/register-user')->with('error',"no data Present.");;
@@ -80,207 +84,22 @@ class UserRegisterController extends Controller
     }
 
 
-    public function uploadFileProcessob(Request $request){
-        ini_set('max_execution_time', 0);
-        try{
-            if ($request->isMethod('post')) {
-                //check file is present or not
-                if($request->hasFile('file')){
-
-                    $fileDetails = $request->file('file');
-
-                    $extensions = array("xlsx");
-                    $result = array($fileDetails->getClientOriginalExtension());
-                    
-                    if(!in_array($result[0],$extensions)){
-                        return redirect('/admin/register-user')->with('error',"wrong file format.");
-                    }
-                    $this->storeFile($fileDetails); // store file to specific location
-
-                    //file Details store in Database 
-                    $fileUpload = [];
-                    $fileUpload['file_name'] = $fileDetails->getClientOriginalName();
-                    $fileUpload['upload_status'] = 'completed';
-                    $fileuploadStatus = FileUpload::create($fileUpload);
-
-                    //check sheet is exixt or not 
-                    $filePath = storage_path().'/app/public/'.$fileDetails->getClientOriginalName();
-                    
-                    //Processing Data Shhet 1 Which is 
-                    $groupData  = (new FastExcel)->sheet(2)->import($filePath);
-
-                    $hierachyData = [];
-                    forEach($groupData as $group){    
-                        if($group['Group4'] && $group['Group4'] != null) {
-                            $hierachyData[$group['Group4']][$group['Group3']][$group['Group2']][] =  $group['Group1'];
-                        }
-                    }
-                    
-                    $arrMegaZone = $arrBranchCode = $arrZone = $arrRegoin = [];
-                    forEach($hierachyData as $megaZoneMaster => $zoneDetails ){
-                        //check Mega exist Or not 
-                        $megaZoneid = $this->getIdByName(new MegaZoneMaster,'megazone_name', $megaZoneMaster);
-                        
-                        forEach($zoneDetails as $zoneName => $regoinDetails){
-                            $zoneId = $this->getIdByName(new ZoneMaster,'zone_name', $zoneName ,'megazone_id',$megaZoneid);
-                            
-                            foreach($regoinDetails as $regoinName => $branchDetails){
-                                $regoinId = $this->getIdByName(new RegionMaster,'region_name', $regoinName ,'zone_id',$zoneId);
-                                
-                                foreach($branchDetails as $key => $branchCode){
-                                    $branchId = $this->getIdByName(new BranchMaster,'branch_code', $branchCode ,'region_id',$regoinId);
-                                }
-                            }
-                        }
-                    }
-                    
-                    $arrMegaZone = MegaZoneMaster::all()->pluck('id','megazone_name');
-                    $arrZone = ZoneMaster::all()->pluck('id','zone_name');
-                    $arrRegoin = RegionMaster::all()->pluck('id','region_name');
-                    $arrBranchCode = BranchMaster::all()->pluck('id','branch_code');
-                    
-
-
-                    
-                     
-
-                    $users  = (new FastExcel)->sheet(1)->import($filePath);
-                    $arrUpdateDateEmailAddress = [];
-                    $arrNoPortalAccess = explode(",",env('NO_PORTAL_ACCESS'));
-                    $arrCanMakeCall = explode(",",env('CAN_MAKE_CALLABLE'));
-                    
-                    $arrExportShhetUsers = [];
-
-                    foreach($users as  $key => $user ){
-                        $errorFlag = false;
-                        $arrTempDateEmailAddress = [];
-                        $password = env("DEFAULT_PASSWORD", rand(1111111111,9999999999));
-                        //check user exist or not
-                        $userRecord = [];
-                        if(in_array($user['Email'], $arrAllEmailIDs )){
-                            $userRecord['id'] = $arrEmail[$user['Email']]['id'];
-                            $userRecord['email'] = $user['Email'];
-                        }else{
-                            $userRecord = [];
-                            $userRecord['id'] = '';
-                            if(env("IS_SEND_MAIL_REGISTRAION")  === 'YES'){
-                                //$this->senduserCreationMail($user['Email'],  $password );
-                            }    
-                        }
-
-                        //add or update new record in array for user 
-                        $userRecord['name'] = $user['Name'];
-                        $userRecord['phone_number'] = $user['MobileNumber'];
-                        $userRecord['email'] = $user['Email'];
-                        $userRecord['designation'] = $user['Designation'];
-                        $userRecord['password'] = Hash::make($password);
-                        $userRecord['is_admin'] = "No";
-                        $userRecord['can_make_calls'] = in_array($user['Designation'], $arrCanMakeCall) ? "YES" : "NO";
-                        $userRecord['portal_access'] = in_array($user['Designation'], $arrNoPortalAccess) ? "NO" : "YES";
-
-                        $userRecord['level'] =  $this->getLevelByDesignation($user['Designation']);
-                        //Assign group name using aove 4 array 
-                        
-                        if($user['Group1'] != ''){
-                            $userRecord['group1'] = $arrBranchCode[trim($user['Group1'])];
-                        }else{
-                            $userRecord['group1'] = 0;
-                        }
-
-                        if($user['Group2'] != ''){
-                            $userRecord['group2'] = $arrRegoin[$user['Group2']];
-                        }else{
-                            $userRecord['group2'] = 0;
-                        }
-
-                        if($user['Group3'] != ''){
-                            $userRecord['group3'] = $arrZone[$user['Group3']];
-                        }else{
-                            $userRecord['group3'] = 0;
-                        }
-
-                        if($user['Group4'] != ''){
-                            $userRecord['group4'] = $arrMegaZone[$user['Group4']];
-                        }else{
-                            $userRecord['group4'] = 0;
-                        }
-                        
-                        if($userRecord['email'] !== ''){
-                            $arrTempDateEmailAddress['remark'] = 'email is not present.';
-                            $errorFlag = true;
-                        }
-
-                        if($userRecord['phoneNumber'] !== ''){
-                            $arrTempDateEmailAddress['remark'] = 'phoneNumber is not present.';
-                            $errorFlag = true;
-                        }
-
-                        if($userRecord['designation'] !== ''){
-                            $arrTempDateEmailAddress['remark'] = 'designation is not present.';
-                            $errorFlag = true;
-                        }
-
-                        if($errorFlag){
-                            $arrTempDateEmailAddress['error'] = "YES";
-                        }else{
-                            if($userRecord['id'] != ''){
-                                try{
-                                    $userDetails = User::where('id', $userRecord['id'])->update($userRecord);
-                                }catch(Exception $e){
-                                    continue;
-                                }
-                            }else{
-                                try{
-                                    $userDetails = User::create($userRecord);
-                                }catch(Exception $e){
-                                    continue;
-                                } 
-                            }
-                            $arrTempDateEmailAddress['error'] = "NO";
-                            $arrTempDateEmailAddress['remark'] = "";
-                        }
-
-                        array_push($arrUpdateDateEmailAddress,$userRecord['email']);
-                    }
-
-
-                    //check if any email is exist or not and update delted at for that email 
-                    $arrRemovingEmailAdress = array_diff($arrAllEmailIDs,$arrUpdateDateEmailAddress);
-                    foreach($arrRemovingEmailAdress as $key => $emailAdress){
-                        if($arrEmail[$emailAdress]['is_admin'] !== 'YES'){
-                            $users = User::where('email', $emailAdress)
-                                    ->delete();
-                        }
-                    }
-
-                    return redirect('/admin/register-user')->with('success',"Documents uploaded successfully.");;
-                }else{
-                    return redirect('/admin/register-user')->with('error',"file required.");
-                }
-            }else{
-                return redirect('/admin/register-user');
-            }
-        }catch(Exception $e){
-
-        }
-        
-    }
 
     public function exportLog(){
-        $sheets = [
-            UsersLog::all()
-        ];
-
-        (new FastExcel($sheets))->export('file.xlsx');
+        $sheets = UsersLog::select(['name','email', 'phone_number','designation','group1','group2','group3','group4','designation','status','remark'])->get();
+        (new FastExcel($sheets))->export('userLog.xlsx');
+        return redirect(url('userLog.xlsx')); 
     }
 
 
     public function exportPassword(){
-        $sheets = new SheetCollection([
-            UsersLog::all()->allowedFields('email','password')
-        ]);
-        
-        (new FastExcel($sheets))->export('userPassword.xlsx');
+        if(env("DOWNLOADPASSWORDLINK") === "YES"){
+            $sheets = UsersLog::select(['email','password'])->get()->toArray();
+            (new FastExcel($sheets))->export('userPassword.xlsx');
+            return redirect(url('userPassword.xlsx'));
+        }else{
+            return redirect(url('/home'));
+        }
     }
 
     /**
@@ -349,7 +168,24 @@ class UserRegisterController extends Controller
     }
 
 
-    
+    public function backCallLogs(){
+        $arrUsers = User::get()->toArray();
+        
+        $rand = rand(2,5);
+        $status = ['Failed','Completed','Busy','No Answer'];
+        $callLogs=[];
+        $callLogs['from_number'] = '111111111';
+        $callLogs['to_number'] = $arrUsers[$rand]['phone_number'];
+        $callLogs['call_duration'] = '412545';
+        $callLogs['call_status'] = $status[2];
+        $callLogs['call_direction'] = "Incoming";
+        $callLogs['group1'] = $arrUsers[$rand]['group1'];
+        $callLogs['group2'] = $arrUsers[$rand]['group2'];
+        $callLogs['group3'] = $arrUsers[$rand]['group3'];
+        $callLogs['group4'] = $arrUsers[$rand]['group4'];
+
+        App\CallRecording::create($callLogs);
+    }
 
     // public function  bulkregisterUser(){
     //   ini_set('max_execution_time', 0);
