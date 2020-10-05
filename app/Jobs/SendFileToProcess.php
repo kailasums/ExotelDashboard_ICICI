@@ -52,7 +52,7 @@ class SendFileToProcess implements ShouldQueue
                 //Start Processing File 
                 $filePath = storage_path().'/app/public/'.$this->details->file_name;
 
-
+                $errorOverAllFlag = false;
                 //Process Heirachy 1 by 1 
                 $groupData  = (new FastExcel)->sheet(2)->import($filePath);
                 if(count($groupData) < 0){
@@ -104,7 +104,7 @@ class SendFileToProcess implements ShouldQueue
 
                 $arrUpdateDateEmailAddress = [];
                 
-                $this->addUserData($exportUserList,$arrEmail);
+                $errorOverAllFlag = $this->addUserData($exportUserList,$arrEmail);
                 
                 $fileUploadProcessingRecord = [];// dd($fileUploadProcessingRecord);
                 if($errorOverAllFlag){
@@ -183,7 +183,7 @@ class SendFileToProcess implements ShouldQueue
                 $userRecord['id'] = '';
                 $userRecord['email'] = $user['Email'];
                 if(env("IS_SEND_MAIL_REGISTRAION")  === 'YES'){
-                    //$this->senduserCreationMail($user['Email'],  $password );
+                    $this->senduserCreationMail($user['Email'],  $password );
                 }   
                 $userRecord['password'] = Hash::make($password);
                 $arrTempDateEmailAddress['password'] = $password; 
@@ -312,7 +312,7 @@ class SendFileToProcess implements ShouldQueue
             }
         }
         
-        return true;
+        return $errorOverAllFlag;
      }
     /**
      * addHierachyData stores and create hierarchy Data
@@ -395,5 +395,20 @@ class SendFileToProcess implements ShouldQueue
             return 0;
         }    
     }
+
+    private function senduserCreationMail($email, $password){
+        $details = [
+            'title' => 'You are registered with our system',
+            'body' => "Hi, \n You are registered with this system. \n Your username is your email address and password is  $password"
+        ];
+        
+        try{
+            \Mail::to($email)->send(new \App\Mail\MyTestMail($details));
+            return true;
+        }catch(Exception $e){
+            return true;
+        }
+        
+     }
 
 }
