@@ -50,7 +50,7 @@ class SendFileToProcess implements ShouldQueue
                 $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
 
                 //Start Processing File 
-                $filePath = storage_path().'/app/public/'.env("IMPORTFILESTORAGENAME");
+                $filePath = storage_path().'/app/public/'.$this->details->file_name;
 
 
                 //Process Heirachy 1 by 1 
@@ -107,7 +107,11 @@ class SendFileToProcess implements ShouldQueue
                 $this->addUserData($exportUserList,$arrEmail);
                 
                 $fileUploadProcessingRecord = [];// dd($fileUploadProcessingRecord);
-                $fileUploadProcessingRecord['upload_status'] = 'completed';
+                if($errorOverAllFlag){
+                    $fileUploadProcessingRecord['upload_status'] = 'completed-with-error';
+                }else{
+                    $fileUploadProcessingRecord['upload_status'] = 'completed';
+                }
                 $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
                 
                 return true;
@@ -153,14 +157,14 @@ class SendFileToProcess implements ShouldQueue
         $arrAllEmailIDs = array_keys($arrEmail);
         
         $arrNoPortalAccess = explode(",",env('NO_PORTAL_ACCESS'));
-        $arrCanMakeCall = explode(",",env('CAN_MAKE_CALLABLE'));
+        $arrCanMakeCall = explode(",",str_replace(" ",'_SPACE_',env('CAN_MAKE_CALLABLE')));
 
         $arrMegaZone = $arrBranchCode = $arrZone = $arrRegoin = [];
         $arrMegaZone = MegaZoneMaster::all()->pluck('id','megazone_name');
         $arrZone = ZoneMaster::all()->pluck('id','zone_name');
         $arrRegoin = RegionMaster::all()->pluck('id','region_name');
         $arrBranchCode = BranchMaster::all()->pluck('id','branch_code');
-        
+        $errorOverAllFlag = false;
         foreach($exportUserList as  $key => $user ){
             if($user['Email'] === '' && $user['Number'] === '' ){
             break;
@@ -262,6 +266,7 @@ class SendFileToProcess implements ShouldQueue
             }
             
             if($errorFlag){
+                $errorOverAllFlag  = true;
                 $arrTempDateEmailAddress['status'] = "error";
             }else{
                 if($userRecord['id'] != ''){

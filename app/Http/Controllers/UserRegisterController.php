@@ -45,7 +45,8 @@ class UserRegisterController extends Controller
             if ($request->isMethod('post')) {
                 if($request->hasFile('file')){
                     $fileDetails = $request->file('file');
-                    if(env("USER_UPLOAD_FILENAME") !== $fileDetails->getClientOriginalName()){
+
+                    if(!in_array($fileDetails->getClientOriginalName(),explode("|",env("USER_UPLOAD_FILENAME"))) ){
                         return redirect('/admin/register-user')->with('error',trans('uploadfile.filenNameNotMatch'));
                     }
                     
@@ -54,7 +55,7 @@ class UserRegisterController extends Controller
                         return redirect('/admin/register-user')->with('error',trans('uploadfile.filePendingToUpload'));
                     }
                     
-                    $extensions = array("xlsx");
+                    $extensions = explode(",",env("FILE_EXTENSION"));
                     $result = array($fileDetails->getClientOriginalExtension());
                     
                     
@@ -86,20 +87,59 @@ class UserRegisterController extends Controller
 
 
     public function exportLog(){
-        $sheets = UsersLog::select(['name','email', 'phone_number','designation','group1','group2','group3','group4','designation','status','remark'])->get();
-        (new FastExcel($sheets))->export('userLog.xlsx');
-        return redirect(url('userLog.xlsx')); 
+        try{
+            $sheets = UsersLog::select(['name','email', 'phone_number','designation','group1','group2','group3','group4','designation','status','remark'])->get();
+        
+            $arrImportData = [];
+            if(count($sheets) > 0 ){
+                for($i=0; $i< count($sheets); $i++){
+                    $tempData = [];
+                    $tempData['Name']= $sheets[$i]['name'];
+                    $tempData['Email']= $sheets[$i]['email'];
+                    $tempData['Number'] = $sheets[$i]['phone_number'];
+                    $tempData['Group1'] = $sheets[$i]['group1'];
+                    $tempData['Group2'] = $sheets[$i]['group2'];
+                    $tempData['Group3'] = $sheets[$i]['group3'];
+                    $tempData['Group4'] = $sheets[$i]['group4'];
+                    $tempData['Designation'] = $sheets[$i]['designation'];
+                    $tempData['Status'] = $sheets[$i]['status'];
+                    $tempData['Remark'] = $sheets[$i]['remark'];
+                    array_push($arrImportData,$tempData);
+                }
+            }
+
+            (new FastExcel($arrImportData))->export('userLog.xlsx');
+            return redirect(url('userLog.xlsx'));
+        }catch(Exception $e){
+            return redirect(url('/home'))->with("error", "Please try again.");
+        }
+         
     }
 
 
     public function exportPassword(){
-        if(env("DOWNLOADPASSWORDLINK") === "YES"){
-            $sheets = UsersLog::select(['email','password'])->get()->toArray();
-            (new FastExcel($sheets))->export('userPassword.xlsx');
-            return redirect(url('userPassword.xlsx'));
-        }else{
-            return redirect(url('/home'));
+        try{
+            if(env("DOWNLOADPASSWORDLINK") === "YES"){
+                $sheets = UsersLog::select(['email','phone_number','password'])->get()->toArray();
+                $arrImportData = [];
+                if(count($sheets) > 0 ){
+                    for($i=0; $i< count($sheets); $i++){
+                        $tempData = [];
+                        $tempData['Email']= $sheets[$i]['email'];
+                        $tempData['Number'] = $sheets[$i]['phone_number'];
+                        $tempData['password'] = $sheets[$i]['password'];
+                        array_push($arrImportData,$tempData);
+                    }
+                }
+                (new FastExcel($arrImportData))->export('userPassword.xlsx');
+                return redirect(url('userPassword.xlsx'));
+            }else{
+                return redirect(url('/home'));
+            }
+        }catch(Exception $e){
+            return redirect(url('/home'))->with("error", "Please try again.");
         }
+        
     }
 
     /**
@@ -131,7 +171,7 @@ class UserRegisterController extends Controller
             $fileLocation = Storage::disk('local')->putFileAs(
                 'public/',
                 $fileDetails,
-                env("IMPORTFILESTORAGENAME")//$filename
+                env("IMPORTFILESTORAGENAME",$filename)//
             ); // file stored at location storage/app/public/
             
             return true;

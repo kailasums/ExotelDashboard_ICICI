@@ -36,7 +36,7 @@
                                     style="display:block;">
                                     <div class='profile-upload upload-field no-preview'><span><label
                                                 class="control-label" for="importusers-csvfilepath"><strong
-                                                    class="mandatory">*</strong>CSV File for upload</label></span>
+                                                    class="mandatory">*</strong>Exc/Xlsx File for upload</label></span>
                                         <div class='input-file-div upload-version'><input type="hidden"
                                                 name="ImportUsers[CsvFilePath]" value=""><input type="file"
                                                 id="importusers-csvfilepath" class="file-loading"
@@ -63,7 +63,7 @@
                         <div id="import-users-listing-div" data-pjax-container="" data-pjax-push-state
                             data-pjax-timeout="1000">
                             <div id="w0" class="grid-view">
-                                <div class="summary">Showing <b>1-2</b> of <b>2</b> items.</div>
+                                <div class="summary"></div>
                                 <table class="table table-striped table-bordered">
                                     <thead>
                                         <tr>
@@ -103,7 +103,7 @@
                                                                     echo $fileUploadRecord[$i]['remark'];
                                                                 }
                                                                  
-                                                                if($fileUploadRecord[$i]['upload_status'] === 'completed'){
+                                                                if($fileUploadRecord[$i]['upload_status'] === 'completed' || $fileUploadRecord[$i]['upload_status'] === 'completed-with-error'){
                                                                     echo "<a target='blank' href='/admin/export-log'>Log File</a>|";  
                                                                     if(env("DOWNLOADPASSWORDLINK")  === "YES"){
                                                                         echo "<a target='blank' href='/admin/export-password'>PasswordFile</a>";    

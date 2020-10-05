@@ -49,6 +49,11 @@ class HomeController extends Controller
             return redirect()->back()->with("error",trans('resetpassword.confirmPasswordFail'));
         }
         
+        // $validatedData = $request->validate([
+        //     'current-password' => 'required',
+        //     'new-password' => 'required|string|min:6|confirmed',
+        // ]);
+        // dd($validatedData);
         //Change Password
         $user = Auth::user();
         $user->password = Hash::make($request->get('new-password'));

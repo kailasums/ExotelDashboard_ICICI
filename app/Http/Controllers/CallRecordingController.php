@@ -65,12 +65,12 @@ class CallRecordingController extends Controller
 			$requestDatas = $request->input();
 			$requestDatas['created_at'] = Carbon::now();
 
-			if (strpos($request->path(), 'incoming') !== false) {
+			if (strpos($request->path(), 'Incoming') !== false) {
 				$userData = User::where('phone_number', $requestDatas['to_number'])->first();
-				$requestDatas['call_directions'] = 'incoming';
+				$requestDatas['call_directions'] = 'Incoming';
 			} else {
 				$userData = User::where('phone_number', $requestDatas['from_number'])->first();
-				$requestDatas['call_directions'] = 'outgoing';
+				$requestDatas['call_directions'] = 'Outgoing';
 			}
 
 			if (!$userData) {
@@ -187,13 +187,13 @@ class CallRecordingController extends Controller
 				$dataQuery = $dataQuery->where('call_direction', $queryParam['call_direction']);
 				$selectOption['call_direction'] = $queryParam['call_direction'];
 			} else {
-				$dataQuery = $dataQuery->where('call_direction', 'incoming');
+				$dataQuery = $dataQuery->where('call_direction', 'Incoming');
 			}
-		}
+		
 
 			if (isset($queryParam['user']) && $queryParam['user']) {
 				$userId = User::find($queryParam['user']);
-				if ($queryParam['call_direction'] === 'incoming') {
+				if ($queryParam['call_direction'] === 'Incoming') {
 					$dataQuery = $dataQuery->where('from_number', $userId->phone_number);
 				} else {
 					$dataQuery = $dataQuery->where('to_number', $userId->phone_number);
@@ -237,7 +237,7 @@ class CallRecordingController extends Controller
 		if (isset($param['zone'])) {
 			$query = ZoneMaster::where('id', $param['zone']);
 		} else {
-			$query = ZoneMaster::where('mega_zone_id', $param);
+			$query = ZoneMaster::where('megazone_id', $param);
 		}
 		$data['zones'] = $query->pluck('zone_name', 'id');
 		$data['zoneParam'] = $query->pluck('id')->toArray();
@@ -347,7 +347,7 @@ class CallRecordingController extends Controller
 		$queryParam = $request->all();
 		$offSet = isset($queryParam['start'])?$queryParam['start']:0;
 		//table data for datatable
-		$userDataQuery = User::where('is_callable', 'yes');
+		$userDataQuery = User::where('can_make_calls', 'YES');
 		if(isset($queryParam['zone_summary']) && $queryParam['zone_summary']) {
 			$userDataQuery =  $userDataQuery->where('group3',$queryParam['zone_summary']);
 		}
