@@ -19,6 +19,13 @@
 
 			</div>
 		<?php endif; ?>
+		<?php if($errors->any()): ?>
+		<div class="alert alert-danger">
+            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php echo e($error); ?> <br/>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+		</div>
+		<?php endif; ?>
 	</div>
         <h1>Change Password</h1>
         <div class="login-fields">

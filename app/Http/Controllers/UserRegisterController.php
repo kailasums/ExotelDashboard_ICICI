@@ -45,14 +45,15 @@ class UserRegisterController extends Controller
             if ($request->isMethod('post')) {
                 if($request->hasFile('file')){
                     $fileDetails = $request->file('file');
-
-                    if(!in_array($fileDetails->getClientOriginalName(),explode("|",env("USER_UPLOAD_FILENAME"))) ){
-                        return redirect('/admin/register-user')->with('error',trans('uploadfile.filenNameNotMatch'));
+                    $fileExtension = $fileDetails->getClientOriginalExtension();
+                    
+                    if(str_replace(".xls","",str_replace(".xlsx","",$fileDetails->getClientOriginalName())) !== env("USER_UPLOAD_FILENAME") ){
+                        return redirect('/import-users')->with('error',trans('uploadfile.filenNameNotMatch'));
                     }
                     
                     $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])->get()->toArray();
                     if(count($processingFileCount) > 0 ){
-                        return redirect('/admin/register-user')->with('error',trans('uploadfile.filePendingToUpload'));
+                        return redirect('/import-users')->with('error',trans('uploadfile.filePendingToUpload'));
                     }
                     
                     $extensions = explode(",",env("FILE_EXTENSION"));
@@ -60,7 +61,7 @@ class UserRegisterController extends Controller
                     
                     
                     if(!in_array($result[0],$extensions)){
-                        return redirect('/admin/register-user')->with('error',trans('uploadfile.fileFormatNotMatch'));
+                        return redirect('/import-users')->with('error',trans('uploadfile.fileFormatNotMatch'));
                     }  //File format check 
                     //UsersLog::truncate();
                     $this->storeFile($fileDetails); // store file to specific location
@@ -72,15 +73,15 @@ class UserRegisterController extends Controller
 
                     dispatch(new SendFileToProcess($fileuploadStatus));
 
-                    return redirect('/admin/register-user')->with('success',trans('uploadfile.success'));
+                    return redirect('/import-users')->with('success',trans('uploadfile.success'));
                 }else{
-                    return redirect('/admin/register-user')->with('error',trans('uploadfile.fileRequire'));
+                    return redirect('/import-users')->with('error',trans('uploadfile.fileRequire'));
                 }
             }else{
-                return redirect('/admin/register-user')->with('error',"no data Present.");;
+                return redirect('/import-users')->with('error',"no data Present.");;
             }
         }catch(Exception $e){
-            return redirect('/admin/register-user')->with('error',"something went wrong.$e");
+            return redirect('/import-users')->with('error',"something went wrong.$e");
         }
     }
 

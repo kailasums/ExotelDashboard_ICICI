@@ -23,7 +23,7 @@ Route::get('/admin/login', 'Auth\LoginController@showAdminLoginForm');
 Route::post('/login/admin', 'Auth\LoginController@login')->name('admin-login');
 
 Route::group(['middleware' => [ 'superadmin']], function() {
-    Route::get('/admin/register-user', 'UserRegisterController@index');
+    Route::get('/import-users', 'UserRegisterController@index');
     Route::post('/admin/upload-file', 'UserRegisterController@uploadFile');
     Route::get('/admin/export-log', 'UserRegisterController@exportLog');
     Route::get('/admin/export-password', 'UserRegisterController@exportPassword');

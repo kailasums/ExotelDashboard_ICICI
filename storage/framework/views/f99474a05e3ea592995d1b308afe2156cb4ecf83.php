@@ -37,7 +37,7 @@
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
                                         class="icn-user"></i>Welcome <?php echo e(Auth::user()->name); ?></a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="/admin/register-user"><i
+                                    <a class="dropdown-item" href="/import-users"><i
                                             class="icn-import-users"></i>Import Users</a>
                                     <a class="dropdown-item" href="/reset-password"><i
                                             class="icn-key"></i>Change password</a>

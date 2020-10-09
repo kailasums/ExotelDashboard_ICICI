@@ -28,6 +28,11 @@ class SendEmailTest extends Mailable
      */
     public function build()
     {
-        return $this->subject('You are registered with our system.')->view('emails.test');
+        try{
+            return $this->subject('You are registered with our system.')->view('emails.test');
+        }catch(Exception $e) {
+            return false;
+        }
+        
     }
 }

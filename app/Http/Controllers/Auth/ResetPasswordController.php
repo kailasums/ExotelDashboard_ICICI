@@ -47,7 +47,7 @@ class ResetPasswordController extends Controller
         $user = Auth::user();
         Session::put('user', $user);
         if($user->is_admin ==='YES') {
-            return redirect('/admin/register-user')
+            return redirect('/import-users')
             ->with('status', trans($response));
         }
         return redirect($this->redirectPath())

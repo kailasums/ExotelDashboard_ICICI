@@ -48,11 +48,11 @@ class HomeController extends Controller
             //Current password and new password are same
             return redirect()->back()->with("error",trans('resetpassword.confirmPasswordFail'));
         }
-        
-        // $validatedData = $request->validate([
-        //     'current-password' => 'required',
-        //     'new-password' => 'required|string|min:6|confirmed',
-        // ]);
+        //^[a-zA-Z0-9]{8,16}$
+        $validatedData = $request->validate([
+            'current-password' => 'required',
+            'new-password' => 'required|string|min:8|max:15|regex:/^[a-zA-Z0-9].{8,15}$/i',
+        ]);
         // dd($validatedData);
         //Change Password
         $user = Auth::user();

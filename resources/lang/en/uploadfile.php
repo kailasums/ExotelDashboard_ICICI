@@ -3,9 +3,9 @@
 <?php
 
 return [
-    'filenNameNotMatch' => "File name is diff than u shared.",
-    'fileFormatNotMatch' => "wrong file format.",
-    'filePendingToUpload'=>"Already File is is process. Please choose a different password.",
-    "fileRequire"=>"file required.",
-    "success" => "Documents uploaded successfully."
+    'filenNameNotMatch' => "You are trying to upload different file, filename is different.",
+    'fileFormatNotMatch' => "Invalid File Format, allowed extensions are .xls, .xlsx ",
+    'filePendingToUpload'=>"Already one file is under processing, please wait & try after sometime.",
+    "fileRequire"=>"File is required.",
+    "success" => "Document uploaded successfully!!"
 ];

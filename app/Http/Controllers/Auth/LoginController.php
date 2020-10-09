@@ -148,7 +148,7 @@ class LoginController extends Controller
 
         if((($user->is_admin === 'YES'))) {
             
-            return property_exists($this, 'redirectTo') ? '/admin/register-user' : '/admin/register-user';
+            return property_exists($this, 'redirectTo') ? '/import-users' : '/import-users';
         } else {
             
             return property_exists($this, 'redirectTo') ?  $this->redirectTo : '/home';

@@ -36,7 +36,7 @@
                                     style="display:block;">
                                     <div class='profile-upload upload-field no-preview'><span><label
                                                 class="control-label" for="importusers-csvfilepath"><strong
-                                                    class="mandatory">*</strong>Exc/Xlsx File for upload</label></span>
+                                                    class="mandatory">*</strong>Excel File for upload</label></span>
                                         <div class='input-file-div upload-version'><input type="hidden"
                                                 name="ImportUsers[CsvFilePath]" value=""><input type="file"
                                                 id="importusers-csvfilepath" class="file-loading"
@@ -94,7 +94,7 @@
                                                 } 
                                                 ?></td>
                                                 <td width="30%"><?php echo ($fileUploadRecord[$i]['created_at'] ? date("Y-m-d H:i:s", strtotime($fileUploadRecord[$i]['created_at'])) : '');?></td>
-                                                <td width="25%"><?php echo ($fileUploadRecord[$i]['upload_status'] ? $fileUploadRecord[$i]['upload_status'] : '');?></td>
+                                                <td width="25%"><?php echo ($fileUploadRecord[$i]['upload_status'] ? ucwords(str_replace("-", " ", $fileUploadRecord[$i]['upload_status']))  : '');?></td>
                                                 <td>
                                                     <div class="actions">
                                                         <?php

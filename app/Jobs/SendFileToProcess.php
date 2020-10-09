@@ -182,8 +182,18 @@ class SendFileToProcess implements ShouldQueue
                 $userRecord = [];
                 $userRecord['id'] = '';
                 $userRecord['email'] = $user['Email'];
+                
                 if(env("IS_SEND_MAIL_REGISTRAION")  === 'YES'){
-                    $this->senduserCreationMail($user['Email'],  $password );
+                    
+                    $response = $this->senduserCreationMail($user['Email'],  $password );
+                    
+                    if(!$response){
+                        
+                        $arrTempDateEmailAddress['remark'] = 'email sending fail.';
+                        $errorFlag = true;
+                    }else{
+                        
+                    }
                 }   
                 $userRecord['password'] = Hash::make($password);
                 $arrTempDateEmailAddress['password'] = $password; 
@@ -261,7 +271,7 @@ class SendFileToProcess implements ShouldQueue
             //check level Groups 
             $checkGroupsLveleWise = $this->checkgrouplevelWise($userRecord);
             if(!$checkGroupsLveleWise){
-                $arrTempDateEmailAddress['remark'] = 'group are not mapped for user.';
+                $arrTempDateEmailAddress['remark'] = 'Invalid designation mapped for user.';
                 $errorFlag = true;
             }
             
@@ -320,7 +330,7 @@ class SendFileToProcess implements ShouldQueue
      */
 
     private function addHierachyData($groupData){
-        //return true;
+        return true;
         $hierachyData = [];
         forEach($groupData as $group){    
             if($group['Group4'] && $group['Group4'] != null) {
@@ -397,16 +407,17 @@ class SendFileToProcess implements ShouldQueue
     }
 
     private function senduserCreationMail($email, $password){
-        $details = [
-            'title' => 'You are registered with our system',
-            'body' => "Hi, \n You are registered with this system. \n Your username is your email address and password is  $password"
-        ];
+        
         
         try{
+            $details = [
+                'title' => 'You are registered with our system',
+                'body' => "Hi, \n You are registered with this system. \n Your username is your email address and password is  $password"
+            ];
             \Mail::to($email)->send(new \App\Mail\MyTestMail($details));
             return true;
         }catch(Exception $e){
-            return true;
+            return false;
         }
         
      }

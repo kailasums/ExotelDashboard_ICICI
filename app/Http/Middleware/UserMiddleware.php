@@ -17,7 +17,7 @@ class UserMiddleware
     public function handle($request, Closure $next)
     {
         if (Auth::user()->is_admin == "YES") {
-            return redirect('/admin/register-user');
+            return redirect('/import-users');
             //abort(403, 'Unauthorized action.');
         }
         return $next($request);

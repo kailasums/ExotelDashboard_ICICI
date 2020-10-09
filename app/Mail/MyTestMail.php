@@ -30,7 +30,12 @@ class MyTestMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('You are registered with our system.')
+        try{
+            return $this->subject('You are registered with our system.')
                     ->view('emails.registeruser');
+        }catch(Exception $e){
+            dd($e);
+        }
+        
     }
 }
