@@ -330,7 +330,7 @@ class SendFileToProcess implements ShouldQueue
      */
 
     private function addHierachyData($groupData){
-        return true;
+        //return true;
         $hierachyData = [];
         forEach($groupData as $group){    
             if($group['Group4'] && $group['Group4'] != null) {

@@ -14,10 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
-Route::post('call-recording/incoming', 'CallRecordingController@store');
-Route::post('call-recording/outgoing', 'CallRecordingController@store');
+Route::post('/outbound_Call_Detail', 'CallRecordingController@store');
+Route::get('/Answered_Call_Details', 'CallRecordingController@storeFromGet');
+Route::get('/Unanswered_Call_Details', 'CallRecordingController@storeFromGet');
+Route::get('/NoDial_Call_Details', 'CallRecordingController@storeFromGet');
+
+// Route::post('call-recording/incoming', 'CallRecordingController@store');
+// Route::post('call-recording/outgoing', 'CallRecordingController@store');
 Route::get('call-recording/list', 'CallRecordingController@show');

@@ -34,13 +34,14 @@ Route::group(['middleware' => ['user']], function() {
     Route::get('pie-chart', 'CallRecordingController@pieChart');
     Route::get('drop-down', 'CallRecordingController@dropDownOption');
     Route::get('call-record-data','CallRecordingController@showData');
+    Route::get('user-call-detail','CallRecordingController@detailList');
 });
 
 Route::get('call-recording', 'CallRecordingController@index');
 
 Route::get('reset-password', 'HomeController@resetPassword');
 Route::post('reset-password', 'HomeController@updatepassword');
-Route::get('call-logs', 'CallRecordingController@backCallLogs');
+Route::get('call-logs', 'UserRegisterController@backCallLogs');
 
 
 Route::get('email-test', function(){

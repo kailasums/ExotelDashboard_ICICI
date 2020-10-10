@@ -13,7 +13,7 @@ class MegaZoneMaster extends Model
      *
      * @var string
      */
-    protected $table = 'megazone_masters';
+    protected $table = 'megazone_master';
 
     protected $primaryKey = 'id';
     /**

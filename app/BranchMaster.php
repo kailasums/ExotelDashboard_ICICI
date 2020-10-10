@@ -13,7 +13,7 @@ class BranchMaster extends Model
      *
      * @var string
      */
-    protected $table = 'branch_masters';
+    protected $table = 'branch_master';
 
     /**
      * The attributes that are mass assignable.

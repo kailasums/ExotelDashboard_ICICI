@@ -211,21 +211,56 @@ class UserRegisterController extends Controller
 
     public function backCallLogs(){
         $arrUsers = User::get()->toArray();
+        for($i=0;$i<1000; $i++){
+
         
-        $rand = rand(2,5);
+        $rand = rand(2,4);
         $status = ['Failed','Completed','Busy','No Answer'];
         $callLogs=[];
         $callLogs['from_number'] = '111111111';
         $callLogs['to_number'] = $arrUsers[$rand]['phone_number'];
-        $callLogs['call_duration'] = '412545';
+        $callLogs['call_duration'] = "".rand(100,300);
         $callLogs['call_status'] = $status[2];
         $callLogs['call_direction'] = "Incoming";
+        $callLogs['call_recording_link'] = "-";
+        $callLogs['call_sid'] = "123456780scxrfdxgfdhfdhgdfhfdgdf";
+        $callLogs['agent_name'] = $arrUsers[$rand]['name'];
+        $callLogs['agent_phone_number'] = $arrUsers[$rand]['phone_number'];
+        $callLogs['user_id'] = $arrUsers[$rand]['id'];
         $callLogs['group1'] = $arrUsers[$rand]['group1'];
         $callLogs['group2'] = $arrUsers[$rand]['group2'];
         $callLogs['group3'] = $arrUsers[$rand]['group3'];
         $callLogs['group4'] = $arrUsers[$rand]['group4'];
 
-        App\CallRecording::create($callLogs);
+        \App\CallRecording::create($callLogs);
+        }
+        
+        for($i=0;$i<1000; $i++){
+
+        
+            $rand = rand(2,4);
+            $status = ['Failed','Completed','Busy','No Answer'];
+            $callLogs=[];
+            $callLogs['from_number'] = $arrUsers[$rand]['phone_number'];
+            $callLogs['to_number'] = '111111111';
+            $callLogs['call_duration'] = "".rand(100,300);
+            $callLogs['call_status'] = $status[2];
+            $callLogs['call_direction'] = "Outgoing";
+            $callLogs['call_recording_link'] = "-";
+            $callLogs['call_sid'] = "123456780scxrfdxgfdhfdhgdfhfdgdf";
+            $callLogs['agent_name'] = $arrUsers[$rand]['name'];
+            $callLogs['agent_phone_number'] = $arrUsers[$rand]['phone_number'];
+            $callLogs['user_id'] = $arrUsers[$rand]['id'];
+            $callLogs['group1'] = $arrUsers[$rand]['group1'];
+            $callLogs['group2'] = $arrUsers[$rand]['group2'];
+            $callLogs['group3'] = $arrUsers[$rand]['group3'];
+            $callLogs['group4'] = $arrUsers[$rand]['group4'];
+    
+            \App\CallRecording::create($callLogs);
+            }
+
+        
+        return true;
     }
 
     // public function  bulkregisterUser(){

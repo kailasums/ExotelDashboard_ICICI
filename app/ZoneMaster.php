@@ -13,7 +13,7 @@ class ZoneMaster extends Model
      *
      * @var string
      */
-    protected $table = 'zone_masters';
+    protected $table = 'zone_master';
 
     /**
      * The attributes that are mass assignable.

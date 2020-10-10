@@ -13,7 +13,7 @@ class CreateRegionMasterTable extends Migration
      */
     public function up()
     {
-        Schema::create('region_masters', function (Blueprint $table) {
+        Schema::create('region_master', function (Blueprint $table) {
             $table->id();
             $table->string('region_name',255)->nullable(false);
             $table->integer('zone_id');
@@ -29,7 +29,7 @@ class CreateRegionMasterTable extends Migration
      */
     public function down()
     {
-        Schema::table('region_masters', function (Blueprint $table) {
+        Schema::table('region_master', function (Blueprint $table) {
             //
         });
     }

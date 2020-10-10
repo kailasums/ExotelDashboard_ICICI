@@ -13,7 +13,7 @@ class RegionMaster extends Model
      *
      * @var string
      */
-    protected $table = 'region_masters';
+    protected $table = 'region_master';
 
      /**
      * The attributes that are mass assignable.

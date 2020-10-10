@@ -19,7 +19,7 @@ class CallRecordingController extends Controller
 {
 	public function __construct()
 	{
-		$this->middleware('auth')->except(['store', 'show']);
+		$this->middleware('auth')->except(['store', 'show','storeFromGet']);
 	}
 
 
@@ -30,7 +30,7 @@ class CallRecordingController extends Controller
 	 */
 	public function index()
 	{
-		return view('callRecord.call_records');
+		return view('callRecord.index');
 	}
 
 	/**
@@ -43,6 +43,73 @@ class CallRecordingController extends Controller
 		//
 	}
 
+
+	private function get_string($str, $param){
+		
+		$whatIWant = substr($str, strpos($str, $param)); 
+		$arr = explode("-", $whatIWant, 2); 
+		$first = $arr[0];  
+		$strings = str_replace($param,"",$first); 
+		$finalString =str_replace("\"","",$strings);
+		
+		 if(empty($finalString)){
+			return "-";
+		}
+		return $finalString;
+	}
+
+
+	public function storeFromGet(Request $request){
+		try{
+			$getData = $request->all();
+			//print_r($getData);exit();
+			$insertData = [];
+			$insertData['call_sid'] = $getData['CallSid'];
+			$insertData['from_number'] = $getData['CallFrom'];
+			$insertData['to_number'] = $getData['CallTo'];
+			$insertData['call_direction'] = "Incoming";
+			$insertData['call_recording_link'] = (isset($getData["RecordingUrl"]))? $getData["RecordingUrl"] : "-";
+			$insertData['call_duration'] = $getData["DialCallDuration"];
+			
+			if(strpos($request->path(), 'NoDial_Call_Details')){
+				$insertData['call_status'] = "No Answer";
+			}
+
+			if(strpos($request->path(), 'Unanswered_Call_Details')){
+				$insertData['call_status'] = $getData['CallType'];
+			}
+
+			if(strpos($request->path(), 'Answered_Call_Details')){
+				$insertData['call_status'] = $getData['CallType'];
+			}
+
+			$userData = User::where('phone_number', $getData['CallTo'])->first();
+
+			if (!$userData) {
+				$response['status'] = 400;
+				$response['error'] = "No Records match with phone number";
+				return response()->json($response);
+			}
+
+			$insertData['agent_name'] = $userData['name'];
+			$insertData['agent_phone_number'] = $userData['phone_number'];
+			$insertData['user_id'] = $userData['id'];
+			$insertData['group1'] = $userData['group1'];
+			$insertData['group2'] = $userData['group2'];
+			$insertData['group3'] = $userData['group3'];
+			$insertData['group4'] = $userData['group4'];
+			$data = CallRecording::create($insertData);
+			$response['status'] = 200;
+			$response['data'] = $data;
+
+			return response()->json($response);
+		} catch (\Exception $e) {
+			$response['status'] = 500;
+			$response['error'] = $e->getMessage();
+			return response()->json($response);
+		}
+	}
+
 	/**
 	 * Store a newly created resource in storage.
 	 *
@@ -52,41 +119,39 @@ class CallRecordingController extends Controller
 	public function store(Request $request)
 	{
 		try {
-			$validator = Validator::make($request->all(), [
-				'to_number' => 'required',
-				'from_number' => 'required'
-			]);
-
-			if ($validator->fails()) {
-				$response['status'] = 422;
-				$response['error'] = $validator->getMessageBag();
-				return response()->json($response);
-			}
-			$requestDatas = $request->input();
-			$requestDatas['created_at'] = Carbon::now();
-
-			if (strpos($request->path(), 'Incoming') !== false) {
-				$userData = User::where('phone_number', $requestDatas['to_number'])->first();
-				$requestDatas['call_directions'] = 'Incoming';
-			} else {
-				$userData = User::where('phone_number', $requestDatas['from_number'])->first();
-				$requestDatas['call_directions'] = 'Outgoing';
-			}
+			// Now we can get the content from it
+			$postData = $request->getContent();
+			//print_r($postData);exit();
+			$insertData = [];
+			$insertData['call_sid'] = $this->get_string($postData, 'CallSid');
+			$insertData['from_number'] = $this->get_string($postData, 'From');
+			$insertData['to_number'] = $this->get_string($postData, 'To');
+			$insertData['call_direction'] = "Outgoing";
+			$insertData['call_recording_link'] = $this->get_string($postData, 'RecordingUrl');;
+			$insertData['call_duration'] = $this->get_string($postData, 'ConversationDuration');
+			//print_r($insertData);exit();
+			$userData = User::where('phone_number', $insertData['from_number'])->first();
 
 			if (!$userData) {
 				$response['status'] = 400;
 				$response['error'] = "No Records match with phone number";
 				return response()->json($response);
 			}
-			$requestDatas['group1'] = $userData['group1'];
-			$requestDatas['group2'] = $userData['group2'];
-			$requestDatas['group3'] = $userData['group3'];
-			$requestDatas['group4'] = $userData['group4'];
-			$data = CallRecording::create($requestDatas);
+
+			$insertData['agent_name'] = $userData['name'];
+			$insertData['agent_phone_number'] = $userData['phone_number'];
+			$insertData['user_id'] = $userData['id'];
+			$insertData['group1'] = $userData['group1'];
+			$insertData['group2'] = $userData['group2'];
+			$insertData['group3'] = $userData['group3'];
+			$insertData['group4'] = $userData['group4'];
+			//print_r($insertData);exit();
+			$data = CallRecording::create($insertData);
 			$response['status'] = 200;
 			$response['data'] = $data;
 
 			return response()->json($response);
+
 		} catch (\Exception $e) {
 			$response['status'] = 500;
 			$response['error'] = $e->getMessage();
@@ -165,8 +230,7 @@ class CallRecordingController extends Controller
 					DB::raw('count(*) as number')
 				)
 				->groupBy('call_status')
-				->where('created_at', '>=', Carbon::today());
-
+				->whereDate('created_at', '=', Carbon::today());
 			if (isset($queryParam['zone']) && $queryParam['zone']) {
 				$dataQuery = $dataQuery->where('group3', $queryParam['zone']);
 				$selectOption['zone'] = $queryParam['zone'];
@@ -186,10 +250,8 @@ class CallRecordingController extends Controller
 			if (isset($queryParam['call_direction']) && $queryParam['call_direction']) {
 				$dataQuery = $dataQuery->where('call_direction', $queryParam['call_direction']);
 				$selectOption['call_direction'] = $queryParam['call_direction'];
-			} else {
-				$dataQuery = $dataQuery->where('call_direction', 'Incoming');
-			}
-		
+			} 
+
 
 			if (isset($queryParam['user']) && $queryParam['user']) {
 				$userId = User::find($queryParam['user']);
@@ -211,7 +273,7 @@ class CallRecordingController extends Controller
 				$array[++$key] = [$value->callStatus, $value->number];
 			}
 		}
-		
+
 
 		$zoneData = isset($queryParam['zone']) ? $this->_zoneData($queryParam) : $this->_zoneData($user->group4);
 		$zone = $zoneData['zones'];
@@ -345,50 +407,85 @@ class CallRecordingController extends Controller
 	function showData(Request $request)
 	{
 		$queryParam = $request->all();
-		$offSet = isset($queryParam['start'])?$queryParam['start']:0;
+		$offSet = isset($queryParam['start']) ? $queryParam['start'] : 0;
 		//table data for datatable
-		$userDataQuery = User::where('can_make_calls', 'YES');
-		if(isset($queryParam['zone_summary']) && $queryParam['zone_summary']) {
-			$userDataQuery =  $userDataQuery->where('group3',$queryParam['zone_summary']);
+		// $userDataQuery = User::where('can_make_calls', 'YES');
+
+		// $userData = $userDataQuery->skip($offSet*10)->take(10)->get(['id', 'phone_number', 'name'])->keyBy('id')->toArray();
+		// $userId = array_keys($userData);
+		$callData = [];
+
+		$callRecordQuery = CallRecording::select('user_id', 'agent_name', 'agent_phone_number', 	DB::raw('COUNT(call_status) as call_status_count'), 'call_status',	DB::raw('SUM(call_duration) as sum_call_status'))->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
+		if (isset($queryParam['zone_summary']) && $queryParam['zone_summary']) {
+			$callRecordQuery =  $callRecordQuery->where('group3', $queryParam['zone_summary']);
 		}
-		if(isset($queryParam['region_summary']) && $queryParam['region_summary']) {
-			$userDataQuery =  $userDataQuery->where('group2',$queryParam['region_summary']);
+		if (isset($queryParam['region_summary']) && $queryParam['region_summary']) {
+			$callRecordQuery =  $callRecordQuery->where('group2', $queryParam['region_summary']);
 		}
-		if(isset($queryParam['branch_summary']) && $queryParam['branch_summary']) {
-			$userDataQuery =  $userDataQuery->where('group1',$queryParam['branch_summary']);
+		if (isset($queryParam['branch_summary']) && $queryParam['branch_summary']) {
+			$callRecordQuery =  $callRecordQuery->where('group1', $queryParam['branch_summary']);
 		}
-		$userData = $userDataQuery->skip($offSet)->take(10)->get(['id', 'phone_number', 'name'])->keyBy('phone_number')->toArray();
-		$phoneNumberData = array_keys($userData);
+		if (isset($queryParam['call_direction_summary']) && $queryParam['call_direction_summary'] != 'undefined') {
+			$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction_summary']);
+		}
+		if (isset($queryParam['user_summary']) && $queryParam['user_summary']) {
+			$callRecordQuery = $callRecordQuery->where('user_id', $queryParam['user_summary']);
+		}
+		$callRecordQuery = $callRecordQuery->groupBy('agent_phone_number', 'user_id', 'agent_name', 'call_status');
+		$callRecordData = $callRecordQuery->get();
+	
+		$callRecordNumber = $callRecordData->keyBy('agent_phone_number')->toArray();
 		$callRecords = [];
-		if (isset($queryParam['call_direction_summary'])) {
-			$callRecordQuery = CallRecording::select('from_number', 	DB::raw('COUNT(call_status) as call_status_count'), 'call_status',	DB::raw('SUM(call_duration) as sum_call_status'))->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
-			$key = ($queryParam['call_direction_summary'] == 'Incoming') ? 'to_number' : 'from_number';
-			$callRecordQuery = $callRecordQuery->whereIn($key, $phoneNumberData)->where('call_direction', $queryParam['call_direction_summary'])->groupBy('call_status', $key);
-			$callRecords = $callRecordQuery->get();
-		} 
-		if (count($callRecords)) {
-			foreach ($callRecords as $key => $value) {
-				$userData[$value['from_number']][$value['call_status']] = $value['call_status_count'];
-				$userData[$value['from_number']]['total_call'] = (isset($userData[$value['from_number']]['total_call']) ? $userData[$value['from_number']]['total_call']  : 0) + $value['call_status_count'];
-				$userData[$value['from_number']]['total_duration'] = (isset($userData[$value['from_number']]['total_duration']) ? $userData[$value['from_number']]['total_duration']  : 0) + $value['sum_call_status'];
-				$userData[$value['from_number']]['avg_duration'] = round($userData[$value['from_number']]['total_duration'] / $userData[$value['from_number']]['total_call']);
+		if (count($callRecordData)) {
+			foreach ($callRecordData as $key => $value) {
+				$callRecordNumber[$value['agent_phone_number']][$value['call_status']] = $value['call_status_count'];
+				$callRecordNumber[$value['agent_phone_number']]['call_count'] = (isset($callRecordNumber[$value['agent_phone_number']]['call_count']) ? $callRecordNumber[$value['agent_phone_number']]['call_count']  : 0) + $value['call_status_count'];
+				$callRecordNumber[$value['agent_phone_number']]['total_durations'] = (isset($callRecordNumber[$value['agent_phone_number']]['total_durations']) ? $callRecordNumber[$value['agent_phone_number']]['total_durations']  : 0) + $value['sum_call_status'];
+				$callRecordNumber[$value['agent_phone_number']]['avg_durations'] = round($callRecordNumber[$value['agent_phone_number']]['total_durations'] / $callRecordNumber[$value['agent_phone_number']]['call_count']);
 			}
-			$userData = array_values($userData);
+		
+			$userData = array_values($callRecordNumber);
+			$callData=[];
+			$userIdData='';
+			for ($i = 0; $i < count($userData); $i++) {
+				array_push($callData, [$userData[$i]['user_id'], $userData[$i]['agent_phone_number'], $userData[$i]['agent_name'], $userData[$i]['call_count'], $userData[$i]['total_durations'], $userData[$i]['avg_durations'],isset($userData[$i]['No Answer'])?$userData[$i]['No Answer']:0, isset($userData[$i]['Busy'])?$userData[$i]['Busy']:0, isset($userData[$i]['Failed'])?$userData[$i]['Failed']:0,isset($userData[$i]['Completed'])?$userData[$i]['Completed']:0]);
+				$userIdData.= ($i==0)? $userData[$i]['user_id']: ','.$userData[$i]['user_id'];
+			}
+		}
+		$data['callData'] = $callData;
+		$data['userId'] = $userIdData;
+		return json_encode($data);
+	}
+
+	public function detailList(Request $request) {
+		$queryParam = $request->all();
+		$offSet = isset($queryParam['start']) ? $queryParam['start'] : 0;
+
+		$callData = [];
+
+		$callRecordQuery = CallRecording::select('id','user_id', 'agent_name', 'agent_phone_number','from_number','to_number','call_duration','call_status','call_direction');
+		
+		if (isset($queryParam['user_id']) && $queryParam['user_id']) {
+			$callRecordQuery = $callRecordQuery->whereIn('user_id', explode(",",$queryParam['user_id']));
+		}
+		if (isset($queryParam['call_status']) && $queryParam['call_status']) {
+			$callRecordQuery = $callRecordQuery->where('call_status', $queryParam['call_status']);
+		}
+		// $callRecordQuery = $callRecordQuery->groupBy('agent_phone_number', 'user_id', 'agent_name', 'call_status');
+		$userData = $callRecordQuery->get();
+	
 			$callData=[];
 			for ($i = 0; $i < count($userData); $i++) {
-				array_push($callData, [$userData[$i]['id'], $userData[$i]['phone_number'], $userData[$i]['name'], $userData[$i]['total_call'], $userData[$i]['total_duration'], $userData[$i]['avg_duration'],isset($userData[$i]['incompleted'])?$userData[$i]['incompleted']:0, isset($userData[$i]['busy'])?$userData[$i]['busy']:0, isset($userData[$i]['failed'])?$userData[$i]['failed']:0,isset($userData[$i]['completed'])?$userData[$i]['completed']:0]);
+				array_push($callData, [$userData[$i]['id'],$userData[$i]['user_id'], $userData[$i]['agent_phone_number'],$userData[$i]['agent_name'], $userData[$i]['call_status'], $userData[$i]['call_direction'],$userData[$i]['from_number'], $userData[$i]['to_number'], $userData[$i]['avg_durations'],isset($userData[$i]['No Answer'])?$userData[$i]['No Answer']:0, isset($userData[$i]['Busy'])?$userData[$i]['Busy']:0, isset($userData[$i]['Failed'])?$userData[$i]['Failed']:0,isset($userData[$i]['Completed'])?$userData[$i]['Completed']:0]);
 			}
-		} else {
-			$callData = [];
-		}
 
-		$response = [
-			'draw' => 0,
-			'recordsTotal' => count($callData),
-			"recordsFiltered" => count($callData),
-			"data" =>
-			$callData
-		];
-		return json_encode($response);
+		// $response = [
+		// 	'draw' => 0,
+		// 	'recordsTotal' => count($callData),
+		// 	"recordsFiltered" => count($callData),
+		// 	"data" =>
+		// 	$callData
+		// ];
+		return json_encode($callData);
 	}
 }

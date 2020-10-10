@@ -15,9 +15,13 @@ class CreateCallRecordsTable extends Migration
     {
         Schema::create('call_logs', function (Blueprint $table) {
             $table->id();
+            $table->string("call_sid",255);
+            $table->string("agent_name",255);
+            $table->string("agent_phone_number",15);
+            $table->integer("user_id");
             $table->string('from_number',15)->nullable(false);
             $table->string('to_number',15)->nullable(false);
-            $table->string('call_duration',15)->nullable(false)->default('00:00:00');
+            $table->string('call_duration',15)->nullable(false)->default('0');
             $table->enum('call_status',['Failed', 'Completed','Busy','No Answer']);
             $table->enum('call_direction',['Incoming', 'Outgoing']);
             $table->string('call_recording_link');
