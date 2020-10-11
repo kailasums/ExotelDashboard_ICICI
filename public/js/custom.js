@@ -1,33 +1,40 @@
 $(document).ready(function() {
+    // $( function() {
+    //     $( "#datepickerFilter1" ).datepicker();
+    //   } );
+
     function showDatatable(element, urlParam, flag) {
         $.ajax({
-                url: flag ? createUrlParam(urlParam, targetSummaryElementArray) : urlParam,
-                success: function(data, textStatus, jqXHR) {
-                    var table_data = JSON.parse(data)
-                    var table = $('#' + element).DataTable({
-                        data: flag ? table_data.callData : table_data,
-                        serverSide: false,
-                        processing: false,
-                        cache: false,
-                        bDestroy: true
-                    })
-                    if (flag) {
-                        $('#userIdHidden').val(table_data.userId)
-                    }
-                }
-            })
-            // const url = createUrlParam(urlParam, targetSummaryElementArray);
-            // $('#' + element).DataTable({
-            //     serverSide: false,
-            //     processing: false,
-            //     ajax: url,
-            //     cache: false,
-            //     bDestroy: true
-            // })
+            url: flag ? createUrlParam(urlParam, targetSummaryElementArray) : urlParam,
+            success: function(data, textStatus, jqXHR) {
+                var table_data = JSON.parse(data)
+                var table = $('#' + element).DataTable({
+                    data: flag ? table_data.callData : table_data,
+                    serverSide: false,
+                    //processing: false,
+                    cache: false,
+                    bFilter: false,
+                    bInfo: false,
+                    bDestroy: true
+                })
+            }
+        })
     }
 
+    function detailDataTable(data) {
+        $('#example1').DataTable({
+            data: data,
+            serverSide: false,
+            processing: false,
+            cache: false,
+            bDestroy: true,
+            bFilter: false,
+            bInfo: false
+        })
+    }
     const targetElementArray = ['zone', 'region', 'branch', 'user', 'call_direction']
     const targetSummaryElementArray = ['zone_summary', 'region_summary', 'branch_summary', 'call_direction_summary', 'user_summary', 'StartDate', 'EndDate']
+    const targetdetailedElementArray = ['call_status', 'zone', 'region', 'branch', 'call_direction', 'user', 'StartDate', 'EndDate']
 
     if (window.location.pathname === '/pie-chart') {
         google.load('visualization', '1', { packages: ['corechart'] })
@@ -36,14 +43,18 @@ $(document).ready(function() {
         $('#example1').DataTable();
         setTimeout(function() {
             selectAjaxOption('pie-chart', 'call_direction', 'incoming', targetElementArray)
+            showDatatable('example', 'call-record-data', true)
         }, 1000)
-        showDatatable('example', 'call-record-data', true)
+
+        //userDetailTable('user-call-detail', '', user_id);
         setTimeout(function() {
-            var user_id = $("input[name='user-detail']").val();
-            userDetailTable('user-call-detail', '', user_id);
+            // var user_id = $("input[name='user-detail']").val();
+            selectAjaxOption('user-call-detail', 'call_direction', 'incoming', targetdetailedElementArray, true)
         }, 1000)
         setStartDate();
     }
+    $('#datepickerFilter1').datepicker({ dateFormat: 'yy-mm-dd' });
+    $('#datepickerFilter2').datepicker({ dateFormat: 'yy-mm-dd' });
 
     function setStartDate() {
         const EndDate = $('#datepickerFilter2').val()
@@ -63,52 +74,54 @@ $(document).ready(function() {
 
     $('#datepickerFilter2').on('change', function() {
         setStartDate()
+        showDatatable('example', 'call-record-data', true);
     })
     $("select[name='zone']").change(function() {
         selectAjaxOption('pie-chart', 'zone', $(this).val(), targetElementArray)
         $("select[name='zone_summary']").val($(this).val())
+        selectAjaxOption('drop-down', 'zone_summary', $(this).val(), targetSummaryElementArray, true)
+        selectAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray, true)
+
+        //setTimeout(function() {
+        //var user_id = $("input[name='user-detail']").val()
+        //userDetailTable('user-call-detail', '', user_id)
+        //}, 1000)
     })
 
     $("select[name='region']").change(function() {
         selectAjaxOption('pie-chart', 'region', $(this).val(), targetElementArray)
+        $("select[name='region_summary']").val($(this).val())
+        selectAjaxOption('drop-down', 'region_summary', $(this).val(), targetSummaryElementArray, true)
+        selectAjaxOption('user-call-detail', 'region', $(this).val(), targetdetailedElementArray, true)
+
     })
 
     $("select[name='branch']").change(function() {
         selectAjaxOption('pie-chart', 'branch', $(this).val(), targetElementArray)
+        $("select[name='branch_summary']").val($(this).val())
+        selectAjaxOption('drop-down', 'branch_summary', $(this).val(), targetSummaryElementArray, true)
+        selectAjaxOption('user-call-detail', 'branch', $(this).val(), targetdetailedElementArray, true)
+
     })
 
     $("select[name='call_direction']").change(function() {
         selectAjaxOption('pie-chart', 'call_direction', $(this).val(), targetElementArray)
+        $("select[name='call_direction_summary']").val($(this).val())
+        selectAjaxOption('drop-down', 'call_direction_summary', $(this).val(), targetSummaryElementArray, true)
+        selectAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray, true)
+
     })
 
     $("select[name='user']").change(function() {
         selectAjaxOption('pie-chart', 'user', $(this).val(), targetElementArray)
-    })
-
-    $("select[name='zone_summary']").change(function() {
-        alert('hit')
-        selectAjaxOption('drop-down', 'zone_summary', $(this).val(), targetSummaryElementArray, true)
-    })
-
-    $("select[name='region_summary']").change(function() {
-        selectAjaxOption('drop-down', 'region_summary', $(this).val(), targetSummaryElementArray, true)
-    })
-
-    $("select[name='branch_summary']").change(function() {
-        selectAjaxOption('drop-down', 'branch_summary', $(this).val(), targetSummaryElementArray, true)
-    })
-
-    $("select[name='user_summary']").change(function() {
+        $("select[name='user_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'user_summary', $(this).val(), targetSummaryElementArray, true)
+        selectAjaxOption('user-call-detail', 'user', $(this).val(), targetdetailedElementArray, true)
+
     })
 
-    $("select[name='call_direction_summary']").change(function() {
-        selectAjaxOption('drop-down', 'call_direction_summary', $(this).val(), targetSummaryElementArray, true)
-    })
-
-    $("select[name='call_status']").change(function() {
-        var user_id = $("input[name='user-detail']").val()
-        userDetailTable('user-call-detail', $(this).val(), user_id);
+    $("input[name='call_status']").on("click", function() {
+        selectAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray, true)
     })
 
     function ajaxGetCall(url) {
@@ -124,10 +137,7 @@ $(document).ready(function() {
         return data.responseText
     }
 
-    function userDetailTable(url, call_status, user_id) {
-        var urlParam = url + "?call_status=" + call_status + "&user_id=" + user_id;
-        showDatatable('example1', urlParam, false);
-    }
+
 
     function selectAjaxOption(url, element, value, targetElement, flag = false) {
         if (url) {
@@ -141,18 +151,48 @@ $(document).ready(function() {
                         for (let i = 0; i < targetElement.length; i++) {
                             if (element !== targetElement[i]) {
                                 $("select[name='" + targetElement[i] + "'").html('')
-                                $("select[name='" + targetElement[i] + "'").html('<option value="" selected="selected">Select</option><optgroup label="items">' + createOptions(data[targetElement[i]], data.selectOption ? data.selectOption[targetElement[i]] : '', targetElement[i]) + '</optgroup>')
+                                $("select[name='" + targetElement[i] + "'").html('<option value="" selected="selected">' + targetElement[i].toUpperCase() + '</option><optgroup label="items">' + createOptions(data[targetElement[i]], data.selectOption ? data.selectOption[targetElement[i]] : '', targetElement[i]) + '</optgroup>')
                             }
                         }
                     }
                     if (!flag) {
                         draw_chart(data.callRecords)
+                        calculatePercentage(data.callRecords)
+                        $("#totalCalls").text(data.totalCalls);
+                        $("#totalDurationCalls").text(data.totalDurationCalls);
+                        $("#avgCalls").text(data.avgCalls);
                     } else {
-                        showDatatable('example', 'call-record-data', true)
+
+                        if (targetElement.indexOf('call_status') > -1) {
+                            detailDataTable(data);
+                        } else {
+                            showDatatable('example', 'call-record-data', true)
+                        }
+
                     }
                 }
             })
         }
+    }
+
+    function calculatePercentage(callRecords) {
+        const callData = JSON.parse(callRecords)
+        quartersum = {}
+        totalSum = 0
+        callData.map(function(entry, index) {
+            if (index != 0) {
+                totalSum += entry[1]
+            }
+        })
+        var htmlElement = "<ul>"
+        callData.map(function(entry, index) {
+            if (index !== 0) {
+                const percentage = (entry[1] / totalSum) * 100
+                htmlElement += "<li><p>" + entry[0] + ":" + percentage.toFixed(2) + "</p></li>"
+            }
+        })
+        htmlElement += "</ul>"
+        $("#records").html(htmlElement)
     }
 
     function createOptions(data, selectOption, key) {
@@ -187,9 +227,16 @@ $(document).ready(function() {
     function createUrlParam(url, elementArray) {
         var urlString = url + '?'
         for (var i = 0; i < elementArray.length; i++) {
+            console.log(elementArray[i]);
             if (i == 0) {
                 if (['StartDate', 'EndDate'].includes(elementArray[i])) {
                     urlString += '&' + elementArray[i] + '=' + $("input[name='" + elementArray[i] + "']").val()
+                } else if (['call_status'].includes(elementArray[i])) {
+                    var params = []
+                    $("input:checkbox[name=call_status]:checked").each(function() {
+                        params.push($(this).val())
+                    });
+                    urlString += '&call_status=' + params.join(",")
                 } else {
                     urlString += elementArray[i] + '=' + $("select[name = '" + elementArray[i] + "']").val()
                 }

@@ -2101,3 +2101,7 @@ table .empty {
         padding: 30px 15px 10px;
     }
 }
+
+.completed-ui{
+    float: right;
+}

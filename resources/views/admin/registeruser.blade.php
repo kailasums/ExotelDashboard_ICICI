@@ -1,7 +1,5 @@
 @extends('layouts.common-layout')
 
-
-
 @section('content')
 
 <script type="text/javascript">
@@ -69,7 +67,7 @@
                                     <thead>
                                         <tr>
                                             <th><a href="/backend/web/index.php?r=import-users%2Findex&amp;sort=CsvFilePath"
-                                                    data-sort="CsvFilePath">CSV File</a></th>
+                                                    data-sort="CsvFilePath">Excel File</a></th>
                                             <th><a href="/backend/web/index.php?r=import-users%2Findex&amp;sort=RequestedOn"
                                                     data-sort="RequestedOn">Requested On</a></th>
                                             <th><a href="/backend/web/index.php?r=import-users%2Findex&amp;sort=Status"

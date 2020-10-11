@@ -1,7 +1,7 @@
 
-$(function () {
-  $('body').bootstrapMaterialDesign()
-})
+// $(function () {
+//   $('body').bootstrapMaterialDesign()
+// })
 
 $(function () {
   jQuery('body').on('keyup change input', '.form-group.animated .form-control, .form-group.overlayed .form-control', function (event) {

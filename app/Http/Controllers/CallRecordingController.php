@@ -19,7 +19,7 @@ class CallRecordingController extends Controller
 {
 	public function __construct()
 	{
-		$this->middleware('auth')->except(['store', 'show','storeFromGet']);
+		$this->middleware('auth')->except(['store', 'show', 'storeFromGet']);
 	}
 
 
@@ -44,23 +44,25 @@ class CallRecordingController extends Controller
 	}
 
 
-	private function get_string($str, $param){
-		
-		$whatIWant = substr($str, strpos($str, $param)); 
-		$arr = explode("-", $whatIWant, 2); 
-		$first = $arr[0];  
-		$strings = str_replace($param,"",$first); 
-		$finalString =str_replace("\"","",$strings);
-		
-		 if(empty($finalString)){
+	private function get_string($str, $param)
+	{
+
+		$whatIWant = substr($str, strpos($str, $param));
+		$arr = explode("-", $whatIWant, 2);
+		$first = $arr[0];
+		$strings = str_replace($param, "", $first);
+		$finalString = str_replace("\"", "", $strings);
+
+		if (empty($finalString)) {
 			return "-";
 		}
 		return $finalString;
 	}
 
 
-	public function storeFromGet(Request $request){
-		try{
+	public function storeFromGet(Request $request)
+	{
+		try {
 			$getData = $request->all();
 			//print_r($getData);exit();
 			$insertData = [];
@@ -68,18 +70,18 @@ class CallRecordingController extends Controller
 			$insertData['from_number'] = $getData['CallFrom'];
 			$insertData['to_number'] = $getData['CallTo'];
 			$insertData['call_direction'] = "Incoming";
-			$insertData['call_recording_link'] = (isset($getData["RecordingUrl"]))? $getData["RecordingUrl"] : "-";
+			$insertData['call_recording_link'] = (isset($getData["RecordingUrl"])) ? $getData["RecordingUrl"] : "-";
 			$insertData['call_duration'] = $getData["DialCallDuration"];
-			
-			if(strpos($request->path(), 'NoDial_Call_Details')){
+
+			if (strpos($request->path(), 'NoDial_Call_Details')) {
 				$insertData['call_status'] = "No Answer";
 			}
 
-			if(strpos($request->path(), 'Unanswered_Call_Details')){
+			if (strpos($request->path(), 'Unanswered_Call_Details')) {
 				$insertData['call_status'] = $getData['CallType'];
 			}
 
-			if(strpos($request->path(), 'Answered_Call_Details')){
+			if (strpos($request->path(), 'Answered_Call_Details')) {
 				$insertData['call_status'] = $getData['CallType'];
 			}
 
@@ -224,6 +226,12 @@ class CallRecordingController extends Controller
 		$user  =  Session::get('user');
 		$selectOption = [];
 		if ($request->ajax()) {
+			$totalCalls =  CallRecording::group($user->group4)->whereDate('created_at', '=', Carbon::today())->count();
+			$totalDurationCalls = CallRecording::group($user->group4)->whereDate('created_at', '=', Carbon::today())->sum('call_duration');
+			$avgCalls = 0;
+			if($totalDurationCalls) {
+				$avgCalls = round($totalDurationCalls / $totalCalls);
+			}
 			$dataQuery = CallRecording::group($user->group4)
 				->select(
 					DB::raw('call_status as callStatus'),
@@ -231,26 +239,24 @@ class CallRecordingController extends Controller
 				)
 				->groupBy('call_status')
 				->whereDate('created_at', '=', Carbon::today());
+
 			if (isset($queryParam['zone']) && $queryParam['zone']) {
 				$dataQuery = $dataQuery->where('group3', $queryParam['zone']);
 				$selectOption['zone'] = $queryParam['zone'];
 			}
 			if (isset($queryParam['region']) && $queryParam['region']) {
 				$dataQuery = $dataQuery->where('group2', $queryParam['region']);
-				$selectOption['zone'] = RegionMaster::where("id", $queryParam['region'])->first()->zone_id;
 				$selectOption['region'] = $queryParam['region'];
 			}
 			if (isset($queryParam['branch']) && $queryParam['branch']) {
 				$dataQuery = $dataQuery->where('group1', $queryParam['branch']);
-				$selectOption['zone'] = BranchMaster::where("id", $queryParam['branch'])->first()->region_id;
-				$selectOption['region'] = RegionMaster::where("id",	$selectOption['zone'])->first()->zone_id;
 				$selectOption['branch'] = $queryParam['branch'];
 			}
 
 			if (isset($queryParam['call_direction']) && $queryParam['call_direction']) {
 				$dataQuery = $dataQuery->where('call_direction', $queryParam['call_direction']);
 				$selectOption['call_direction'] = $queryParam['call_direction'];
-			} 
+			}
 
 
 			if (isset($queryParam['user']) && $queryParam['user']) {
@@ -260,9 +266,6 @@ class CallRecordingController extends Controller
 				} else {
 					$dataQuery = $dataQuery->where('to_number', $userId->phone_number);
 				}
-				$selectOption['zone'] = $userId->group3;
-				$selectOption['region'] = $userId->group2;
-				$selectOption['branch'] = $userId->group1;
 				$selectOption['user'] = $queryParam['user'];
 			}
 
@@ -275,32 +278,28 @@ class CallRecordingController extends Controller
 		}
 
 
-		$zoneData = isset($queryParam['zone']) ? $this->_zoneData($queryParam) : $this->_zoneData($user->group4);
+		$zoneData = $this->_zoneData($user->group4);
 		$zone = $zoneData['zones'];
 
-		$regionData = isset($queryParam['region']) ? $this->_regionData($queryParam) : $this->_regionData($zoneData['zoneParam']);
+		$regionData = (isset($queryParam['zone']) && $queryParam['zone']) ? $this->_regionData($queryParam) : $this->_regionData($zoneData['zoneParam']);
 		$region =  $regionData['region'];
 
-		$branchData = isset($queryParam['branch']) ? $this->_branchData($queryParam) : $this->_branchData($regionData['regionParam']);
+		$branchData = (isset($queryParam['region']) && $queryParam['region']) ? $this->_branchData($queryParam) : $this->_branchData($regionData['regionParam']);
 		$branch =  $branchData['branch'];
 
-		$user = isset($queryParam['user']) ? $this->_userData($queryParam) : $this->_userData($branchData['branchParam']);
+		$user = (isset($queryParam['branch']) && $queryParam['branch']) ? $this->_userData($queryParam) : $this->_userData($branchData['branchParam']);
 		$call_direction = $this->_callDirection();
 
 		if ($request->ajax()) {
 			$callRecords = json_encode($array);
-			return compact('callRecords', 'zone', 'region', 'branch', 'user', 'call_direction', 'selectOption');
+			return compact('callRecords', 'zone', 'region', 'branch', 'user', 'call_direction', 'selectOption', 'totalCalls', 'totalDurationCalls', 'avgCalls');
 		}
 		return view('callRecord.google-pie-chart')->with(compact('zone', 'region', 'branch', 'user', 'call_direction'));
 	}
 
 	public function _zoneData($param)
 	{
-		if (isset($param['zone'])) {
-			$query = ZoneMaster::where('id', $param['zone']);
-		} else {
-			$query = ZoneMaster::where('megazone_id', $param);
-		}
+		$query = ZoneMaster::where('megazone_id', $param);
 		$data['zones'] = $query->pluck('zone_name', 'id');
 		$data['zoneParam'] = $query->pluck('id')->toArray();
 		return $data;
@@ -308,8 +307,8 @@ class CallRecordingController extends Controller
 
 	public function _regionData($param)
 	{
-		if (isset($param['region'])) {
-			$query = RegionMaster::where('id', $param['region']);
+		if (isset($param['zone'])) {
+			$query = RegionMaster::where('zone_id', $param['zone']);
 		} else {
 			$query = RegionMaster::whereIn('zone_id', $param);
 		}
@@ -320,8 +319,8 @@ class CallRecordingController extends Controller
 
 	public function _branchData($param)
 	{
-		if (isset($param['branch'])) {
-			$query = BranchMaster::where('id', $param['branch']);
+		if (isset($param['region'])) {
+			$query = BranchMaster::where('region_id', $param['region']);
 		} else {
 			$query = BranchMaster::whereIn('region_id', $param);
 		}
@@ -332,19 +331,21 @@ class CallRecordingController extends Controller
 
 	public function _callDirection()
 	{
-		$call_direction = ['incoming' => 'Incoming', 'outgoing' => 'Outgoing'];
+		$call_direction = ['Incoming' => 'Incoming', 'Outgoing' => 'Outgoing'];
 		return $call_direction;
 	}
+
 	public function _userData($param)
 	{
-		if (isset($param['user'])) {
-			$query = User::where('id', $param['user']);
+		if (isset($param['branch'])) {
+			$query = User::where('group1', $param['branch']);
 		} else {
 			$query = User::whereIn('group1', $param);
 		}
 		$user = $query->pluck('name', 'id');
 		return $user;
 	}
+
 	/**
 	 * Remove the specified resource from storage.
 	 *
@@ -360,7 +361,7 @@ class CallRecordingController extends Controller
 	{
 		$queryParam = $request->all();
 		$user = Session::get('user');
-		$zoneData = isset($queryParam['zone_summary']) ? $this->_zoneData($queryParam) : $this->_zoneData($user->group4);
+		$zoneData = $this->_zoneData($user->group4);
 		$zone = $zoneData['zones'];
 		$selectOption['call_direction_summary'] = $queryParam['call_direction_summary'];
 		if (isset($queryParam['region_summary']) && $queryParam['region_summary']) {
@@ -408,11 +409,7 @@ class CallRecordingController extends Controller
 	{
 		$queryParam = $request->all();
 		$offSet = isset($queryParam['start']) ? $queryParam['start'] : 0;
-		//table data for datatable
-		// $userDataQuery = User::where('can_make_calls', 'YES');
 
-		// $userData = $userDataQuery->skip($offSet*10)->take(10)->get(['id', 'phone_number', 'name'])->keyBy('id')->toArray();
-		// $userId = array_keys($userData);
 		$callData = [];
 
 		$callRecordQuery = CallRecording::select('user_id', 'agent_name', 'agent_phone_number', 	DB::raw('COUNT(call_status) as call_status_count'), 'call_status',	DB::raw('SUM(call_duration) as sum_call_status'))->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
@@ -433,9 +430,10 @@ class CallRecordingController extends Controller
 		}
 		$callRecordQuery = $callRecordQuery->groupBy('agent_phone_number', 'user_id', 'agent_name', 'call_status');
 		$callRecordData = $callRecordQuery->get();
-	
+
 		$callRecordNumber = $callRecordData->keyBy('agent_phone_number')->toArray();
 		$callRecords = [];
+		$userIdData = '';
 		if (count($callRecordData)) {
 			foreach ($callRecordData as $key => $value) {
 				$callRecordNumber[$value['agent_phone_number']][$value['call_status']] = $value['call_status_count'];
@@ -443,13 +441,13 @@ class CallRecordingController extends Controller
 				$callRecordNumber[$value['agent_phone_number']]['total_durations'] = (isset($callRecordNumber[$value['agent_phone_number']]['total_durations']) ? $callRecordNumber[$value['agent_phone_number']]['total_durations']  : 0) + $value['sum_call_status'];
 				$callRecordNumber[$value['agent_phone_number']]['avg_durations'] = round($callRecordNumber[$value['agent_phone_number']]['total_durations'] / $callRecordNumber[$value['agent_phone_number']]['call_count']);
 			}
-		
+
 			$userData = array_values($callRecordNumber);
-			$callData=[];
-			$userIdData='';
+			$callData = [];
+
 			for ($i = 0; $i < count($userData); $i++) {
-				array_push($callData, [$userData[$i]['user_id'], $userData[$i]['agent_phone_number'], $userData[$i]['agent_name'], $userData[$i]['call_count'], $userData[$i]['total_durations'], $userData[$i]['avg_durations'],isset($userData[$i]['No Answer'])?$userData[$i]['No Answer']:0, isset($userData[$i]['Busy'])?$userData[$i]['Busy']:0, isset($userData[$i]['Failed'])?$userData[$i]['Failed']:0,isset($userData[$i]['Completed'])?$userData[$i]['Completed']:0]);
-				$userIdData.= ($i==0)? $userData[$i]['user_id']: ','.$userData[$i]['user_id'];
+				array_push($callData, [$userData[$i]['user_id'], $userData[$i]['agent_phone_number'], $userData[$i]['agent_name'], $userData[$i]['call_count'], $userData[$i]['total_durations'], $userData[$i]['avg_durations'], isset($userData[$i]['No Answer']) ? $userData[$i]['No Answer'] : 0, isset($userData[$i]['Busy']) ? $userData[$i]['Busy'] : 0, isset($userData[$i]['Failed']) ? $userData[$i]['Failed'] : 0, isset($userData[$i]['Completed']) ? $userData[$i]['Completed'] : 0]);
+				$userIdData .= ($i == 0) ? $userData[$i]['user_id'] : ',' . $userData[$i]['user_id'];
 			}
 		}
 		$data['callData'] = $callData;
@@ -457,35 +455,48 @@ class CallRecordingController extends Controller
 		return json_encode($data);
 	}
 
-	public function detailList(Request $request) {
+	public function detailList(Request $request)
+	{
 		$queryParam = $request->all();
-		$offSet = isset($queryParam['start']) ? $queryParam['start'] : 0;
 
 		$callData = [];
 
-		$callRecordQuery = CallRecording::select('id','user_id', 'agent_name', 'agent_phone_number','from_number','to_number','call_duration','call_status','call_direction');
-		
-		if (isset($queryParam['user_id']) && $queryParam['user_id']) {
-			$callRecordQuery = $callRecordQuery->whereIn('user_id', explode(",",$queryParam['user_id']));
-		}
-		if (isset($queryParam['call_status']) && $queryParam['call_status']) {
-			$callRecordQuery = $callRecordQuery->where('call_status', $queryParam['call_status']);
-		}
-		// $callRecordQuery = $callRecordQuery->groupBy('agent_phone_number', 'user_id', 'agent_name', 'call_status');
-		$userData = $callRecordQuery->get();
-	
-			$callData=[];
-			for ($i = 0; $i < count($userData); $i++) {
-				array_push($callData, [$userData[$i]['id'],$userData[$i]['user_id'], $userData[$i]['agent_phone_number'],$userData[$i]['agent_name'], $userData[$i]['call_status'], $userData[$i]['call_direction'],$userData[$i]['from_number'], $userData[$i]['to_number'], $userData[$i]['avg_durations'],isset($userData[$i]['No Answer'])?$userData[$i]['No Answer']:0, isset($userData[$i]['Busy'])?$userData[$i]['Busy']:0, isset($userData[$i]['Failed'])?$userData[$i]['Failed']:0,isset($userData[$i]['Completed'])?$userData[$i]['Completed']:0]);
-			}
+		$callRecordQuery = CallRecording::select('id', 'user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction');
 
-		// $response = [
-		// 	'draw' => 0,
-		// 	'recordsTotal' => count($callData),
-		// 	"recordsFiltered" => count($callData),
-		// 	"data" =>
-		// 	$callData
-		// ];
-		return json_encode($callData);
+		if (isset($queryParam['zone']) && $queryParam['zone']) {
+			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
+		}
+		if (isset($queryParam['region']) && $queryParam['region']) {
+			$callRecordQuery = $callRecordQuery->where('group2', $queryParam['region']);
+		}
+		if (isset($queryParam['branch']) && $queryParam['branch']) {
+			$callRecordQuery = $callRecordQuery->where('group1', $queryParam['branch']);
+		}
+
+		if (isset($queryParam['call_direction']) && $queryParam['call_direction']) {
+			$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction']);
+			//$selectOption['call_direction'] = $queryParam['call_direction'];
+		}
+
+
+		if (isset($queryParam['user']) && $queryParam['user']) {
+			$userId = User::find($queryParam['user']);
+			if ($queryParam['call_direction'] === 'Incoming') {
+				$callRecordQuery = $callRecordQuery->where('from_number', $userId->phone_number);
+			} else {
+				$callRecordQuery = $callRecordQuery->where('to_number', $userId->phone_number);
+			}
+			$selectOption['user'] = $queryParam['user'];
+		}
+
+
+		if (isset($queryParam['call_status']) && $queryParam['call_status'] != "undefined" && $queryParam['call_status']) {	
+			$callRecordQuery = $callRecordQuery->whereIn('call_status', explode(",",$queryParam['call_status']));
+		}
+		$userData = $callRecordQuery->get();
+		for ($i = 0; $i < count($userData); $i++) {
+			array_push($callData, [$userData[$i]['id'], $userData[$i]['user_id'], $userData[$i]['agent_phone_number'], $userData[$i]['agent_name'], $userData[$i]['call_status'], $userData[$i]['call_direction'], $userData[$i]['from_number'], $userData[$i]['to_number'], $userData[$i]['avg_durations'], isset($userData[$i]['No Answer']) ? $userData[$i]['No Answer'] : 0, isset($userData[$i]['Busy']) ? $userData[$i]['Busy'] : 0, isset($userData[$i]['Failed']) ? $userData[$i]['Failed'] : 0, isset($userData[$i]['Completed']) ? $userData[$i]['Completed'] : 0]);
+		}
+		return response()->json($callData);
 	}
 }

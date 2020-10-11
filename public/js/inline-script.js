@@ -1,7 +1,7 @@
 
-$(function () {
-  $('body').bootstrapMaterialDesign()
-})
+// $(function () {
+//   $('body').bootstrapMaterialDesign()
+// })
 
 $(function () {
   $('#statusOption').slimScroll({

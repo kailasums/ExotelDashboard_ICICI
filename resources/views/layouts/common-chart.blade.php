@@ -14,6 +14,7 @@
     <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -34,6 +35,7 @@
     <script src="{{URL::asset('js/tether.min.js')}}"></script>
     <script src="{{URL::asset('js/bootstrap-material-design.iife.min.js')}}"></script>
     <script src="{{URL::asset('js/jquery.slimscroll.js')}}"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js""></script>
     <script type="text/javascript" src="{{URL::asset('js/custom.js')}}"></script>
 </body>
 
