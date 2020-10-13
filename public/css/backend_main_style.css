@@ -142,7 +142,7 @@ table *{ position: static;}
 .table-bordered > thead > tr > td, .table-bordered > thead > tr > th{ border-bottom: none; background: #353535; color: #fff;    padding: 10px;}
 .table-bordered > thead > tr > td a, .table-bordered > thead > tr > th a{ color: #fff;}
 .table-striped > tbody > tr:nth-of-type(2n+1){ background-color: inherit;}
-.actions a{ margin-right: 12px;}
+/* .actions a{ margin-right: 12px;} */
 .red, a.red{ color: #ff0000;}
 .orange, a.orange{ color: #e47910;}
 .green, a.green{ color: #2e9c0c;}

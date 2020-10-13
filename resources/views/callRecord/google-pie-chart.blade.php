@@ -88,7 +88,7 @@
                                             <!--  <input type="hidden" name="googlechart1" value='[["Status","Calls"]]'> -->
                                             <div id="piechart4" class="">
                                                 <div id="div-chartw0">
-                                                    <div id="records"></div>
+                                                    <div id="records" class="completed-ui"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -241,28 +241,28 @@
                                                         <table id="example" class="display" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>ID</th>
-                                                                    <th>Agent Phone Number</th>
                                                                     <th>Agent Name</th>
-                                                                    <th>Total Call</th>
+                                                                    <th>Agent Number</th>
+                                                                    <th>Total Calls</th>
                                                                     <th>Total Duration</th>
-                                                                    <th>Avg Duration</th>
-                                                                    <th>Incompleted</th>
-                                                                    <th>Busy</th>
-                                                                    <th>Failed</th>
+                                                                    <th>Average Duration</th>
+                                                                    <th>Calls Completed</th>
+                                                                    <th>Calls Not Completed - No Answer</th>
+                                                                    <th> Busy</th>
+                                                                    <th> Failed</th>
                                                                 </tr>
                                                             </thead>
                                                             <tfoot>
                                                                 <tr>
-                                                                    <th>ID</th>
-                                                                    <th>Agent Phone Number</th>
                                                                     <th>Agent Name</th>
-                                                                    <th>Total Call</th>
+                                                                    <th>Agent Number</th>
+                                                                    <th>Total Calls</th>
                                                                     <th>Total Duration</th>
-                                                                    <th>Avg Duration</th>
-                                                                    <th>Incompleted</th>
-                                                                    <th>Busy</th>
-                                                                    <th>Failed</th>
+                                                                    <th>Average Duration</th>
+                                                                    <th>Calls Completed</th>
+                                                                    <th>Calls Not Completed - No Answer</th>
+                                                                    <th> Busy</th>
+                                                                    <th> Failed</th>
                                                                 </tr>
                                                             </tfoot>
                                                         </table>
@@ -279,29 +279,31 @@
                                                         <table id="example1" class="display" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>ID</th>
-                                                                    <th>User Id</th>
-                                                                    <th>Agent Phone Number</th>
+                                                                <tr>
                                                                     <th>Agent Name</th>
-                                                                    <th>Call Duration</th>
+                                                                    <th>Agent Number</th>
+                                                                    <th>Customer Number</th>
+                                                                    <th>Date</th>
+                                                                    <th>Call Type </th>
                                                                     <th>Call Status</th>
-                                                                    <th>Call Direction</th>
-                                                                    <th>From Number</th>
-                                                                    <th>To Number</th>
-
+                                                                    <th>Call Sid</th>
+                                                                    <th>Call Duration</th>
+                                                                    <th>Dial Call Duration</th>
+                                                                    <th>Call Recording Url</th>
                                                                 </tr>
                                                             </thead>
                                                             <tfoot>
                                                                 <tr>
-                                                                    <th>ID</th>
-                                                                    <th>USER ID</th>
-                                                                    <th>Agent Phone Number</th>
                                                                     <th>Agent Name</th>
-                                                                    <th>Call Duration</th>
+                                                                    <th>Agent Number</th>
+                                                                    <th>Customer Number</th>
+                                                                    <th>Date</th>
+                                                                    <th>Call Type </th>
                                                                     <th>Call Status</th>
-                                                                    <th>Call Direction</th>
-                                                                    <th>From Number</th>
-                                                                    <th>To Number</th>
+                                                                    <th>Call Sid</th>
+                                                                    <th>Call Duration</th>
+                                                                    <th>Dial Call Duration</th>
+                                                                    <th>Call Recording Url</th>
                                                                 </tr>
                                                             </tfoot>
                                                         </table>

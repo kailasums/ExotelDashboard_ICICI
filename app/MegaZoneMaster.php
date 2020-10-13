@@ -40,4 +40,9 @@ class MegaZoneMaster extends Model
     {
         return $this->hasMany(User::class,'group1','id');
     }
+
+    public function scopeMegaZoneData($query){
+        $user = Auth::user();
+        return $query->where("id",$user->group4);
+    }
 }

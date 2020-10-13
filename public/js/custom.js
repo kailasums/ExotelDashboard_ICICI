@@ -49,7 +49,7 @@ $(document).ready(function() {
         //userDetailTable('user-call-detail', '', user_id);
         setTimeout(function() {
             // var user_id = $("input[name='user-detail']").val();
-            selectAjaxOption('user-call-detail', 'call_direction', 'incoming', targetdetailedElementArray, true)
+            selectAjaxOption('user-call-detail', 'call_direction', 'incoming', targetdetailedElementArray, true, false)
         }, 1000)
         setStartDate();
     }
@@ -75,12 +75,19 @@ $(document).ready(function() {
     $('#datepickerFilter2').on('change', function() {
         setStartDate()
         showDatatable('example', 'call-record-data', true);
+        selectAjaxOption('user-call-detail', 'endDate', $(this).val(), targetdetailedElementArray, true, false)
     })
+
+    $('#datepickerFilter1').on('change', function() {
+        showDatatable('example', 'call-record-data', true);
+        selectAjaxOption('user-call-detail', 'startDate', $(this).val(), targetdetailedElementArray, true, false)
+    })
+
     $("select[name='zone']").change(function() {
         selectAjaxOption('pie-chart', 'zone', $(this).val(), targetElementArray)
         $("select[name='zone_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'zone_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray, true)
+        selectAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray, true, false)
 
         //setTimeout(function() {
         //var user_id = $("input[name='user-detail']").val()
@@ -100,7 +107,7 @@ $(document).ready(function() {
         selectAjaxOption('pie-chart', 'branch', $(this).val(), targetElementArray)
         $("select[name='branch_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'branch_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'branch', $(this).val(), targetdetailedElementArray, true)
+        selectAjaxOption('user-call-detail', 'branch', $(this).val(), targetdetailedElementArray, true, false)
 
     })
 
@@ -108,7 +115,7 @@ $(document).ready(function() {
         selectAjaxOption('pie-chart', 'call_direction', $(this).val(), targetElementArray)
         $("select[name='call_direction_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'call_direction_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray, true)
+        selectAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray, true, false)
 
     })
 
@@ -121,25 +128,10 @@ $(document).ready(function() {
     })
 
     $("input[name='call_status']").on("click", function() {
-        selectAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray, true)
+        selectAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray, true, false)
     })
 
-    function ajaxGetCall(url) {
-        var data = $.ajax({
-            url: url,
-            method: 'GET',
-            async: false,
-            success: function(data) {
-                return data
-            }
-        })
-
-        return data.responseText
-    }
-
-
-
-    function selectAjaxOption(url, element, value, targetElement, flag = false) {
+    function selectAjaxOption(url, element, value, targetElement, flag = false, userDetailCall = true) {
         if (url) {
             url = createUrlParam(url, targetElement)
             $.ajax({
@@ -147,7 +139,7 @@ $(document).ready(function() {
                 method: 'GET',
                 async: false,
                 success: function(data) {
-                    if (targetElement) {
+                    if (targetElement && userDetailCall) {
                         for (let i = 0; i < targetElement.length; i++) {
                             if (element !== targetElement[i]) {
                                 $("select[name='" + targetElement[i] + "'").html('')
@@ -188,7 +180,7 @@ $(document).ready(function() {
         callData.map(function(entry, index) {
             if (index !== 0) {
                 const percentage = (entry[1] / totalSum) * 100
-                htmlElement += "<li><p>" + entry[0] + ":" + percentage.toFixed(2) + "</p></li>"
+                htmlElement += "<li><p style='right:100px;'>" + entry[0] + ":" + percentage.toFixed(2).toString() + "</p></li>"
             }
         })
         htmlElement += "</ul>"

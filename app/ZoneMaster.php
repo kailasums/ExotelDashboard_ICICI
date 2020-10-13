@@ -47,4 +47,12 @@ class ZoneMaster extends Model
         return $this->hasMany(User::class,'group2','id');
     }
     
+    public function scopeZoneData($query){
+        $user = Auth::user();
+        $query = $query->where("megazone_id",$user->group4);
+        if(isset($user->group3)  && $user->group3 !== 0 ){
+            $query = $query->where("id",$user->group3);
+        }
+         return $query;
+    }
 }

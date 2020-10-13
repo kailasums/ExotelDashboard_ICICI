@@ -21,7 +21,7 @@ class CreateUsersLogTable extends Migration
             $table->string('password');
             $table->string('phone_number',15)->unique();
             $table->enum('is_admin',['YES','NO'])->default('NO');
-            $table->enum('can_make_calls',['YES','NO'])->default('NO');
+            $table->enum('can_make_call',['YES','NO'])->default('NO');
             $table->enum('portal_access',['YES','NO'])->default('NO');
             $table->enum('level',['LEVEL0','LEVEL1','LEVEL2','LEVEL3','LEVEL4'])->default('level0')->nullable();
             $table->string('group1')->nullable();

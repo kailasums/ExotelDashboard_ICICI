@@ -71,18 +71,22 @@ class CallRecordingController extends Controller
 			$insertData['to_number'] = $getData['CallTo'];
 			$insertData['call_direction'] = "Incoming";
 			$insertData['call_recording_link'] = (isset($getData["RecordingUrl"])) ? $getData["RecordingUrl"] : "-";
-			$insertData['call_duration'] = $getData["DialCallDuration"];
+			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime($getData["Created"]));
+			$insertData['dial_call_duration'] = $getData["DialCallDuration"];
 
 			if (strpos($request->path(), 'NoDial_Call_Details')) {
-				$insertData['call_status'] = "No Answer";
+				$insertData['call_status'] =strtolower("No Answer") ;
+				$insertData['call_duration'] = 0;
 			}
 
 			if (strpos($request->path(), 'Unanswered_Call_Details')) {
-				$insertData['call_status'] = $getData['CallType'];
+				$insertData['call_status'] = strtolower($getData['CallType']);
+				$insertData['call_duration'] = $getData["Legs"][0]['OnCallDuration'];
 			}
 
 			if (strpos($request->path(), 'Answered_Call_Details')) {
-				$insertData['call_status'] = $getData['CallType'];
+				$insertData['call_status'] = strtolower($getData['CallType']);
+				$insertData['call_duration'] = $getData["Legs"][0]['OnCallDuration'];
 			}
 
 			$userData = User::where('phone_number', $getData['CallTo'])->first();
@@ -130,7 +134,10 @@ class CallRecordingController extends Controller
 			$insertData['to_number'] = $this->get_string($postData, 'To');
 			$insertData['call_direction'] = "Outgoing";
 			$insertData['call_recording_link'] = $this->get_string($postData, 'RecordingUrl');;
-			$insertData['call_duration'] = $this->get_string($postData, 'ConversationDuration');
+			$insertData['dial_call_duration'] = $this->get_string($postData, 'ConversationDuration');
+			$insertData['call_duration'] = $this->get_string($postData, 'Legs[0][OnCallDuration]');
+			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime($this->get_string($postData, 'StartTime')));
+			$insertData['call_status'] = $this->get_string($postData, 'Legs[0][Status]');
 			//print_r($insertData);exit();
 			$userData = User::where('phone_number', $insertData['from_number'])->first();
 
@@ -342,6 +349,7 @@ class CallRecordingController extends Controller
 		} else {
 			$query = User::whereIn('group1', $param);
 		}
+		$query = $query->where('can_make_call', "YES");
 		$user = $query->pluck('name', 'id');
 		return $user;
 	}
@@ -446,7 +454,7 @@ class CallRecordingController extends Controller
 			$callData = [];
 
 			for ($i = 0; $i < count($userData); $i++) {
-				array_push($callData, [$userData[$i]['user_id'], $userData[$i]['agent_phone_number'], $userData[$i]['agent_name'], $userData[$i]['call_count'], $userData[$i]['total_durations'], $userData[$i]['avg_durations'], isset($userData[$i]['No Answer']) ? $userData[$i]['No Answer'] : 0, isset($userData[$i]['Busy']) ? $userData[$i]['Busy'] : 0, isset($userData[$i]['Failed']) ? $userData[$i]['Failed'] : 0, isset($userData[$i]['Completed']) ? $userData[$i]['Completed'] : 0]);
+				array_push($callData, [$userData[$i]['agent_name'],  $userData[$i]['agent_phone_number'],  $userData[$i]['call_count'], $userData[$i]['total_durations'], $userData[$i]['avg_durations'],  isset($userData[$i]['completed']) ? $userData[$i]['completed'] : 0,isset($userData[$i]['no answer']) ? $userData[$i]['no answer'] : 0,isset($userData[$i]['busy']) ? $userData[$i]['busy'] : 0, isset($userData[$i]['failed']) ? $userData[$i]['failed'] : 0]);
 				$userIdData .= ($i == 0) ? $userData[$i]['user_id'] : ',' . $userData[$i]['user_id'];
 			}
 		}
@@ -461,7 +469,7 @@ class CallRecordingController extends Controller
 
 		$callData = [];
 
-		$callRecordQuery = CallRecording::select('id', 'user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction');
+		$callRecordQuery = CallRecording::select('id', 'user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction','date_time','dial_call_duration','call_recording_link')->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
 
 		if (isset($queryParam['zone']) && $queryParam['zone']) {
 			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
@@ -495,7 +503,17 @@ class CallRecordingController extends Controller
 		}
 		$userData = $callRecordQuery->get();
 		for ($i = 0; $i < count($userData); $i++) {
-			array_push($callData, [$userData[$i]['id'], $userData[$i]['user_id'], $userData[$i]['agent_phone_number'], $userData[$i]['agent_name'], $userData[$i]['call_status'], $userData[$i]['call_direction'], $userData[$i]['from_number'], $userData[$i]['to_number'], $userData[$i]['avg_durations'], isset($userData[$i]['No Answer']) ? $userData[$i]['No Answer'] : 0, isset($userData[$i]['Busy']) ? $userData[$i]['Busy'] : 0, isset($userData[$i]['Failed']) ? $userData[$i]['Failed'] : 0, isset($userData[$i]['Completed']) ? $userData[$i]['Completed'] : 0]);
+			if(strtolower($userData[$i]['call_direction']) === 'outgoing'){
+				$cust_number = $userData[$i]['to_number'];
+			}else{
+				$cust_number = $userData[$i]['from_number'];
+			}
+			$link = "";
+			if($userData[$i]['call_recording_link'] != '-'){
+				$link  = "<audio controls><source src='".$userData[$i]['call_recording_link']."'> </audio>";
+			}
+			array_push($callData, [$userData[$i]['agent_name'],$userData[$i]['agent_phone_number'],$cust_number, Date("Y-m-d Hj:i:s",strtotime($userData[$i]['date_time'])),$userData[$i]['call_direction'], $userData[$i]['call_status'], $userData[$i]['call_sid'], $userData[$i]['call_duration'], $userData[$i]['dial_call_duration'],
+			 $link]);
 		}
 		return response()->json($callData);
 	}

@@ -215,12 +215,12 @@ class UserRegisterController extends Controller
 
         
         $rand = rand(2,4);
-        $status = ['Failed','Completed','Busy','No Answer'];
+        $status = ['Failed','Completed','Busy','No Answered'];
         $callLogs=[];
         $callLogs['from_number'] = '111111111';
         $callLogs['to_number'] = $arrUsers[$rand]['phone_number'];
         $callLogs['call_duration'] = "".rand(100,300);
-        $callLogs['call_status'] = $status[3];
+        $callLogs['call_status'] = $status[0];
         $callLogs['call_direction'] = "Incoming";
         $callLogs['call_recording_link'] = "-";
         $callLogs['call_sid'] = "123456780scxrfdxgfdhfdhgdfhfdgdf";
@@ -244,7 +244,7 @@ class UserRegisterController extends Controller
             $callLogs['from_number'] = $arrUsers[$rand]['phone_number'];
             $callLogs['to_number'] = '111111111';
             $callLogs['call_duration'] = "".rand(100,300);
-            $callLogs['call_status'] = $status[3];
+            $callLogs['call_status'] = $status[0];
             $callLogs['call_direction'] = "Outgoing";
             $callLogs['call_recording_link'] = "-";
             $callLogs['call_sid'] = "123456780scxrfdxgfdhfdhgdfhfdgdf";

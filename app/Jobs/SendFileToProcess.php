@@ -184,16 +184,19 @@ class SendFileToProcess implements ShouldQueue
                 $userRecord['email'] = $user['Email'];
                 
                 if(env("IS_SEND_MAIL_REGISTRAION")  === 'YES'){
-                    
-                    $response = $this->senduserCreationMail($user['Email'],  $password );
-                    
-                    if(!$response){
-                        
-                        $arrTempDateEmailAddress['remark'] = 'email sending fail.';
-                        $errorFlag = true;
-                    }else{
-                        
+                    try{
+                        $response = $this->senduserCreationMail($user['Email'],  $password );
+                        if(!$response){
+                            
+                            $arrTempDateEmailAddress['remark'] = 'email sending fail.';
+                            $errorFlag = true;
+                        }else{
+                            
+                        }    
+                    }catch(Exception $e){
+                        echo $e;
                     }
+                    
                 }   
                 $userRecord['password'] = Hash::make($password);
                 $arrTempDateEmailAddress['password'] = $password; 
@@ -205,7 +208,7 @@ class SendFileToProcess implements ShouldQueue
             $userRecord['email'] = $user['Email'];
             $userRecord['designation'] = $user['Designation'];
             $userRecord['is_admin'] = "No";
-            $userRecord['can_make_calls'] = in_array($user['Designation'], $arrCanMakeCall) ? "YES" : "NO";
+            $userRecord['can_make_call'] = in_array($user['Designation'], $arrCanMakeCall) ? "YES" : "NO";
             $userRecord['portal_access'] = in_array($user['Designation'], $arrNoPortalAccess) ? "NO" : "YES";
             $userRecord['level'] =  $this->getLevelByDesignation($user['Designation']);
             
@@ -214,7 +217,7 @@ class SendFileToProcess implements ShouldQueue
             $arrTempDateEmailAddress['email'] = $userRecord['email'];
             $arrTempDateEmailAddress['is_admin'] =  "NO";
             $arrTempDateEmailAddress['designation'] =  $user['Designation'];
-            $arrTempDateEmailAddress['can_make_calls'] = $userRecord['can_make_calls'];
+            $arrTempDateEmailAddress['can_make_call'] = $userRecord['can_make_call'];
             $arrTempDateEmailAddress['portal_access'] = $userRecord['portal_access'];
             $arrTempDateEmailAddress['level'] = $userRecord['level'];
             
@@ -330,7 +333,7 @@ class SendFileToProcess implements ShouldQueue
      */
 
     private function addHierachyData($groupData){
-        //return true;
+       // return true;
         $hierachyData = [];
         forEach($groupData as $group){    
             if($group['Group4'] && $group['Group4'] != null) {
