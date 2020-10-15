@@ -31,9 +31,9 @@ Route::group(['middleware' => [ 'superadmin']], function() {
 
 Route::group(['middleware' => ['user']], function() {
     Route::get('/home', function () {
-        return redirect('pie-chart');
+        return redirect('dashboard');
       })->name('home');
-    Route::get('pie-chart', 'CallRecordingController@pieChart');
+    Route::get('dashboard', 'CallRecordingController@pieChart');
     Route::get('drop-down', 'CallRecordingController@dropDownOption');
     Route::get('call-record-data','CallRecordingController@showData');
     Route::get('user-call-detail','CallRecordingController@detailList');

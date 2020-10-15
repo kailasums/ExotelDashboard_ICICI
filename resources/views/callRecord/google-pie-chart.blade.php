@@ -15,13 +15,16 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icn-user"></i>Welcome {{ Auth::user()->name }}</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/site/change-password"><i class="icn-key"></i>Change password</a>
-                                <a class="dropdown-item" href="">
-                                    <i class="icn-logout"></i>
-                                    <form action="/logout" method="post">
-                                        <input type="hidden" name="_csrf" value="ZBlQvltMSYMH-bPSq60J11SjQaixAeFCcj_BXw1jQ3YAYSaHayEEsmGSg57JnWGYIPIU0eJnths8WKlqPyt3OA=="><button type="submit">Logout</button>
+                                <a class="dropdown-item" href="/reset-password"><i class="icn-key"></i>Change password</a>
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
                                     </form>
-                                </a>
                             </div>
                         </li>
                     </ul>
@@ -39,7 +42,7 @@
                                 <a class="graphSummery" data-toggle="collapse" href="#piechart-graph" aria-expanded="false" aria-controls="piechart-graph">Hide Summary</a>
                             </div>
 
-                            <div style="margin-bottom:10px;margin-top:10px;background: white;height:50px;padding:12px">
+                            <div style="margin-bottom:10px;margin-top:10px;background: white;/* height:50px; */padding:12px;float: left;width: 100%">
 
                                 <div class="selectType col-md-2">
                                     <div class="select">
@@ -87,8 +90,8 @@
                                         <div class="card">
                                             <!--  <input type="hidden" name="googlechart1" value='[["Status","Calls"]]'> -->
                                             <div id="piechart4" class="">
-                                                <div id="div-chartw0">
-                                                    <div id="records" class="completed-ui"></div>
+                                                <div id="div-chartw0" >
+                                                    <div id="totalrecords" class="completed-ui" style="margin-top: 20%;"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -108,16 +111,16 @@
                                     <div class="col-md-3">
                                         <div class="card">
                                             <div id="piechart2" class="">
-                                                <div id="div-chartw2">
+                                                <div id="div-chartw2" style="margin-top: 20%;">
                                                     <ul>
                                                         <li>
-                                                            <p>Total Calls:<span id="totalCalls"></span></p>
+                                                            <p style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Total Calls : <span style="font-weight: normal;" id="totalCalls"></span></p>
                                                         </li>
                                                         <li>
-                                                            <p>Total Call Duration:<span id="totalDurationCalls"></span></p>
+                                                            <p  style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Total Call Duration : <span style="font-weight: normal;" id="totalDurationCalls"></span></p>
                                                         </li>
                                                         <li>
-                                                            <p>Avg Calls:<span id="avgCalls"></span></p>
+                                                            <p  style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Avg Calls : <span style="font-weight: normal;" id="avgCalls"></span></p>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -153,7 +156,7 @@
                                                         <label for="Completed">Busy</label>
                                                     </div>
                                                     <div class="form-group checkbox">
-                                                        <input type="checkbox" class="charecter-filter report-status-filter" name="call_status"  value="No Answered" id="In Progress">
+                                                        <input type="checkbox" class="charecter-filter report-status-filter" name="call_status"  value="no answered" id="In Progress">
                                                         <label for="In Progress">No Answer</label>
                                                     </div>
                                                     <div class="form-group checkbox">
@@ -231,7 +234,7 @@
                                                 <div class="input-group date"><input type="text" id="datepickerFilter2" class="form-control" name="EndDate" value="{{date('Y-m-d')}}" data-date-container="#datepicker1" data-provide="#datepicker1"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
                                                 <div id="datepicker"></div>
                                                 <div id="datepicker1"></div>
-
+                                                <div id="errorDate"><p class="date_diff"></p></div>
                                                 <a id="reset-link-filter" class="reset-link" href="javascript:void(0)">Reset All</a>
 
                                             </div>
@@ -247,12 +250,13 @@
                                                                     <th>Total Duration</th>
                                                                     <th>Average Duration</th>
                                                                     <th>Calls Completed</th>
-                                                                    <th>Calls Not Completed - No Answer</th>
-                                                                    <th> Busy</th>
-                                                                    <th> Failed</th>
+                                                                    <th>No Answer</th>
+                                                                    <th>Busy</th>
+                                                                    <th>Failed</th>
+                                                                    <th>Call-hangup</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tfoot>
+                                                            <!-- <tfoot>
                                                                 <tr>
                                                                     <th>Agent Name</th>
                                                                     <th>Agent Number</th>
@@ -260,11 +264,12 @@
                                                                     <th>Total Duration</th>
                                                                     <th>Average Duration</th>
                                                                     <th>Calls Completed</th>
-                                                                    <th>Calls Not Completed - No Answer</th>
-                                                                    <th> Busy</th>
-                                                                    <th> Failed</th>
+                                                                    <th>No Answer</th>
+                                                                    <th>Busy</th>
+                                                                    <th>Failed</th>
+                                                                    <th>Call-hangup</th>
                                                                 </tr>
-                                                            </tfoot>
+                                                            </tfoot> -->
                                                         </table>
                                                     </div>
                                                 </div>
@@ -292,7 +297,7 @@
                                                                     <th>Call Recording Url</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tfoot>
+                                                            <!-- <tfoot>
                                                                 <tr>
                                                                     <th>Agent Name</th>
                                                                     <th>Agent Number</th>
@@ -305,7 +310,7 @@
                                                                     <th>Dial Call Duration</th>
                                                                     <th>Call Recording Url</th>
                                                                 </tr>
-                                                            </tfoot>
+                                                            </tfoot> -->
                                                         </table>
                                                     </div>
                                                 </div>

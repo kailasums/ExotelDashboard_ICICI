@@ -6,7 +6,7 @@
                 <div class="login-screen-logo text-center">
                     <img src="{{URL::asset('images/logo.png')}}" />
                 </div>
-                <h1>Login</h1>
+                <h1>User Login</h1>
                 <div class="login-fields">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf

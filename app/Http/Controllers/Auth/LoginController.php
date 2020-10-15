@@ -182,7 +182,7 @@ class LoginController extends Controller
     {
         $user = Auth::user();
         $this->guard()->logout();
-        $request->session()->invalidate();
+        $request->session()->invalidate();   
         if($user->is_admin=='YES') {
             return $this->loggedOut($request) ?redirect('/admin/login'): redirect('/admin/login');
         } 

@@ -34,9 +34,10 @@ class UserRegisterController extends Controller
      * User Register vai csv file 
      */
     public function index(){
+        $title  = "Import User";
         $fileData = FileUpload::orderBy('created_at', 'desc')
                                 ->limit(3)->get()->toArray();
-        return view('admin.registeruser', ["fileUploadRecord" => $fileData]);
+        return view('admin.registeruser', ["fileUploadRecord" => $fileData, "title" => $title ]);
     }
 
     public function uploadFile(Request $request){
@@ -127,7 +128,7 @@ class UserRegisterController extends Controller
                     for($i=0; $i< count($sheets); $i++){
                         $tempData = [];
                         $tempData['Email']= $sheets[$i]['email'];
-                        $tempData['Number'] = $sheets[$i]['phone_number'];
+                        #$tempData['Number'] = $sheets[$i]['phone_number'];
                         $tempData['password'] = $sheets[$i]['password'];
                         array_push($arrImportData,$tempData);
                     }
@@ -215,7 +216,7 @@ class UserRegisterController extends Controller
 
         
         $rand = rand(2,4);
-        $status = ['Failed','Completed','Busy','No Answered'];
+        $status = ['failed','completed','busy','no answered'];
         $callLogs=[];
         $callLogs['from_number'] = '111111111';
         $callLogs['to_number'] = $arrUsers[$rand]['phone_number'];

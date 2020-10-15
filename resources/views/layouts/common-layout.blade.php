@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Import Users</title>
+    <title><?php echo isset($title) ? $title : '' ?> </title>
     <link rel="shortcut icon" href="images/favicon.png" type="image/ico" />
     <link href="{{ asset('css/backend_bootstrap.css') }}" rel="stylesheet">
 
@@ -37,8 +37,17 @@
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
                                         class="icn-user"></i>Welcome {{ Auth::user()->name }}</a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="/import-users"><i
-                                            class="icn-import-users"></i>Import Users</a>
+                                <?php
+                                    if(Auth::user()->is_admin  === "YES") {
+                                        echo '<a class="dropdown-item" href="/import-users"><i
+                                            class="icn-import-users"></i>Import Users</a>';
+                                    }else{
+                                        echo '<a class="dropdown-item" href="/dashboard"><i
+                                            class="icn-import-users"></i>Dashboard</a>';
+                                    }
+                                ?>
+                                
+                                    
                                     <a class="dropdown-item" href="/reset-password"><i
                                             class="icn-key"></i>Change password</a>
                                     

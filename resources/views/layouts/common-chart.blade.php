@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-    <title>Pie Chart</title>
+    <title>Dashboard</title>
     <!--<link rel="shortcut icon" href="/images/favicon.png" type="image/ico"/>-->
 
 

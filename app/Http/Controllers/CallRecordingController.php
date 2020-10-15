@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class CallRecordingController extends Controller
 {
@@ -137,7 +138,7 @@ class CallRecordingController extends Controller
 			$insertData['dial_call_duration'] = $this->get_string($postData, 'ConversationDuration');
 			$insertData['call_duration'] = $this->get_string($postData, 'Legs[0][OnCallDuration]');
 			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime($this->get_string($postData, 'StartTime')));
-			$insertData['call_status'] = $this->get_string($postData, 'Legs[0][Status]');
+			$insertData['call_status'] = strtolower($this->get_string($postData, 'Legs[0][Status]'));
 			//print_r($insertData);exit();
 			$userData = User::where('phone_number', $insertData['from_number'])->first();
 
@@ -280,7 +281,7 @@ class CallRecordingController extends Controller
 
 			$array[] = ['Call_Status', 'Number'];
 			foreach ($data as $key => $value) {
-				$array[++$key] = [$value->callStatus, $value->number];
+				$array[++$key] = [ucwords($value->callStatus), $value->number];
 			}
 		}
 
@@ -437,6 +438,7 @@ class CallRecordingController extends Controller
 			$callRecordQuery = $callRecordQuery->where('user_id', $queryParam['user_summary']);
 		}
 		$callRecordQuery = $callRecordQuery->groupBy('agent_phone_number', 'user_id', 'agent_name', 'call_status');
+		//$callRecordQuery =  $callRecordQuery->orderBy('created_at', 'desc');
 		$callRecordData = $callRecordQuery->get();
 
 		$callRecordNumber = $callRecordData->keyBy('agent_phone_number')->toArray();
@@ -454,7 +456,7 @@ class CallRecordingController extends Controller
 			$callData = [];
 
 			for ($i = 0; $i < count($userData); $i++) {
-				array_push($callData, [$userData[$i]['agent_name'],  $userData[$i]['agent_phone_number'],  $userData[$i]['call_count'], $userData[$i]['total_durations'], $userData[$i]['avg_durations'],  isset($userData[$i]['completed']) ? $userData[$i]['completed'] : 0,isset($userData[$i]['no answer']) ? $userData[$i]['no answer'] : 0,isset($userData[$i]['busy']) ? $userData[$i]['busy'] : 0, isset($userData[$i]['failed']) ? $userData[$i]['failed'] : 0]);
+				array_push($callData, [$userData[$i]['agent_name'],  $userData[$i]['agent_phone_number'],  $userData[$i]['call_count'], $userData[$i]['total_durations'], $userData[$i]['avg_durations'],  isset($userData[$i]['completed']) ? $userData[$i]['completed'] : 0,isset($userData[$i]['no answer']) ? $userData[$i]['no answer'] : 0,isset($userData[$i]['busy']) ? $userData[$i]['busy'] : 0, isset($userData[$i]['failed']) ? $userData[$i]['failed'] : 0, isset($userData[$i]['client-hangup']) ? $userData[$i]['client-hangup'] : 0]);
 				$userIdData .= ($i == 0) ? $userData[$i]['user_id'] : ',' . $userData[$i]['user_id'];
 			}
 		}
@@ -469,7 +471,7 @@ class CallRecordingController extends Controller
 
 		$callData = [];
 
-		$callRecordQuery = CallRecording::select('id', 'user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction','date_time','dial_call_duration','call_recording_link')->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
+		$callRecordQuery = CallRecording::select('id', 'call_sid','user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction','date_time','dial_call_duration','call_recording_link')->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
 
 		if (isset($queryParam['zone']) && $queryParam['zone']) {
 			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
@@ -501,6 +503,7 @@ class CallRecordingController extends Controller
 		if (isset($queryParam['call_status']) && $queryParam['call_status'] != "undefined" && $queryParam['call_status']) {	
 			$callRecordQuery = $callRecordQuery->whereIn('call_status', explode(",",$queryParam['call_status']));
 		}
+		$callRecordQuery =  $callRecordQuery->orderBy('created_at', 'desc');
 		$userData = $callRecordQuery->get();
 		for ($i = 0; $i < count($userData); $i++) {
 			if(strtolower($userData[$i]['call_direction']) === 'outgoing'){
@@ -512,7 +515,7 @@ class CallRecordingController extends Controller
 			if($userData[$i]['call_recording_link'] != '-'){
 				$link  = "<audio controls><source src='".$userData[$i]['call_recording_link']."'> </audio>";
 			}
-			array_push($callData, [$userData[$i]['agent_name'],$userData[$i]['agent_phone_number'],$cust_number, Date("Y-m-d Hj:i:s",strtotime($userData[$i]['date_time'])),$userData[$i]['call_direction'], $userData[$i]['call_status'], $userData[$i]['call_sid'], $userData[$i]['call_duration'], $userData[$i]['dial_call_duration'],
+			array_push($callData, [$userData[$i]['agent_name'],$userData[$i]['agent_phone_number'],$cust_number, Date("Y-m-d H:i:s",strtotime($userData[$i]['date_time'])),$userData[$i]['call_direction'], ucwords($userData[$i]['call_status']), $userData[$i]['call_sid'], $userData[$i]['call_duration'], $userData[$i]['dial_call_duration'],
 			 $link]);
 		}
 		return response()->json($callData);

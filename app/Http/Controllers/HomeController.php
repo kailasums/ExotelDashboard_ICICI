@@ -31,7 +31,8 @@ class HomeController extends Controller
 
     public function resetPassword()
     {
-        return view('reset-password');
+        $title = "Reset Password";
+        return view('reset-password', ["title"=> $title]);
     }
 
     public function updatepassword(Request $request)
@@ -51,7 +52,7 @@ class HomeController extends Controller
         //^[a-zA-Z0-9]{8,16}$
         $validatedData = $request->validate([
             'current-password' => 'required',
-            'new-password' => 'required|string|min:8|max:15|regex:/^[a-zA-Z0-9].{8,15}$/i',
+            'new-password' => ["required","string","min:8","max:15","regex:/(?=^.{8,15}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*()_+}{&quot;:;'?\/&gt;.&lt;,])(?!.*\s).*$/"],
         ]);
         // dd($validatedData);
         //Change Password

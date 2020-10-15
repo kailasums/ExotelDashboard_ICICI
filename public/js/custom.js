@@ -1,8 +1,5 @@
 $(document).ready(function() {
-    // $( function() {
-    //     $( "#datepickerFilter1" ).datepicker();
-    //   } );
-
+    
     function showDatatable(element, urlParam, flag) {
         $.ajax({
             url: flag ? createUrlParam(urlParam, targetSummaryElementArray) : urlParam,
@@ -15,11 +12,16 @@ $(document).ready(function() {
                     cache: false,
                     bFilter: false,
                     bInfo: false,
-                    bDestroy: true
+                    bDestroy: true,
+                    ordering: false
                 })
             }
         })
     }
+
+    $("#reset-link-filter").on("click",function(){
+        
+    });
 
     function detailDataTable(data) {
         $('#example1').DataTable({
@@ -29,20 +31,21 @@ $(document).ready(function() {
             cache: false,
             bDestroy: true,
             bFilter: false,
-            bInfo: false
+            bInfo: false,
+            //ordering: false
         })
     }
     const targetElementArray = ['zone', 'region', 'branch', 'user', 'call_direction']
     const targetSummaryElementArray = ['zone_summary', 'region_summary', 'branch_summary', 'call_direction_summary', 'user_summary', 'StartDate', 'EndDate']
     const targetdetailedElementArray = ['call_status', 'zone', 'region', 'branch', 'call_direction', 'user', 'StartDate', 'EndDate']
 
-    if (window.location.pathname === '/pie-chart') {
+    if (window.location.pathname === '/dashboard') {
         google.load('visualization', '1', { packages: ['corechart'] })
         google.setOnLoadCallback(selectAjaxOption)
-        $('#example').DataTable();
+        $('#example').DataTable({ordering:false});
         $('#example1').DataTable();
         setTimeout(function() {
-            selectAjaxOption('pie-chart', 'call_direction', 'incoming', targetElementArray)
+            selectAjaxOption('dashboard', 'call_direction', 'incoming', targetElementArray)
             showDatatable('example', 'call-record-data', true)
         }, 1000)
 
@@ -59,10 +62,18 @@ $(document).ready(function() {
     function setStartDate() {
         const EndDate = $('#datepickerFilter2').val()
         var d = new Date(EndDate)
-        var StartDate = formatDate(new Date(d.setDate(d.getDate() - 10)))
+        var StartDate = EndDate//formatDate(new Date(d.setDate(d.getDate() - 10)))
         $('#datepickerFilter1').val(StartDate)
         $('#datepickerFilter1').prop('max', EndDate)
         $('#datepickerFilter1').prop('min', StartDate)
+    }
+
+    function checkDateDiff(startDate, endDate) {
+        const date1 = new Date(startDate);
+        const date2 = new Date(endDate);
+        const diffTime = Math.abs(date2 - date1);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays;
     }
 
     function formatDate(newDate) {
@@ -79,12 +90,20 @@ $(document).ready(function() {
     })
 
     $('#datepickerFilter1').on('change', function() {
-        showDatatable('example', 'call-record-data', true);
-        selectAjaxOption('user-call-detail', 'startDate', $(this).val(), targetdetailedElementArray, true, false)
+        const days = checkDateDiff($(this).val(), $('#datepickerFilter2').val());
+        if (days > 10) {
+            $(".date_diff").text("Date Difference is greater then 10 days");
+            $(".date_diff").addClass("error text-danger");
+            setStartDate();
+        } else {
+            $("#errorDate").text("");
+            showDatatable('example', 'call-record-data', true);
+            selectAjaxOption('user-call-detail', 'startDate', $(this).val(), targetdetailedElementArray, true, false)
+        }
     })
 
     $("select[name='zone']").change(function() {
-        selectAjaxOption('pie-chart', 'zone', $(this).val(), targetElementArray)
+        selectAjaxOption('dashboard', 'zone', $(this).val(), targetElementArray)
         $("select[name='zone_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'zone_summary', $(this).val(), targetSummaryElementArray, true)
         selectAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray, true, false)
@@ -95,16 +114,29 @@ $(document).ready(function() {
         //}, 1000)
     })
 
+    // $("select[name='zone_summary']").change(function() {
+    //     alert("11")
+    //     $("select[name='zone']").val($(this).val()); 
+    //     // selectAjaxOption('pie-chart', 'zone', $(this).val(), targetElementArray)
+    //     // $("select[name='zone_summary']").val($(this).val())
+    //     // selectAjaxOption('drop-down', 'zone_summary', $(this).val(), targetSummaryElementArray, true)
+    //     // selectAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray, true, false)
+
+    //     //setTimeout(function() {
+    //     //var user_id = $("input[name='user-detail']").val()
+    //     //userDetailTable('user-call-detail', '', user_id)
+    //     //}, 1000)
+    // })
     $("select[name='region']").change(function() {
-        selectAjaxOption('pie-chart', 'region', $(this).val(), targetElementArray)
+        selectAjaxOption('dashboard', 'region', $(this).val(), targetElementArray)
         $("select[name='region_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'region_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'region', $(this).val(), targetdetailedElementArray, true)
+        selectAjaxOption('user-call-detail', 'region', $(this).val(), targetdetailedElementArray, true,false)
 
     })
 
     $("select[name='branch']").change(function() {
-        selectAjaxOption('pie-chart', 'branch', $(this).val(), targetElementArray)
+        selectAjaxOption('dashboard', 'branch', $(this).val(), targetElementArray)
         $("select[name='branch_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'branch_summary', $(this).val(), targetSummaryElementArray, true)
         selectAjaxOption('user-call-detail', 'branch', $(this).val(), targetdetailedElementArray, true, false)
@@ -112,7 +144,7 @@ $(document).ready(function() {
     })
 
     $("select[name='call_direction']").change(function() {
-        selectAjaxOption('pie-chart', 'call_direction', $(this).val(), targetElementArray)
+        selectAjaxOption('dashboard', 'call_direction', $(this).val(), targetElementArray)
         $("select[name='call_direction_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'call_direction_summary', $(this).val(), targetSummaryElementArray, true)
         selectAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray, true, false)
@@ -120,10 +152,10 @@ $(document).ready(function() {
     })
 
     $("select[name='user']").change(function() {
-        selectAjaxOption('pie-chart', 'user', $(this).val(), targetElementArray)
+        selectAjaxOption('dashboard', 'user', $(this).val(), targetElementArray)
         $("select[name='user_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'user_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'user', $(this).val(), targetdetailedElementArray, true)
+        selectAjaxOption('user-call-detail', 'user', $(this).val(), targetdetailedElementArray, true, false)
 
     })
 
@@ -179,12 +211,15 @@ $(document).ready(function() {
         var htmlElement = "<ul>"
         callData.map(function(entry, index) {
             if (index !== 0) {
-                const percentage = (entry[1] / totalSum) * 100
-                htmlElement += "<li><p style='right:100px;'>" + entry[0] + ":" + percentage.toFixed(2).toString() + "</p></li>"
+                const percentage = entry[1]; //(entry[1] / totalSum) * 100
+                // htmlElement += "<li><p style='right:100px;'>" + entry[0] + ":" + percentage.toFixed(2).toString() + "</p></li>"
+                //const percentage = entry[1]; //(entry[1] / totalSum) * 100
+                htmlElement += "<li><p style='right:100px; font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;'>" + entry[0] + ' : <span style="font-weight: normal;">'+percentage+'</span></p></li>'
             }
         })
         htmlElement += "</ul>"
-        $("#records").html(htmlElement)
+        
+        $("#totalrecords").html(htmlElement)
     }
 
     function createOptions(data, selectOption, key) {

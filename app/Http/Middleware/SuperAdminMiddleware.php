@@ -20,7 +20,7 @@ class SuperAdminMiddleware
     public function handle($request, Closure $next)
     {
         if (Auth::user()->is_admin !== "YES") {
-            $this->redirect('/home');
+            return redirect('/dashboard');
             //abort(403, 'Unauthorized action.');
         }
 
