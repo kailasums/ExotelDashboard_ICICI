@@ -15,7 +15,7 @@ class AuthBasic
      */
     public function handle($request, Closure $next)
     {
-        if($request->header('Authorization')  !== env("AUTHENTICATIONKEY")){
+        if(($request->header('apikey')  !== env("apikey")) && $request->header('sid')  !== env("sid")){
             return response()->json(["message" => "Auth Failed"]);
         }else{
             return $next($request);
