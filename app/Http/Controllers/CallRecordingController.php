@@ -66,11 +66,13 @@ class CallRecordingController extends Controller
 	{
 		try {
 			$getData = $request->all();
-			Log::info("==========================ALL Request Body Incoming================================================");
-			Log::info(json_encode($request->all()));
-			Log::info("==========================ALL Request header Incoming================================================");
-			Log::info(json_encode($request->header()));
-			Log::info("==========================================================================");
+			if(env("ISWRITELOG") === "YES"){
+				Log::info("==========================ALL Request Body Incoming================================================");
+				Log::info(json_encode($request->all()));
+				Log::info("==========================ALL Request header Incoming================================================");
+				Log::info(json_encode($request->header()));
+				Log::info("==========================================================================");
+			}
 			//print_r($getData);exit();
 			$insertData = [];
 			$insertData['call_sid'] = $getData['CallSid'];
@@ -134,11 +136,13 @@ class CallRecordingController extends Controller
 		try {
 			// Now we can get the content from it
 			$postData = $request->getContent();
-			Log::info("==========================ALL Request Body Outgoing================================================");
-			Log::info(json_encode($request->all()));
-			Log::info("==========================ALL Request header Outgoing================================================");
-			Log::info(json_encode($request->header()));
-			Log::info("==========================================================================");
+			if(env("ISWRITELOG") === "YES"){
+				Log::info("==========================ALL Request Body Outgoing================================================");
+				Log::info(json_encode($request->all()));
+				Log::info("==========================ALL Request header Outgoing================================================");
+				Log::info(json_encode($request->header()));
+				Log::info("==========================================================================");
+			}
 			//print_r($postData);exit();
 			$insertData = [];
 			$insertData['call_sid'] = $this->get_string($postData, 'CallSid');
