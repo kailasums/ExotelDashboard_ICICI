@@ -138,9 +138,6 @@ class SendFileToProcess implements ShouldQueue
             forEach($levelGroup as $group){
                 
                 if($userDetails[$group] === 0){
-                    print_r($userDetails);
-                    echo $userDetails[$group];
-                    dd($group);
                     return false;
                 }
             }
@@ -277,7 +274,30 @@ class SendFileToProcess implements ShouldQueue
                 $arrTempDateEmailAddress['remark'] = 'Invalid designation mapped for user.';
                 $errorFlag = true;
             }
+            //dd($user);
+            //check email and phone number already exist or not 
+            $usersCheckDuplicate = new User();
+            if($userRecord['id'] != ''){
+                $usersCheckDuplicate = $usersCheckDuplicate->where("id" , "<>", $userRecord['id'] );  
+            }
             
+            $usersCheckDuplicate = $usersCheckDuplicate->where(function($q) use ($user){
+                $q->where('phone_number', $user['Number']) 
+                ->orWhere('email', $user['Email']);
+            } );
+            
+            
+            $usersCheckDuplicate = $usersCheckDuplicate->get()->toArray();
+            if(count($usersCheckDuplicate) > 0 ){
+                $errorFlag = true;
+                if($usersCheckDuplicate[0]['email']  === $userRecord['email']){
+                    $arrTempDateEmailAddress['remark'] = 'Email is already exist.';
+                }
+                if($usersCheckDuplicate[0]['phone_number']  === $userRecord['phone_number']){
+                    $arrTempDateEmailAddress['remark'] = 'Phone Number is already exist.';
+                }
+            }
+
             if($errorFlag){
                 $errorOverAllFlag  = true;
                 $arrTempDateEmailAddress['status'] = "error";
@@ -318,10 +338,8 @@ class SendFileToProcess implements ShouldQueue
         $arrRemovingEmailAdress = array_diff($arrAllEmailIDs,$arrUpdateDateEmailAddress);
         foreach($arrRemovingEmailAdress as $key => $emailAdress){
             if($arrEmail[$emailAdress]['is_admin'] !== 'YES'){
-                $users = User::where('email', $emailAdress)
-                        ->delete();
-                $users = UsersLog::where('email', $emailAdress)
-                        ->delete();
+                $users = User::where('email', $emailAdress)->forcedelete();
+                $users = UsersLog::where('email', $emailAdress)->forcedelete();
             }
         }
         
@@ -333,7 +351,7 @@ class SendFileToProcess implements ShouldQueue
      */
 
     private function addHierachyData($groupData){
-       // return true;
+        //return true;
         $hierachyData = [];
         forEach($groupData as $group){    
             if($group['Group4'] && $group['Group4'] != null) {

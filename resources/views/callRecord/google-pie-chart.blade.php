@@ -253,7 +253,7 @@
                                                                     <th>No Answer</th>
                                                                     <th>Busy</th>
                                                                     <th>Failed</th>
-                                                                    <th>Call-hangup</th>
+                                                                    <!-- <th>Call-hangup</th> -->
                                                                 </tr>
                                                             </thead>
                                                             <!-- <tfoot>

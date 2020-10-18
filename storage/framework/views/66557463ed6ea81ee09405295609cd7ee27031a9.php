@@ -27,6 +27,7 @@
     <script src="<?php echo e(URL::asset('js/tether.min.js')); ?>"></script>
     <script src="<?php echo e(URL::asset('js/bootstrap-material-design.iife.min.js')); ?>"></script>
     <script src="<?php echo e(URL::asset('js/jquery.slimscroll.js')); ?>"></script>
+    <script type="text/javascript" src="<?php echo e(URL::asset('js/custom.js')); ?>"></script>
 </body>
 
 </html>

@@ -1,3 +1,6 @@
+<style>
+.action a { margin : 10px; }
+</style>
 <?php $__env->startSection('content'); ?>
 
 <script type="text/javascript">
@@ -68,7 +71,7 @@
                                     <thead>
                                         <tr>
                                             <th><a href="/backend/web/index.php?r=import-users%2Findex&amp;sort=CsvFilePath"
-                                                    data-sort="CsvFilePath">CSV File</a></th>
+                                                    data-sort="CsvFilePath">Excel File</a></th>
                                             <th><a href="/backend/web/index.php?r=import-users%2Findex&amp;sort=RequestedOn"
                                                     data-sort="RequestedOn">Requested On</a></th>
                                             <th><a href="/backend/web/index.php?r=import-users%2Findex&amp;sort=Status"
@@ -104,9 +107,9 @@
                                                                 }
                                                                  
                                                                 if($fileUploadRecord[$i]['upload_status'] === 'completed' || $fileUploadRecord[$i]['upload_status'] === 'completed-with-error'){
-                                                                    echo "<a target='blank' href='/admin/export-log'>Log File</a>|";  
+                                                                    echo "<a style='margin:10px;' target='blank' href='/admin/export-log'>Log File</a>|";  
                                                                     if(env("DOWNLOADPASSWORDLINK")  === "YES"){
-                                                                        echo "<a target='blank' href='/admin/export-password'>PasswordFile</a>";    
+                                                                        echo "<a style='margin:10px;' target='blank' href='/admin/export-password'>PasswordFile</a>";    
                                                                     }
                                                                 }
                                                             }

@@ -16,10 +16,10 @@ class CreateUsersLogTable extends Migration
         Schema::create('users_logs', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email',255)->unique();
+            $table->string('email',255);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone_number',15)->unique();
+            $table->string('phone_number',15);
             $table->enum('is_admin',['YES','NO'])->default('NO');
             $table->enum('can_make_call',['YES','NO'])->default('NO');
             $table->enum('portal_access',['YES','NO'])->default('NO');

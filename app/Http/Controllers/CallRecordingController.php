@@ -471,7 +471,7 @@ class CallRecordingController extends Controller
 			$callData = [];
 
 			for ($i = 0; $i < count($userData); $i++) {
-				array_push($callData, [$userData[$i]['agent_name'],  $userData[$i]['agent_phone_number'],  $userData[$i]['call_count'], $userData[$i]['total_durations'], $userData[$i]['avg_durations'],  isset($userData[$i]['completed']) ? $userData[$i]['completed'] : 0,isset($userData[$i]['no answer']) ? $userData[$i]['no answer'] : 0,isset($userData[$i]['busy']) ? $userData[$i]['busy'] : 0, isset($userData[$i]['failed']) ? $userData[$i]['failed'] : 0, isset($userData[$i]['client-hangup']) ? $userData[$i]['client-hangup'] : 0]);
+				array_push($callData, [$userData[$i]['agent_name'],  $userData[$i]['agent_phone_number'],  $userData[$i]['call_count'], $userData[$i]['total_durations'], $userData[$i]['avg_durations'],  isset($userData[$i]['completed']) ? $userData[$i]['completed'] : 0,isset($userData[$i]['no answer']) ? $userData[$i]['no answer'] : 0,isset($userData[$i]['busy']) ? $userData[$i]['busy'] : 0, isset($userData[$i]['failed']) ? $userData[$i]['failed'] : 0]);//, isset($userData[$i]['client-hangup']) ? $userData[$i]['client-hangup'] : 0
 				$userIdData .= ($i == 0) ? $userData[$i]['user_id'] : ',' . $userData[$i]['user_id'];
 			}
 		}
