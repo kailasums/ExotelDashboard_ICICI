@@ -5,7 +5,7 @@
                 <div class="login-screen-logo text-center">
                     <img src="<?php echo e(URL::asset('images/logo.png')); ?>" />
                 </div>
-                <h1>Login</h1>
+                <h1>User Login</h1>
                 <div class="login-fields">
                     <form method="POST" action="<?php echo e(route('login')); ?>">
                         <?php echo csrf_field(); ?>
@@ -88,4 +88,5 @@ unset($__errorArgs, $__bag); ?>
         <!-- <p class="text-center">© 2020 Tata Sky. All Rights Reserved.</p> -->
     </section>
     <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.common-auth', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/ISPCalling/resources/views/auth/login.blade.php ENDPATH**/ ?>

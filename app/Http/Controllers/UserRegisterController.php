@@ -210,18 +210,19 @@ class UserRegisterController extends Controller
     }
 
 
-    public function backCallLogs(){
+    public function backCallLogs(Request $request){
         $arrUsers = User::get()->toArray();
-        for($i=0;$i<500; $i++){
+        for($i=0;$i<($request->get('incoming') ? $request->get('incoming') : 0); $i++){
 
-        
-        $rand = rand(2,4);
+        $rand = rand(2,count($arrUsers)-1);
         $status = ['failed','completed','busy','no answered'];
         $callLogs=[];
         $callLogs['from_number'] = '111111111';
         $callLogs['to_number'] = $arrUsers[$rand]['phone_number'];
+        $callLogs['date_time'] = Date("Y-m-d H:i:s");
         $callLogs['call_duration'] = "".rand(100,300);
-        $callLogs['call_status'] = $status[0];
+        $callLogs['dial_call_duration'] = "".rand(100,300);
+        $callLogs['call_status'] = ($request->get('call_status')) ? $request->get('call_status') : 'busy';
         $callLogs['call_direction'] = "Incoming";
         $callLogs['call_recording_link'] = "-";
         $callLogs['call_sid'] = "123456780scxrfdxgfdhfdhgdfhfdgdf";
@@ -236,17 +237,19 @@ class UserRegisterController extends Controller
         \App\CallRecording::create($callLogs);
         }
         
-        for($i=0;$i<750; $i++){
+        for($i=0;$i<($request->get('outgoing') ? $request->get('outgoing') : 0); $i++){
 
         
-            $rand = rand(2,4);
+            $rand = rand(2,count($arrUsers)-1);
             $status = ['Failed','Completed','Busy','No Answer'];
             $callLogs=[];
             $callLogs['from_number'] = $arrUsers[$rand]['phone_number'];
             $callLogs['to_number'] = '111111111';
             $callLogs['call_duration'] = "".rand(100,300);
-            $callLogs['call_status'] = $status[0];
+            $callLogs['dail_call_duration'] = "".rand(100,300);
+            $callLogs['call_status'] = ($request->get('call_status')) ? $request->get('call_status') : 'busy';
             $callLogs['call_direction'] = "Outgoing";
+            $callLogs['date_time'] = Date("Y-m-d H:i:s");
             $callLogs['call_recording_link'] = "-";
             $callLogs['call_sid'] = "123456780scxrfdxgfdhfdhgdfhfdgdf";
             $callLogs['agent_name'] = $arrUsers[$rand]['name'];
