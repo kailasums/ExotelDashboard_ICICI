@@ -88,7 +88,7 @@
                                                 
                                                 if($fileUploadRecord[$i]['file_name']){
                                                     if($i === 0 ){
-                                                        echo "<a target='blank' href='".url("/storage/".env("IMPORTFILESTORAGENAME"))."'>".$fileUploadRecord[$i]['file_name']."</a>";
+                                                        echo "<a target='blank' href='".url("/storage/".$fileUploadRecord[$i]['file_name'])."'>".$fileUploadRecord[$i]['file_name']."</a>";
                                                     }else{
                                                         echo $fileUploadRecord[$i]['file_name'];
                                                     }
