@@ -234,7 +234,7 @@
                                                 <div id="datepicker"></div>
                                                 <div id="datepicker1"></div>
                                                 
-                                                <a id="reset-link-filter" class="reset-link" href="javascript:void(0)">Reset All</a>
+                                                <a id="reset-link-filter" class="reset-link" href="javascript:void(0)">Reset Date</a>
                                                 <div id="errorDate"><p class="date_diff"></p></div>
                                             </div>
                                             <div class="calls-table">

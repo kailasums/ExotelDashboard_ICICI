@@ -13,7 +13,7 @@ $(document).ready(function() {
                     bFilter: false,
                     bInfo: false,
                     bDestroy: true,
-                    ordering: false
+                    ordering: true
                 })
             }
         })
@@ -56,8 +56,10 @@ $(document).ready(function() {
         }, 1000)
         setStartDate();
     }
-    $('#datepickerFilter1').datepicker({ dateFormat: 'yy-mm-dd' });
-    $('#datepickerFilter2').datepicker({ dateFormat: 'yy-mm-dd' });
+    d = new Date();
+    d.setMonth(d.getMonth() - 3); 
+    $('#datepickerFilter1').datepicker({ dateFormat: 'yy-mm-dd' , minDate: d,  maxDate: new Date()});
+    $('#datepickerFilter2').datepicker({ dateFormat: 'yy-mm-dd' , minDate: d,  maxDate: new Date()});
 
     function setStartDate() {
         const EndDate = $('#datepickerFilter2').val()
@@ -67,6 +69,11 @@ $(document).ready(function() {
         $('#datepickerFilter1').prop('max', EndDate)
         $('#datepickerFilter1').prop('min', StartDate)
     }
+
+    $("#reset-link-filter").on("click",function(){
+        setStartDate();
+        $('#datepickerFilter2').trigger("change")
+    })
 
     function checkDateDiff(startDate, endDate) {
         const date1 = new Date(startDate);

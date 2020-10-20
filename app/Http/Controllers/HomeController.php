@@ -55,7 +55,7 @@ class HomeController extends Controller
             'new-password' => ["required","string","min:8","max:15"],
         ]);
         // /(?=^.{8,15}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*()_+}{&quot;:;'?\/&gt;.&lt;,])(?!.*\s).*$/
-        if(!preg_match('/(?=\^.{8,15}\$)(?=.\*\\d)(?=.\*[a-z])(?=.\*[A-Z])(?=.\*[!@#$%^&amp;*()_+}{&quot;:;\'?\/&gt;.&lt;,])(?!.\*\s).\*\$/', $request->get('new-password'))){
+        if(!preg_match('/(?=^.{8,15}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*()_+}{&quot;:;\'?\/&gt;.&lt;,])(?!.*\s).*$/', $request->get('new-password'))){
             return redirect()->back()->with("error",trans('resetpassword.passwordMatchString'));
         }
         // dd($validatedData);

@@ -391,7 +391,7 @@ table .empty{ font-family: robotoregular;}
 @media(max-width:1299px){
 	.list-view{ overflow-x: scroll;}
 	.grid-view{ padding-top: 15px; position: relative;}
-	.grid-view:after{ content: "Slide To Right"; position: absolute; left: 0; top: 0; font-family: robotoregular; font-size: 12px; color: #383838;}
+	.grid-view:after{ /* content: "Slide To Right"; */position: absolute; left: 0; top: 0; font-family: robotoregular; font-size: 12px; color: #383838;}
 	.grid-view:before{ content: '\0047'; font-family: 'glyphter'; font-size: 8px; position: absolute; top: 4px; left: 77px; transform: rotate(-90deg); text-shadow: 0 4px 0 rgba(56, 56, 56, 1);}
 	.wh-table{ width: 1100px; max-width: inherit;}
 	

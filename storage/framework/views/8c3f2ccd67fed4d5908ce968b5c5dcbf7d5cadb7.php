@@ -3,7 +3,7 @@
         <div class="site-login">
             <div class="login-inner-box">
                 <div class="login-screen-logo text-center">
-                    <img src="<?php echo e(URL::asset('images/logo.png')); ?>" />
+                    <a href="/home" > <img src="<?php echo e(URL::asset('images/logo.png')); ?>" /> </a>
                 </div>
                 <h1>User Login</h1>
                 <div class="login-fields">

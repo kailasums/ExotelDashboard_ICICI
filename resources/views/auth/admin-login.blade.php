@@ -4,7 +4,7 @@
         <div class="site-login">
             <div class="login-inner-box">
                 <div class="login-screen-logo text-center">
-                    <img src="{{URL::asset('images/logo.png')}}" />
+                    <a href="/home"> <img src="{{URL::asset('images/logo.png')}}" /> </a>
                 </div>
                 <h1>Admin Login</h1>
                 <div class="login-fields">

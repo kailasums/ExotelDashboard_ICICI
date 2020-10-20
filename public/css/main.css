@@ -2039,7 +2039,7 @@ table .empty {
         position: relative;
     }
     .grid-view:after {
-        content: "Slide To Right";
+        /* content: "Slide To Right"; */
         position: absolute;
         left: 0;
         top: 0;
