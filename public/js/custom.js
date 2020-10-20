@@ -245,6 +245,8 @@ $(document).ready(function() {
             var data = google.visualization.arrayToDataTable(JSON.parse(chart_values))
             var options = {
                 //title: 'Percentage of Call Record Status'
+                width: '100%',
+                height: '100%'
             }
             var chart = new google.visualization.PieChart(document.getElementById('pie_chart'))
             chart.draw(data, options)

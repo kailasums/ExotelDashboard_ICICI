@@ -2030,7 +2030,7 @@ table .empty {
     transition: opacity .1s linear 0s
 }
 
-@media(max-width:1299px) {
+@media screen and (min-width:768px) and (max-width:1299px) {
     .list-view {
         overflow-x: scroll;
     }
@@ -2075,6 +2075,12 @@ table .empty {
 }
 
 @media(max-width:767px) {
+    #filters{
+        min-height: 203px;
+    }
+    #statusOptionTab{
+        height: 132px;
+    }
     .site-login {
         margin-top: 0;
     }
@@ -2084,15 +2090,51 @@ table .empty {
     #header .navbar-brand {
         margin-left: 15px;
     }
+    
+    #pie_chart{
+        width: 300px !important;
+    }
+    .bigPieChart{
+        top:0;
+        left: 0;
+    }
+    .summeryLink{
+        margin-top: -6px;
+    }
+    .navbar-inverse .navbar-toggle .icon-bar{
+        background-color: #333;
+    }
+    .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus{
+        background-color: #fff;
+    }
+    .selectType{
+        padding: 0;
+    }
+    .selectType .select{
+        margin-top: 5px;
+    }
+    #import-users-listing-div .grid-view{
+        overflow-x: scroll;
+    }
+    .bg{
+        padding: 20px;
+    }
 }
 
 @media(max-width:580px) {
     .site-login {
         width: 90%;
     }
+    #pie_chart{
+        width: 300px !important;
+    }
 }
 
 @media(max-width:380px) {
+    #pie_chart{
+        width: 250px !important;
+        height:250px !important
+    }
     .site-login {
         margin-top: -30px;
     }
@@ -2100,3 +2142,4 @@ table .empty {
         padding: 30px 15px 10px;
     }
 }
+

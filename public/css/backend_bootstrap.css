@@ -6755,3 +6755,24 @@ button.close {
   }
 }
 /*# sourceMappingURL=bootstrap.css.map */
+@media screen and (max-width:767px){
+  #import-users-listing-div .grid-view{
+  overflow-x: scroll;
+}
+.bg{
+  padding: 20px;
+}
+.upload-field .input-group-btn{
+  right: 0 !important;
+}
+.profile-upload .uploadBtn .btn{
+  min-width: 100px;
+  margin-left: 40px;
+}
+.navbar-inverse .navbar-toggle .icon-bar{
+  background-color: #333;
+}
+.navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus{
+  background-color: #fff;
+}
+}

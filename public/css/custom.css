@@ -2105,3 +2105,8 @@ table .empty {
 .completed-ui{
     float: right;
 }
+
+#errorDate{
+    float: left;
+    width: 100%;
+}

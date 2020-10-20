@@ -1,5 +1,5 @@
 <?php $__env->startSection('content'); ?>
-<div class="wrap border-bottom">
+<div class="wrap">
     <header id="header">
         <nav id="w5" class="navbar-inverse navbar-fixed-top navbar">
             <div class="container">
@@ -86,8 +86,7 @@
                             </div>
 
 
-                            <div id="piechart-graph" class="graph-section in" style="background: white;
-    margin-bottom: 20px;">
+                            <div id="piechart-graph" class="graph-section in" style="background: white;margin-bottom: 20px;">
 
 
                                 <div class="row custom-padd">
@@ -185,7 +184,7 @@
                             </div> -->
                                         </div>
                                     </div>
-                                    <div class="col-md-10 pad-left">
+                                    <div class="col-md-10 ">
                                         <div class="calls-listing-table card">
                                             <div class="search-box">
                                                 <div class="form-group search-field" style="display:none">
@@ -244,9 +243,9 @@
                                                 <div class="input-group date"><input type="text" id="datepickerFilter2" class="form-control" name="EndDate" value="<?php echo e(date('Y-m-d')); ?>" data-date-container="#datepicker1" data-provide="#datepicker1"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
                                                 <div id="datepicker"></div>
                                                 <div id="datepicker1"></div>
-                                                <div id="errorDate"><p class="date_diff"></p></div>
+                                                
                                                 <a id="reset-link-filter" class="reset-link" href="javascript:void(0)">Reset All</a>
-
+                                                <div id="errorDate"><p class="date_diff"></p></div>
                                             </div>
                                             <div class="calls-table">
                                                 <div class="grid-view">
