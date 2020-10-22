@@ -80,7 +80,7 @@ class CallRecordingController extends Controller
 			$insertData['to_number'] = isset($getData['DialWhomNumber']) ? $getData['DialWhomNumber'] : "-";
 			$insertData['call_direction'] = "Incoming";
 			$insertData['call_recording_link'] = (isset($getData["RecordingUrl"])) ? $getData["RecordingUrl"] : "-";
-			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime($getData["Created"]));
+			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime(urldecode($getData["StartTime"])));
 			$insertData['dial_call_duration'] = $getData["DialCallDuration"];
 
 			if (strpos($request->path(), 'NoDial_Call_Details')) {
@@ -113,6 +113,7 @@ class CallRecordingController extends Controller
 			$insertData['group2'] = isset($userData['group2'])  ?  $userData['group2'] : 0 ;
 			$insertData['group3'] = ($userData['group3']) ?$userData['group3']: 0;
 			$insertData['group4'] = $userData['group4']? $userData['group4'] : 0; 
+			
 			$data = CallRecording::create($insertData);
 			$response['status'] = 200;
 			$response['data'] = $data;
@@ -152,7 +153,7 @@ class CallRecordingController extends Controller
 			$insertData['call_recording_link'] = $this->get_string($postData, 'RecordingUrl');;
 			$insertData['dial_call_duration'] = $this->get_string($postData, 'ConversationDuration');
 			$insertData['call_duration'] = $this->get_string($postData, 'Legs[0][OnCallDuration]');
-			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime($this->get_string($postData, 'StartTime')));
+			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime(urldecode($this->get_string($postData, 'StartTime'))));
 			$insertData['call_status'] = strtolower($this->get_string($postData, 'Legs[0][Status]'));
 			//print_r($insertData);exit();
 			$userData = User::where('phone_number', $insertData['from_number'])->first();
