@@ -70,7 +70,7 @@
 
                                 <div class="selectType col-md-2">
                                     <div class="select">
-                                        {!! Form::select('call_direction', (object) array_merge( [''=>'Call Direction'], (array) $call_direction), '',array('class' => 'user-regions-filter','form'=>"type")); !!}
+                                        {!! Form::select('call_direction', (object) array_merge( [''=>'CALL DIRECTION'], (array) $call_direction), '',array('class' => 'user-regions-filter','form'=>"type")); !!}
                                     </div>
                                 </div>
 

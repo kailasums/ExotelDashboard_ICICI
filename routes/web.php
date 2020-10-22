@@ -29,7 +29,7 @@ Route::group(['middleware' => [ 'superadmin']], function() {
     Route::get('/admin/export-password', 'UserRegisterController@exportPassword');
 });
 
-Route::group(['middleware' => ['user']], function() {
+//Route::group(['middleware' => ['user']], function() {
     Route::get('/home', function () {
         return redirect('dashboard');
       })->name('home');
@@ -37,7 +37,7 @@ Route::group(['middleware' => ['user']], function() {
     Route::get('drop-down', 'CallRecordingController@dropDownOption');
     Route::get('call-record-data','CallRecordingController@showData');
     Route::get('user-call-detail','CallRecordingController@detailList');
-});
+//});
 
 Route::get('call-recording', 'CallRecordingController@index');
 

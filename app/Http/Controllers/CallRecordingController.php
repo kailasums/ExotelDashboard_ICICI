@@ -21,7 +21,7 @@ class CallRecordingController extends Controller
 {
 	public function __construct()
 	{
-		$this->middleware('auth')->except(['store', 'show', 'storeFromGet']);
+		//$this->middleware('auth')->except(['store', 'show', 'storeFromGet']);
 	}
 
 
@@ -77,7 +77,7 @@ class CallRecordingController extends Controller
 			$insertData = [];
 			$insertData['call_sid'] = $getData['CallSid'];
 			$insertData['from_number'] = $getData['CallFrom'];
-			$insertData['to_number'] = $getData['CallTo'];
+			$insertData['to_number'] = isset($getData['DialWhomNumber']) ? $getData['DialWhomNumber'] : "-";
 			$insertData['call_direction'] = "Incoming";
 			$insertData['call_recording_link'] = (isset($getData["RecordingUrl"])) ? $getData["RecordingUrl"] : "-";
 			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime($getData["Created"]));
@@ -100,19 +100,19 @@ class CallRecordingController extends Controller
 
 			$userData = User::where('phone_number', $getData['CallTo'])->first();
 
-			if (!$userData) {
-				$response['status'] = 400;
-				$response['error'] = "No Records match with phone number";
-				return response()->json($response);
-			}
+			// if (!$userData) {
+			// 	$response['status'] = 400;
+			// 	$response['error'] = "No Records match with phone number";
+			// 	return response()->json($response);
+			// }
 
-			$insertData['agent_name'] = $userData['name'];
-			$insertData['agent_phone_number'] = $userData['phone_number'];
-			$insertData['user_id'] = $userData['id'];
-			$insertData['group1'] = $userData['group1'];
-			$insertData['group2'] = $userData['group2'];
-			$insertData['group3'] = $userData['group3'];
-			$insertData['group4'] = $userData['group4'];
+			$insertData['agent_name'] = isset($userData['name']) ? $userData['name'] : '-';
+			$insertData['agent_phone_number'] = isset($userData['phone_number']) ? $userData['phone_number'] : "-" ;
+			$insertData['user_id'] = isset($userData['id']) ? $userData['id'] : 0;
+			$insertData['group1'] = isset($userData['group1']) ?  $userData['group1'] : 0 ;
+			$insertData['group2'] = isset($userData['group2'])  ?  $userData['group2'] : 0 ;
+			$insertData['group3'] = ($userData['group3']) ?$userData['group3']: 0;
+			$insertData['group4'] = $userData['group4']? $userData['group4'] : 0; 
 			$data = CallRecording::create($insertData);
 			$response['status'] = 200;
 			$response['data'] = $data;
@@ -157,19 +157,19 @@ class CallRecordingController extends Controller
 			//print_r($insertData);exit();
 			$userData = User::where('phone_number', $insertData['from_number'])->first();
 
-			if (!$userData) {
-				$response['status'] = 400;
-				$response['error'] = "No Records match with phone number";
-				return response()->json($response);
-			}
+			// if (!$userData) {
+			// 	$response['status'] = 400;
+			// 	$response['error'] = "No Records match with phone number";
+			// 	return response()->json($response);
+			// }
 
-			$insertData['agent_name'] = $userData['name'];
-			$insertData['agent_phone_number'] = $userData['phone_number'];
-			$insertData['user_id'] = $userData['id'];
-			$insertData['group1'] = $userData['group1'];
-			$insertData['group2'] = $userData['group2'];
-			$insertData['group3'] = $userData['group3'];
-			$insertData['group4'] = $userData['group4'];
+			$insertData['agent_name'] = isset($userData['name'])  ? $userData['name'] : '-';
+			$insertData['agent_phone_number'] = isset($userData['phone_number']) ? $userData['phone_number'] : '-';
+			$insertData['user_id'] = isset($userData['id']) ?  $userData['id'] : 0;
+			$insertData['group1'] = isset($userData['group1']) ? $userData['group1'] :0 ;
+			$insertData['group2'] = isset($userData['group2']) ? $userData['group2'] : 0;
+			$insertData['group3'] = isset($userData['group3']) ? $userData['group3'] : 0 ;
+			$insertData['group4'] = isset($userData['group4']) ? $userData['group4'] : 0 ;
 			//print_r($insertData);exit();
 			$data = CallRecording::create($insertData);
 			$response['status'] = 200;
@@ -244,7 +244,6 @@ class CallRecordingController extends Controller
 	 */
 	public function pieChart(Request $request)
 	{
-
 		$queryParam = $request->all();
 		$user  =  Session::get('user');
 		$selectOption = [];
@@ -281,13 +280,18 @@ class CallRecordingController extends Controller
 				$selectOption['call_direction'] = $queryParam['call_direction'];
 			}
 
-
+			
 			if (isset($queryParam['user']) && $queryParam['user']) {
 				$userId = User::find($queryParam['user']);
-				if ($queryParam['call_direction'] === 'Incoming') {
-					$dataQuery = $dataQuery->where('from_number', $userId->phone_number);
-				} else {
-					$dataQuery = $dataQuery->where('to_number', $userId->phone_number);
+				switch($queryParam['call_direction']){
+					case 'Incoming':
+						$dataQuery = $dataQuery->where('from_number', $userId->phone_number);	
+					break;
+
+					case 'Outgoing':
+						$dataQuery = $dataQuery->where('to_number', $userId->phone_number);	
+					break;
+
 				}
 				$selectOption['user'] = $queryParam['user'];
 			}

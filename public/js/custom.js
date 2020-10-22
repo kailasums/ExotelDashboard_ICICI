@@ -19,9 +19,6 @@ $(document).ready(function() {
         })
     }
 
-    $("#reset-link-filter").on("click",function(){
-        
-    });
 
     function detailDataTable(data) {
         $('#example1').DataTable({
@@ -179,10 +176,18 @@ $(document).ready(function() {
                 async: false,
                 success: function(data) {
                     if (targetElement && userDetailCall) {
+                        var showName = {
+                            zone : "Zone",
+                            region : "Region",
+                            user : "PB",
+                            branch : "Branch"
+                        }
+                        
                         for (let i = 0; i < targetElement.length; i++) {
                             if (element !== targetElement[i]) {
+                                // alert(targetElement[i])
                                 $("select[name='" + targetElement[i] + "'").html('')
-                                $("select[name='" + targetElement[i] + "'").html('<option value="" selected="selected">' + targetElement[i].toUpperCase() + '</option><optgroup label="items">' + createOptions(data[targetElement[i]], data.selectOption ? data.selectOption[targetElement[i]] : '', targetElement[i]) + '</optgroup>')
+                                $("select[name='" + targetElement[i] + "'").html('<option value="" selected="selected">' + showName[targetElement[i]].toUpperCase() + '</option><optgroup label="items">' + createOptions(data[targetElement[i]], data.selectOption ? data.selectOption[targetElement[i]] : '', targetElement[i]) + '</optgroup>')
                             }
                         }
                     }
@@ -253,7 +258,8 @@ $(document).ready(function() {
             var options = {
                 //title: 'Percentage of Call Record Status'
                 width: '100%',
-                height: '100%'
+                height: '100%',
+                legend: {position: 'none'}
             }
             var chart = new google.visualization.PieChart(document.getElementById('pie_chart'))
             chart.draw(data, options)
