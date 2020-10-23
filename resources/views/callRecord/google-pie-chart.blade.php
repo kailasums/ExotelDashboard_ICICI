@@ -233,7 +233,7 @@
                                                 <div class="input-group date"><input type="text" id="datepickerFilter2" class="form-control" name="EndDate" value="{{date('Y-m-d')}}" data-date-container="#datepicker1" data-provide="#datepicker1"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
                                                 <div id="datepicker"></div>
                                                 <div id="datepicker1"></div>
-                                                
+                                                <a id="applydatefilter" class="reset-link" href="javascript:void(0)">Apply Date Filter</a> &nbsp; &nbsp;&nbsp;&nbsp;
                                                 <a id="reset-link-filter" class="reset-link" href="javascript:void(0)">Reset Date</a>
                                                 <div id="errorDate"><p class="date_diff"></p></div>
                                             </div>

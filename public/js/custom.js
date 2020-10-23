@@ -69,7 +69,7 @@ $(document).ready(function() {
 
     $("#reset-link-filter").on("click",function(){
         setStartDate();
-        $('#datepickerFilter2').trigger("change")
+        $('#applydatefilter').trigger("click")
     })
 
     function checkDateDiff(startDate, endDate) {
@@ -87,14 +87,14 @@ $(document).ready(function() {
         return year + '-' + month + '-' + day
     }
 
-    $('#datepickerFilter2').on('change', function() {
-        setStartDate()
-        showDatatable('example', 'call-record-data', true);
-        selectAjaxOption('user-call-detail', 'endDate', $(this).val(), targetdetailedElementArray, true, false)
-    })
+    // $('#apply-date-filter').on('change', function() {
+    //     setStartDate()
+    //     showDatatable('example', 'call-record-data', true);
+    //     selectAjaxOption('user-call-detail', 'endDate', $(this).val(), targetdetailedElementArray, true, false)
+    // })
 
-    $('#datepickerFilter1').on('change', function() {
-        const days = checkDateDiff($(this).val(), $('#datepickerFilter2').val());
+    $('#applydatefilter').on('click', function() {
+        const days = checkDateDiff($("#datepickerFilter1").val(), $('#datepickerFilter2').val());
         if (days > 10) {
             $(".date_diff").text("Date Difference is greater then 10 days");
             $(".date_diff").addClass("error text-danger");
@@ -102,7 +102,7 @@ $(document).ready(function() {
         } else {
             $("#errorDate").text("");
             showDatatable('example', 'call-record-data', true);
-            selectAjaxOption('user-call-detail', 'startDate', $(this).val(), targetdetailedElementArray, true, false)
+            selectAjaxOption('user-call-detail', 'startDate', $("#datepickerFilter1").val(), targetdetailedElementArray, true, false)
         }
     })
 

@@ -98,7 +98,7 @@ class CallRecordingController extends Controller
 				$insertData['call_duration'] = $getData["Legs"][0]['OnCallDuration'];
 			}
 
-			$userData = User::where('phone_number', $getData['CallTo'])->first();
+			$userData = User::where('phone_number', $insertData['to_number'])->first();
 
 			// if (!$userData) {
 			// 	$response['status'] = 400;
@@ -251,6 +251,7 @@ class CallRecordingController extends Controller
 		if ($request->ajax()) {
 			$totalCalls =  CallRecording::group($user->group4)->whereDate('created_at', '=', Carbon::today())->count();
 			$totalDurationCalls = CallRecording::group($user->group4)->whereDate('created_at', '=', Carbon::today())->sum('call_duration');
+			
 			$avgCalls = 0;
 			if($totalDurationCalls) {
 				$avgCalls = round($totalDurationCalls / $totalCalls);
@@ -296,7 +297,6 @@ class CallRecordingController extends Controller
 				}
 				$selectOption['user'] = $queryParam['user'];
 			}
-
 			$data = $dataQuery->get();
 
 			$array[] = ['Call_Status', 'Number'];
@@ -440,8 +440,9 @@ class CallRecordingController extends Controller
 		$offSet = isset($queryParam['start']) ? $queryParam['start'] : 0;
 
 		$callData = [];
-
+		$user  =  Session::get('user'); 
 		$callRecordQuery = CallRecording::select('user_id', 'agent_name', 'agent_phone_number', 	DB::raw('COUNT(call_status) as call_status_count'), 'call_status',	DB::raw('SUM(call_duration) as sum_call_status'))->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
+		$callRecordQuery =  $callRecordQuery->where('group4', $user->group4);
 		if (isset($queryParam['zone_summary']) && $queryParam['zone_summary']) {
 			$callRecordQuery =  $callRecordQuery->where('group3', $queryParam['zone_summary']);
 		}
