@@ -745,6 +745,15 @@ a.blue {
     margin-top: 13px;
     margin-left: 3px;
 }
+.search-box .reset-link{
+    color:#fff;
+    padding: 6px 8px;
+    font-size: 12px;
+    min-height: 29px;
+    margin-top: 0;
+    font-weight: 600;
+    min-width: auto;
+}
 
 #statusOptionTab {
     height: 130px;
@@ -2030,7 +2039,18 @@ table .empty {
     -webkit-transition: opacity .1s linear 0s;
     transition: opacity .1s linear 0s
 }
-
+#totalrecords{
+    width: 220px;
+    float: left;
+}
+#piechart-graph .chart-card{
+    max-width: 790px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    min-height: 400px;
+}
 @media(max-width:1299px) {
     .list-view {
         overflow-x: scroll;
@@ -2076,6 +2096,21 @@ table .empty {
 }
 
 @media(max-width:767px) {
+    #piechart-graph .chart-card{
+        flex-direction: column;
+        padding-bottom: 25px;
+    }
+    #totalrecords ul,#piechart2 ul {
+        text-align: center;
+    }
+    #totalrecords ul li, #piechart2 ul li{display: inline-block; padding: 0 5px;}
+    .grid-view:before{
+        display: none;
+    }
+    #totalrecords{
+        margin-top: 25px;
+        width: 100%;
+    }
     .site-login {
         margin-top: 0;
     }
@@ -2090,6 +2125,13 @@ table .empty {
 @media(max-width:580px) {
     .site-login {
         width: 90%;
+    }
+    
+}
+@media(max-width:540px) {
+    .dateRang{
+       float: left;
+       width: 100%;
     }
 }
 

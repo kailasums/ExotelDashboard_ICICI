@@ -90,32 +90,24 @@
 
 
                                 <div class="row custom-padd">
-                                    <div class="col-md-4">
-                                        <div class="card">
-                                            <!--  <input type="hidden" name="googlechart1" value='[["Status","Calls"]]'> -->
+                                   
+                                    <div class="col-md-12">
+                                        <div class="chart-card">
                                             <div id="piechart4" class="">
                                                 <div id="div-chartw0" >
-                                                    <div id="totalrecords" class="completed-ui" style="margin-top: 20%;"></div>
+                                                    <div id="totalrecords" class="completed-ui"></div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <div class="card">
                                             <div id="piechart" class="bigPieChart">
                                                 <div id="div-chartw1">
                                                     <div class="panel-body d-inline-block align-items-top" align="center">
-                                                        <div id="pie_chart" style="width:700px; height:300px;">
+                                                        <div id="pie_chart" style="width:300px; height:300px;">
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="card">
                                             <div id="piechart2" class="">
-                                                <div id="div-chartw2" style="margin-top: 20%;">
+                                                <div id="div-chartw2">
                                                     <ul>
                                                         <li>
                                                             <p style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Total Calls : <span style="font-weight: normal;" id="totalCalls"></span></p>
@@ -131,6 +123,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                   
                                     <div class="col-md-3" style="display:none">
                                         <div class="card">
                                             <div id="piechart3" class="bigPieChart">
@@ -239,12 +232,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="dateRang">
                                                 <div class="input-group date"><input type="text" id="datepickerFilter1" class="form-control" name="StartDate" data-date-container="#datepicker" data-provide="#datepicker"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
                                                 <div class="input-group date"><input type="text" id="datepickerFilter2" class="form-control" name="EndDate" value="<?php echo e(date('Y-m-d')); ?>" data-date-container="#datepicker1" data-provide="#datepicker1"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
                                                 <div id="datepicker"></div>
                                                 <div id="datepicker1"></div>
-                                                <a id="applydatefilter" class="reset-link" href="javascript:void(0)">Apply Date Filter</a> &nbsp; &nbsp;&nbsp;&nbsp;
-                                                <a id="reset-link-filter" class="reset-link" href="javascript:void(0)">Reset Date</a>
+                                                </div>
+                                                <a id="applydatefilter" class="reset-link btn btn-primary" href="javascript:void(0)">Apply Date Filter</a>
+                                                <a id="reset-link-filter" class="reset-link btn btn-primary" href="javascript:void(0)">Reset Date</a>
                                                 <div id="errorDate"><p class="date_diff"></p></div>
                                             </div>
                                             <div class="calls-table">

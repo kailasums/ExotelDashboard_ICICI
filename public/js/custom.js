@@ -226,7 +226,7 @@ $(document).ready(function() {
                 const percentage = entry[1]; //(entry[1] / totalSum) * 100
                 // htmlElement += "<li><p style='right:100px;'>" + entry[0] + ":" + percentage.toFixed(2).toString() + "</p></li>"
                 //const percentage = entry[1]; //(entry[1] / totalSum) * 100
-                htmlElement += "<li><p style='right:100px; font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;'>" + entry[0] + ' : <span style="font-weight: normal;">'+percentage+'</span></p></li>'
+                htmlElement += "<li><p style='font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;'>" + entry[0] + ' : <span style="font-weight: normal;">'+percentage+'</span></p></li>'
             }
         })
         htmlElement += "</ul>"

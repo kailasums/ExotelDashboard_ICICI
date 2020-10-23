@@ -2132,8 +2132,8 @@ table .empty {
 
 @media(max-width:380px) {
     #pie_chart{
-        width: 250px !important;
-        height:250px !important
+        width: 200px !important;
+        height:200px !important
     }
     .site-login {
         margin-top: -30px;
