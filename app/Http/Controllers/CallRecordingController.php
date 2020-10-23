@@ -21,7 +21,8 @@ class CallRecordingController extends Controller
 {
 	public function __construct()
 	{
-		//$this->middleware('auth')->except(['store', 'show', 'storeFromGet']);
+		$this->middleware('auth')->except(['store', 'show', 'storeFromGet']);
+		$this->user = Session::get('user');
 	}
 
 
@@ -34,17 +35,6 @@ class CallRecordingController extends Controller
 	{
 		return view('callRecord.index');
 	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function create()
-	{
-		//
-	}
-
 
 	private function get_string($str, $param)
 	{
@@ -136,7 +126,7 @@ class CallRecordingController extends Controller
 	{
 		try {
 			// Now we can get the content from it
-			$postData = $request->getContent();
+			$postData = $request->all();
 			if(env("ISWRITELOG") === "YES"){
 				Log::info("==========================ALL Request Body Outgoing================================================");
 				Log::info(json_encode($request->all()));
@@ -145,17 +135,17 @@ class CallRecordingController extends Controller
 				Log::info(json_encode($request->header()));
 				Log::info("==========================================================================");
 			}
-			//print_r($postData);exit();
+			
 			$insertData = [];
-			$insertData['call_sid'] = $this->get_string($postData, 'CallSid');
-			$insertData['from_number'] = $this->get_string($postData, 'From');
-			$insertData['to_number'] = $this->get_string($postData, 'To');
+			$insertData['call_sid'] = $postData['CallSid'];//$this->get_string($postData, 'CallSid');
+			$insertData['from_number'] = $postData['From'];//$this->get_string($postData, 'From');
+			$insertData['to_number'] = $postData['To']; //$this->get_string($postData, 'To');
 			$insertData['call_direction'] = "Outgoing";
-			$insertData['call_recording_link'] = $this->get_string($postData, 'RecordingUrl');;
-			$insertData['dial_call_duration'] = $this->get_string($postData, 'ConversationDuration');
-			$insertData['call_duration'] = $this->get_string($postData, 'Legs[0][OnCallDuration]');
-			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime(urldecode($this->get_string($postData, 'StartTime'))));
-			$insertData['call_status'] = strtolower($this->get_string($postData, 'Legs[0][Status]'));
+			$insertData['call_recording_link'] = $postData["RecordingUrl"];//$this->get_string($postData, 'RecordingUrl');;
+			$insertData['dial_call_duration'] = $postData["ConversationDuration"]; //$this->get_string($postData, 'ConversationDuration');
+			$insertData['call_duration'] = $postData['Legs'][0]['OnCallDuration']; // $this->get_string($postData, 'Legs[0][OnCallDuration]');
+			$insertData['date_time'] = Date("Y-m-d H:i:s", strtotime(urldecode($postData['StartTime'])));
+			$insertData['call_status'] = strtolower($postData['Legs'][0]["Status"]);
 			//print_r($insertData);exit();
 			$userData = User::where('phone_number', $insertData['from_number'])->first();
 
@@ -247,17 +237,17 @@ class CallRecordingController extends Controller
 	public function pieChart(Request $request)
 	{
 		$queryParam = $request->all();
-		$user  =  Session::get('user');
+		$user = Session::get('user');
 		$selectOption = [];
 		if ($request->ajax()) {
-			$totalCalls =  CallRecording::group($user->group4)->whereDate('created_at', '=', Carbon::today())->count();
-			$totalDurationCalls = CallRecording::group($user->group4)->whereDate('created_at', '=', Carbon::today())->sum('call_duration');
+			$totalCalls =  CallRecording::group($this->user->group4)->whereDate('created_at', '=', Carbon::today())->count();
+			$totalDurationCalls = CallRecording::group($this->user->group4)->whereDate('created_at', '=', Carbon::today())->sum('call_duration');
 			
 			$avgCalls = 0;
 			if($totalDurationCalls) {
 				$avgCalls = round($totalDurationCalls / $totalCalls);
 			}
-			$dataQuery = CallRecording::group($user->group4)
+			$dataQuery = CallRecording::group($this->user->group4)
 				->select(
 					DB::raw('call_status as callStatus'),
 					DB::raw('count(*) as number')
@@ -306,7 +296,7 @@ class CallRecordingController extends Controller
 			}
 		}
 
-
+		
 		$zoneData = $this->_zoneData($user->group4);
 		$zone = $zoneData['zones'];
 
@@ -328,7 +318,7 @@ class CallRecordingController extends Controller
 
 	public function _zoneData($param)
 	{
-		$query = ZoneMaster::where('megazone_id', $param);
+		$query = ZoneMaster::ZoneData(); //where('megazone_id', $param);
 		$data['zones'] = $query->pluck('zone_name', 'id');
 		$data['zoneParam'] = $query->pluck('id')->toArray();
 		return $data;
@@ -336,11 +326,12 @@ class CallRecordingController extends Controller
 
 	public function _regionData($param)
 	{
-		if (isset($param['zone'])) {
-			$query = RegionMaster::where('zone_id', $param['zone']);
-		} else {
-			$query = RegionMaster::whereIn('zone_id', $param);
-		}
+		// if (isset($param['zone'])) {
+		// 	$query = RegionMaster::where('zone_id', $param['zone']);
+		// } else {
+		// 	$query = RegionMaster::whereIn('zone_id', $param);
+		// }
+		$query = RegionMaster::RegoinData();
 		$data['region'] = $query->pluck('region_name', 'id');
 		$data['regionParam'] = $query->pluck('id')->toArray();
 		return $data;
@@ -348,11 +339,12 @@ class CallRecordingController extends Controller
 
 	public function _branchData($param)
 	{
-		if (isset($param['region'])) {
-			$query = BranchMaster::where('region_id', $param['region']);
-		} else {
-			$query = BranchMaster::whereIn('region_id', $param);
-		}
+		// if (isset($param['region'])) {
+		// 	$query = BranchMaster::where('region_id', $param['region']);
+		// } else {
+		// 	$query = BranchMaster::whereIn('region_id', $param);
+		// }
+		$query = BranchMaster::BranchData();
 		$data['branch'] = $query->pluck('branch_code', 'id');
 		$data['branchParam'] = $query->pluck('id')->toArray();
 		return $data;
@@ -494,7 +486,7 @@ class CallRecordingController extends Controller
 		$callData = [];
 
 		$callRecordQuery = CallRecording::select('id', 'call_sid','user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction','date_time','dial_call_duration','call_recording_link')->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
-
+		$callRecordQuery =  $callRecordQuery->where('group4', $this->user->group4);
 		if (isset($queryParam['zone']) && $queryParam['zone']) {
 			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
 		}

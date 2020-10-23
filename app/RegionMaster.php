@@ -51,7 +51,7 @@ class RegionMaster extends Model
 
     public function scopeRegoinData($query){
         $user = Auth::user();
-        $query = $query->where("megazone_id",$user->group4);
+        //$query = $query->where("megazone_id",$user->group4);
         if(isset($user->group3)  && $user->group3 !== 0 ){
             $query = $query->where("zone_id",$user->group3);
         }
