@@ -140,6 +140,7 @@ class CallRecordingController extends Controller
 			if(env("ISWRITELOG") === "YES"){
 				Log::info("==========================ALL Request Body Outgoing================================================");
 				Log::info(json_encode($request->all()));
+				Log::info(json_encode($request->getContent()));
 				Log::info("==========================ALL Request header Outgoing================================================");
 				Log::info(json_encode($request->header()));
 				Log::info("==========================================================================");
