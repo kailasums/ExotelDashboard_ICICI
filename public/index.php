@@ -8,7 +8,7 @@
  */
 
 define('LARAVEL_START', microtime(true));
-
+//Asia/Kolkata
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader

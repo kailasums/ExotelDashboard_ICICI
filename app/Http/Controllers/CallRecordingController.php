@@ -236,18 +236,30 @@ class CallRecordingController extends Controller
 	 */
 	public function pieChart(Request $request)
 	{
+		$selectOption = [];
 		$queryParam = $request->all();
 		$user = Session::get('user');
-		$selectOption = [];
+		if(isset($user->group3) && $user->group3 !== 0 ){
+			$selectOption['zone'] = $user->group3;
+		}
+		if(isset($user->group2) && $user->group2 !== 0 ){
+			$selectOption['region'] = $user->group2;
+		}
+		if(isset($user->group1) && $user->group1 !== 0 ){
+			$selectOption['branch'] = $user->group1;
+		}
+		
 		if ($request->ajax()) {
-			$totalCalls =  CallRecording::group($this->user->group4)->whereDate('created_at', '=', Carbon::today())->count();
-			$totalDurationCalls = CallRecording::group($this->user->group4)->whereDate('created_at', '=', Carbon::today())->sum('call_duration');
+			$totalCalls =  CallRecording::group($user->group4)->Filter("group3", $user->group3)->Filter("group2", $user->group2)->Filter("group1", $user->group1)->whereDate('created_at', '=', Carbon::today())->count();
+			$totalDurationCalls = CallRecording::group($user->group4)->Filter("group3", $user->group3)->Filter("group2", $user->group2)->Filter("group1", $user->group1)->whereDate('created_at', '=', Carbon::today())->sum('call_duration');
+			
 			
 			$avgCalls = 0;
 			if($totalDurationCalls) {
 				$avgCalls = round($totalDurationCalls / $totalCalls);
 			}
-			$dataQuery = CallRecording::group($this->user->group4)
+			$dataQuery = CallRecording::group($user->group4)
+				->Filter("group3", $user->group3)->Filter("group2", $user->group2)->Filter("group1", $user->group1)
 				->select(
 					DB::raw('call_status as callStatus'),
 					DB::raw('count(*) as number')
@@ -256,19 +268,19 @@ class CallRecordingController extends Controller
 				->whereDate('created_at', '=', Carbon::today());
 
 			if (isset($queryParam['zone']) && $queryParam['zone']) {
-				$dataQuery = $dataQuery->where('group3', $queryParam['zone']);
+				//$dataQuery = $dataQuery->where('group3', $queryParam['zone']);
 				$selectOption['zone'] = $queryParam['zone'];
 			}
 			if (isset($queryParam['region']) && $queryParam['region']) {
-				$dataQuery = $dataQuery->where('group2', $queryParam['region']);
+				//$dataQuery = $dataQuery->where('group2', $queryParam['region']);
 				$selectOption['region'] = $queryParam['region'];
 			}
 			if (isset($queryParam['branch']) && $queryParam['branch']) {
-				$dataQuery = $dataQuery->where('group1', $queryParam['branch']);
+				//$dataQuery = $dataQuery->where('group1', $queryParam['branch']);
 				$selectOption['branch'] = $queryParam['branch'];
 			}
 
-			if (isset($queryParam['call_direction']) && $queryParam['call_direction']) {
+			if (isset($queryParam['call_direction']) && $queryParam['call_direction'] && $queryParam['call_direction'] != '') {
 				$dataQuery = $dataQuery->where('call_direction', $queryParam['call_direction']);
 				$selectOption['call_direction'] = $queryParam['call_direction'];
 			}
@@ -289,7 +301,7 @@ class CallRecordingController extends Controller
 				$selectOption['user'] = $queryParam['user'];
 			}
 			$data = $dataQuery->get();
-
+			
 			$array[] = ['Call_Status', 'Number'];
 			foreach ($data as $key => $value) {
 				$array[++$key] = [ucwords($value->callStatus), $value->number];
@@ -435,17 +447,23 @@ class CallRecordingController extends Controller
 		$callData = [];
 		$user  =  Session::get('user'); 
 		$callRecordQuery = CallRecording::select('user_id', 'agent_name', 'agent_phone_number', 	DB::raw('COUNT(call_status) as call_status_count'), 'call_status',	DB::raw('SUM(call_duration) as sum_call_status'))->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
-		$callRecordQuery =  $callRecordQuery->where('group4', $user->group4);
-		if (isset($queryParam['zone_summary']) && $queryParam['zone_summary']) {
-			$callRecordQuery =  $callRecordQuery->where('group3', $queryParam['zone_summary']);
-		}
-		if (isset($queryParam['region_summary']) && $queryParam['region_summary']) {
-			$callRecordQuery =  $callRecordQuery->where('group2', $queryParam['region_summary']);
-		}
-		if (isset($queryParam['branch_summary']) && $queryParam['branch_summary']) {
-			$callRecordQuery =  $callRecordQuery->where('group1', $queryParam['branch_summary']);
-		}
-		if (isset($queryParam['call_direction_summary']) && $queryParam['call_direction_summary'] != 'undefined') {
+		// $callRecordQuery =  $callRecordQuery->where('group4', $user->group4);
+		
+		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
+		// if (isset($queryParam['zone_summary']) && $queryParam['zone_summary']) {
+		// 	$callRecordQuery =  $callRecordQuery->where('group3', $queryParam['zone_summary']);
+		// }
+		// if (isset($queryParam['region_summary']) && $queryParam['region_summary']) {
+		// 	$callRecordQuery =  $callRecordQuery->where('group2', $queryParam['region_summary']);
+		// }
+		// if (isset($queryParam['branch_summary']) && $queryParam['branch_summary']) {
+		// 	$callRecordQuery =  $callRecordQuery->where('group1', $queryParam['branch_summary']);
+		// }
+		
+		//if (isset($queryParam['call_direction_summary']) && $queryParam['call_direction_summary'] != 'undefined') {
+			
+		if (isset($queryParam['call_direction_summary']) && !is_null($queryParam['call_direction_summary']) && $queryParam['call_direction_summary'] != "null" && $queryParam['call_direction_summary']) {
+			
 			$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction_summary']);
 		}
 		if (isset($queryParam['user_summary']) && $queryParam['user_summary']) {
@@ -482,36 +500,39 @@ class CallRecordingController extends Controller
 	public function detailList(Request $request)
 	{
 		$queryParam = $request->all();
+		
 		$offSet = isset($queryParam['start']) ? $queryParam['start'] : 0;
-		$length = isset($queryParam['length']) ? $queryParam['length'] : 10;
+		$length = ($queryParam['length'] > 0) ? $queryParam['length'] : 10;
 		$callData = [];
+		$user = Session::get('user'); 
+		$callRecordQuery = CallRecording::select('id', 'user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction','date_time','dial_call_duration','call_recording_link');
+		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
+		$callRecordQuery = $callRecordQuery->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
 
-		$callRecordQuery = CallRecording::select('id', 'user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction','date_time','dial_call_duration','call_recording_link')->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
-
-		if (isset($queryParam['zone']) && $queryParam['zone']) {
-		$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
-		}
-		if (isset($queryParam['region']) && $queryParam['region']) {
-		$callRecordQuery = $callRecordQuery->where('group2', $queryParam['region']);
-		}
-		if (isset($queryParam['branch']) && $queryParam['branch']) {
-		$callRecordQuery = $callRecordQuery->where('group1', $queryParam['branch']);
-		}
-
-		if (isset($queryParam['call_direction']) && $queryParam['call_direction']) {
+		// if (isset($queryParam['zone']) && $queryParam['zone']) {
+		// $callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
+		// }
+		// if (isset($queryParam['region']) && $queryParam['region']) {
+		// $callRecordQuery = $callRecordQuery->where('group2', $queryParam['region']);
+		// }
+		// if (isset($queryParam['branch']) && $queryParam['branch']) {
+		// $callRecordQuery = $callRecordQuery->where('group1', $queryParam['branch']);
+		// }
+		if (isset($queryParam['call_direction']) && !is_null($queryParam['call_direction']) && $queryParam['call_direction'] != "null" && $queryParam['call_direction']) {
 		$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction']);
-		//$selectOption['call_direction'] = $queryParam['call_direction'];
+		$selectOption['call_direction'] = $queryParam['call_direction'];
 		}
-
 
 		if (isset($queryParam['user']) && $queryParam['user']) {
-		$userId = User::find($queryParam['user']);
-		if ($queryParam['call_direction'] === 'Incoming') {
-			$callRecordQuery = $callRecordQuery->where('from_number', $userId->phone_number);
-		} else {
-			$callRecordQuery = $callRecordQuery->where('to_number', $userId->phone_number);
-		}
-		$selectOption['user'] = $queryParam['user'];
+			$userId = User::find($queryParam['user']);
+			if (isset($queryParam['call_direction']) && !is_null($queryParam['call_direction']) && $queryParam['call_direction'] != "null" && $queryParam['call_direction']) {
+				if ($queryParam['call_direction'] === 'Incoming') {
+					$callRecordQuery = $callRecordQuery->where('from_number', $userId->phone_number);
+				} else {
+					$callRecordQuery = $callRecordQuery->where('to_number', $userId->phone_number);
+				}
+			}
+			$selectOption['user'] = $queryParam['user'];
 		}
 
 
@@ -519,13 +540,21 @@ class CallRecordingController extends Controller
 		$callRecordQuery = $callRecordQuery->whereIn('call_status', explode(",",$queryParam['call_status']));
 		}
 		$totalRecords = $callRecordQuery->count();
+		// print_r($length);
+		// print_r($offSet);
+		// print_r($offSet);
 		$userData = $callRecordQuery->skip($offSet)->take($length)->get();
+		// print_r($queryParam);
+		// dd($userData);
 		for ($i = 0; $i < count($userData); $i++) {
-		if(strtolower($userData[$i]['call_direction']) === 'outgoing'){
-			$cust_number = $userData[$i]['to_number'];
-		}else{
-			$cust_number = $userData[$i]['from_number'];
-		}
+			if(isset($userData[$i]['call_direction'])){
+				if(strtolower($userData[$i]['call_direction']) === 'outgoing'){
+					$cust_number = $userData[$i]['to_number'];
+				}else{
+					$cust_number = $userData[$i]['from_number'];
+				}	
+			}
+			
 		$link = "";
 		if($userData[$i]['call_recording_link'] != '-'){
 			$link  = "<audio controls><source src='".$userData[$i]['call_recording_link']."'> </audio>";

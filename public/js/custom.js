@@ -1,6 +1,7 @@
 $(document).ready(function() {
     
     function showDatatable(element, urlParam, flag) {
+        alert(flag ? createUrlParam(urlParam, targetSummaryElementArray) : urlParam);
         $.ajax({
             url: flag ? createUrlParam(urlParam, targetSummaryElementArray) : urlParam,
             success: function(data, textStatus, jqXHR) {
@@ -13,7 +14,10 @@ $(document).ready(function() {
                     bFilter: false,
                     bInfo: false,
                     bDestroy: true,
-                    ordering: true
+                    ordering: true,
+                    "oLanguage": {
+                        "sEmptyTable": "No data available"
+                    },
                 })
             }
         })
@@ -38,6 +42,15 @@ $(document).ready(function() {
         $('#example1').DataTable({
             processing: true,
             serverSide: true,
+            paging: false,
+            searching: false,
+            cache: false,
+            bDestroy: true,
+            bFilter: false,
+            bInfo: false,
+            "oLanguage": {
+                "sEmptyTable": "No data available"
+            },
             ajax: {
                 url: url,
                 type: "GET"
@@ -61,35 +74,21 @@ $(document).ready(function() {
     const targetdetailedElementArray = ['call_status', 'zone', 'region', 'branch', 'call_direction', 'user', 'StartDate', 'EndDate']
 
     if (window.location.pathname === '/dashboard') {
+        // $("#div-chartw2").hide();
+        // $("#no-data-pie").hide();
         google.load('visualization', '1', { packages: ['corechart'] })
         google.setOnLoadCallback(selectAjaxOption)
-        $('#example').DataTable({});
-        $('#example1').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: url,
-                type: "GET"
-            },
-            columns: [
-                { data: "agent_name" },
-                { data: "agent_phone_number" },
-                { data: "call_direction" },
-                { data: "call_duration" },
-                { data: "call_sid" },
-                { data: "call_status" },
-                { data: "cust_number" },
-                { data: "date_time" },
-                { data: "dial_call_duration" },
-                { data: "link" }
-            ]
-        });
+        $('#example').DataTable({"oLanguage": {
+            "sEmptyTable": "No data available"
+        }});
+        
+        // $('#example1').DataTable({});
+        // selectUserDataAjaxOption('user-call-detail', , 'call_direction', 'incoming', targetElement)
         setTimeout(function() {
             selectAjaxOption('dashboard', 'call_direction', 'incoming', targetElementArray)
             showDatatable('example', 'call-record-data', true)
         }, 1000)
 
-        //userDetailTable('user-call-detail', '', user_id);
         setTimeout(function() {
             // var user_id = $("input[name='user-detail']").val();
             selectUserDataAjaxOption('user-call-detail', 'call_direction', 'incoming', targetdetailedElementArray)
@@ -141,7 +140,7 @@ $(document).ready(function() {
         if (days > 10) {
             $(".date_diff").text("Date Difference is greater then 10 days");
             $(".date_diff").addClass("error text-danger");
-            setStartDate();
+            // setStartDate();
         } else {
             $("#errorDate").text("");
             showDatatable('example', 'call-record-data', true);
@@ -153,6 +152,7 @@ $(document).ready(function() {
         selectAjaxOption('dashboard', 'zone', $(this).val(), targetElementArray)
         $("select[name='zone_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'zone_summary', $(this).val(), targetSummaryElementArray, true)
+        showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray)
 
         //setTimeout(function() {
@@ -178,6 +178,7 @@ $(document).ready(function() {
         selectAjaxOption('dashboard', 'region', $(this).val(), targetElementArray)
         $("select[name='region_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'region_summary', $(this).val(), targetSummaryElementArray, true)
+        showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'region', $(this).val(), targetdetailedElementArray)
 
     })
@@ -194,6 +195,7 @@ $(document).ready(function() {
         selectAjaxOption('dashboard', 'call_direction', $(this).val(), targetElementArray)
         $("select[name='call_direction_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'call_direction_summary', $(this).val(), targetSummaryElementArray, true)
+        showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray)
 
     })
@@ -202,6 +204,7 @@ $(document).ready(function() {
         selectAjaxOption('dashboard', 'user', $(this).val(), targetElementArray)
         $("select[name='user_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'user_summary', $(this).val(), targetSummaryElementArray, true)
+        showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'user', $(this).val(), targetdetailedElementArray)
 
     })
@@ -212,6 +215,7 @@ $(document).ready(function() {
 
     function selectAjaxOption(url, element, value, targetElement, flag = false, userDetailCall = true) {
         if (url) {
+            alert(url)
             url = createUrlParam(url, targetElement)
             $.ajax({
                 url: url,
@@ -223,28 +227,41 @@ $(document).ready(function() {
                             zone : "Zone",
                             region : "Region",
                             user : "PB",
-                            branch : "Branch"
+                            branch : "Branch",
+                            call_direction : "Call Direction"
                         }
                         
                         for (let i = 0; i < targetElement.length; i++) {
                             if (element !== targetElement[i]) {
-                                // alert(targetElement[i])
+                                //alert(targetElement[i])
                                 $("select[name='" + targetElement[i] + "'").html('')
                                 $("select[name='" + targetElement[i] + "'").html('<option value="" selected="selected">' + showName[targetElement[i]].toUpperCase() + '</option><optgroup label="items">' + createOptions(data[targetElement[i]], data.selectOption ? data.selectOption[targetElement[i]] : '', targetElement[i]) + '</optgroup>')
                             }
                         }
                     }
                     if (!flag) {
-                        draw_chart(data.callRecords)
-                        calculatePercentage(data.callRecords)
-                        $("#totalCalls").text(data.totalCalls);
-                        $("#totalDurationCalls").text(data.totalDurationCalls);
-                        $("#avgCalls").text(data.avgCalls);
+                        
+                        if(data.callRecords && Object.keys(JSON.parse(data.callRecords)).length  > 1  ){
+                            draw_chart(data.callRecords)
+                            calculatePercentage(data.callRecords)
+                            $("#totalCalls").text(data.totalCalls);
+                            $("#totalDurationCalls").text(data.totalDurationCalls);
+                            $("#avgCalls").text(data.avgCalls);
+                            $("#no-data-pie").hide();
+                            $("#pie-chart-data").show();
+                            $("#div-chartw2").show();
+                        }else{
+                            $("#no-data-pie").show();
+                            $("#div-chartw2").hide();
+                            $("#pie-chart-data").hide();
+                        }
+                        
                     } else {
-
+                        alert("2")
                         if (targetElement.indexOf('call_status') > -1) {
-                            detailDataTable(data);
+                            // detailDataTable(data);
                         } else {
+                            alert("1");
                             showDatatable('example', 'call-record-data', true)
                         }
 

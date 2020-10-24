@@ -29,4 +29,14 @@ class CallRecording extends Model
     {
         return $query->where('group4', $value);
     }
+
+
+    public function scopeFilter($filter, $search, $search2 = 0)
+    {
+        if ($search2 !== 0) {
+            return $filter->where($search, $search2);
+        }
+
+        return $filter;
+    }
 }

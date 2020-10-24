@@ -45,7 +45,7 @@ class HomeController extends Controller
             //Current password and new password are same
             return redirect()->back()->with("error",trans('resetpassword.newPasswordCurrentPasswordSame') );
         }
-        if(strcmp($request->get('new-password'), $request->get('new-password-confirm')) == 1){
+        if(strcmp($request->get('new-password'), $request->get('new-password-confirm')) !== 0){
             //Current password and new password are same
             return redirect()->back()->with("error",trans('resetpassword.confirmPasswordFail'));
         }

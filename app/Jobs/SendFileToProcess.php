@@ -447,7 +447,11 @@ class SendFileToProcess implements ShouldQueue
      }
     public function failed(Throwable $exception)
     {
-       dd($exception);
+        $fileUploadProcessingRecord = [];
+        $fileUploadProcessingRecord['upload_status'] = 'failed';
+        $fileUploadProcessingRecord['remark'] = $exception;
+        $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
+        return false;
     }
 
 }

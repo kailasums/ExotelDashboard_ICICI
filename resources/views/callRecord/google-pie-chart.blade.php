@@ -84,7 +84,7 @@
                             <div id="piechart-graph" class="graph-section in" style="background: white;margin-bottom: 20px;">
 
 
-                                <div class="row custom-padd">
+                                <div class="row custom-padd" id="pie-chart-data" >
                                    
                                     <div class="col-md-12">
                                         <div class="chart-card">
@@ -102,7 +102,7 @@
                                                 </div>
                                             </div>
                                             <div id="piechart2" class="">
-                                                <div id="div-chartw2">
+                                                <div id="div-chartw2" style="display:none;">
                                                     <ul>
                                                         <li>
                                                             <p style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Total Calls : <span style="font-weight: normal;" id="totalCalls"></span></p>
@@ -127,7 +127,14 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row custom-padd" id="no-data-pie" >
+                                    <div class="col-md-12"  style="display:none;height:50px;text-align:center;font-weight:bold;    font-size: 20px;padding: 10px;">
+                                                No Data Available     
+                                    </div>
+                                </div>
                             </div>
+                            
                         </div>
                     </div>
                     <div class="row">

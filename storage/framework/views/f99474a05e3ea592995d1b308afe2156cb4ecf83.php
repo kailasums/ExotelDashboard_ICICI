@@ -29,7 +29,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span></button><a class="navbar-brand"
-                            href="/home"><img src="<?php echo e(asset('images/logo.png')); ?>" alt=""></a></div>
+                            href="<?php echo e(route('home')); ?>" style="cursor:pointer"><img src="<?php echo e(asset('images/logo.png')); ?>" alt=""></a></div>
                     <div id="w1-collapse" class="collapse navbar-collapse">
                         <ul id="w2" class="navbar-nav navbar-right nav">
                             <li class="nav-item dropdown">
