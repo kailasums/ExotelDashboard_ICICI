@@ -23,7 +23,7 @@ class SendFileToProcess implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
   
     protected $details;
-    public $timeout = 0;
+    public $timeout = 360000;
   
     /**
      * Create a new job instance.
