@@ -30,7 +30,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span></button><a class="navbar-brand"
                             href="{{ route('home') }}" style="cursor:pointer"><img src="{{ asset('images/logo.png') }}" alt=""></a></div>
-                    <div id="w1-collapse" class="collapse navbar-collapse">
+                    <div id="w1-collapse" class="collapse navbar-collapse" style="margin-left:20%;">
                         <ul id="w2" class="navbar-nav navbar-right nav">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
