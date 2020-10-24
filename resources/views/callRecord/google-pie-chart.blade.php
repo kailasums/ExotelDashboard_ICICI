@@ -129,7 +129,7 @@
                                 </div>
 
                                 <div class="row custom-padd" id="no-data-pie" >
-                                    <div class="col-md-12"  style="display:none;height:50px;text-align:center;font-weight:bold;    font-size: 20px;padding: 10px;">
+                                    <div class="col-md-12"  style="height:50px;text-align:center;font-weight:bold;    font-size: 20px;padding: 10px;">
                                                 No Data Available     
                                     </div>
                                 </div>
