@@ -23,6 +23,7 @@ class SendFileToProcess implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
   
     protected $details;
+    public $timeout = 0;
   
     /**
      * Create a new job instance.
@@ -174,6 +175,7 @@ class SendFileToProcess implements ShouldQueue
             if(in_array($user['Email'], $arrAllEmailIDs )){
                 $userRecord['id'] = $arrEmail[$user['Email']]['id'];
                 $userRecord['email'] = $user['Email'];
+                //dd($userRecord['email']);
             }else{
                 $password = env("DEFAULT_PASSWORD", rand(1111111111,9999999999));
                 $userRecord = [];
@@ -196,7 +198,8 @@ class SendFileToProcess implements ShouldQueue
                     
                 }   
                 $userRecord['password'] = Hash::make($password);
-                $arrTempDateEmailAddress['password'] = $password; 
+                $arrTempDateEmailAddress['password'] = $password;
+                //dd($arrTempDateEmailAddress); 
             }
 
             //add or update new record in array for user 
