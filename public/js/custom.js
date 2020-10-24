@@ -1,7 +1,7 @@
 $(document).ready(function() {
     
     function showDatatable(element, urlParam, flag) {
-        alert(flag ? createUrlParam(urlParam, targetSummaryElementArray) : urlParam);
+        
         $.ajax({
             url: flag ? createUrlParam(urlParam, targetSummaryElementArray) : urlParam,
             success: function(data, textStatus, jqXHR) {
@@ -215,7 +215,7 @@ $(document).ready(function() {
 
     function selectAjaxOption(url, element, value, targetElement, flag = false, userDetailCall = true) {
         if (url) {
-            alert(url)
+            
             url = createUrlParam(url, targetElement)
             $.ajax({
                 url: url,
@@ -257,11 +257,11 @@ $(document).ready(function() {
                         }
                         
                     } else {
-                        alert("2")
+                        
                         if (targetElement.indexOf('call_status') > -1) {
                             // detailDataTable(data);
                         } else {
-                            alert("1");
+                            
                             showDatatable('example', 'call-record-data', true)
                         }
 
