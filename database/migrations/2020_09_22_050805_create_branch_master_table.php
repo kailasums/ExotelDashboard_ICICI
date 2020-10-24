@@ -19,6 +19,8 @@ class CreateBranchMasterTable extends Migration
             $table->integer('region_id');
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['branch_code']);
+            $table->index(['region_id']);
         });
     }
 

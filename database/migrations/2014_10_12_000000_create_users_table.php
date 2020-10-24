@@ -32,6 +32,8 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['email', 'phone_number']);
+            $table->index(['group1', 'group2','group3', 'group4']);
         });
     }
 

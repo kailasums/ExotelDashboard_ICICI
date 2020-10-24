@@ -19,6 +19,8 @@ class CreateZoneTable extends Migration
             $table->integer('megazone_id');
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['megazone_id']);
+            $table->index(['zone_name']);
         });
     }
 

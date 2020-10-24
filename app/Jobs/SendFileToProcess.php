@@ -445,5 +445,9 @@ class SendFileToProcess implements ShouldQueue
         }
         
      }
+    public function failed(Throwable $exception)
+    {
+       dd($exception);
+    }
 
 }

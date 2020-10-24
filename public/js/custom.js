@@ -32,6 +32,30 @@ $(document).ready(function() {
             //ordering: false
         })
     }
+
+    function selectUserDataAjaxOption(url, element, value, targetElement) {
+        url = createUrlParam(url, targetElement)
+        $('#example1').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: url,
+                type: "GET"
+            },
+            columns: [
+                { data: "agent_name" },
+                { data: "agent_phone_number" },
+                { data: "call_direction" },
+                { data: "call_duration" },
+                { data: "call_sid" },
+                { data: "call_status" },
+                { data: "cust_number" },
+                { data: "date_time" },
+                { data: "dial_call_duration" },
+                { data: "link" }
+            ]
+        });
+    }
     const targetElementArray = ['zone', 'region', 'branch', 'user', 'call_direction']
     const targetSummaryElementArray = ['zone_summary', 'region_summary', 'branch_summary', 'call_direction_summary', 'user_summary', 'StartDate', 'EndDate']
     const targetdetailedElementArray = ['call_status', 'zone', 'region', 'branch', 'call_direction', 'user', 'StartDate', 'EndDate']
@@ -39,8 +63,27 @@ $(document).ready(function() {
     if (window.location.pathname === '/dashboard') {
         google.load('visualization', '1', { packages: ['corechart'] })
         google.setOnLoadCallback(selectAjaxOption)
-        $('#example').DataTable({ordering:false});
-        $('#example1').DataTable();
+        $('#example').DataTable({});
+        $('#example1').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: url,
+                type: "GET"
+            },
+            columns: [
+                { data: "agent_name" },
+                { data: "agent_phone_number" },
+                { data: "call_direction" },
+                { data: "call_duration" },
+                { data: "call_sid" },
+                { data: "call_status" },
+                { data: "cust_number" },
+                { data: "date_time" },
+                { data: "dial_call_duration" },
+                { data: "link" }
+            ]
+        });
         setTimeout(function() {
             selectAjaxOption('dashboard', 'call_direction', 'incoming', targetElementArray)
             showDatatable('example', 'call-record-data', true)
@@ -49,7 +92,7 @@ $(document).ready(function() {
         //userDetailTable('user-call-detail', '', user_id);
         setTimeout(function() {
             // var user_id = $("input[name='user-detail']").val();
-            selectAjaxOption('user-call-detail', 'call_direction', 'incoming', targetdetailedElementArray, true, false)
+            selectUserDataAjaxOption('user-call-detail', 'call_direction', 'incoming', targetdetailedElementArray)
         }, 1000)
         setStartDate();
     }
@@ -102,7 +145,7 @@ $(document).ready(function() {
         } else {
             $("#errorDate").text("");
             showDatatable('example', 'call-record-data', true);
-            selectAjaxOption('user-call-detail', 'startDate', $("#datepickerFilter1").val(), targetdetailedElementArray, true, false)
+            selectUserDataAjaxOption('user-call-detail', 'startDate', $("#datepickerFilter1").val(), targetdetailedElementArray)
         }
     })
 
@@ -110,7 +153,7 @@ $(document).ready(function() {
         selectAjaxOption('dashboard', 'zone', $(this).val(), targetElementArray)
         $("select[name='zone_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'zone_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray, true, false)
+        selectUserDataAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray)
 
         //setTimeout(function() {
         //var user_id = $("input[name='user-detail']").val()
@@ -135,7 +178,7 @@ $(document).ready(function() {
         selectAjaxOption('dashboard', 'region', $(this).val(), targetElementArray)
         $("select[name='region_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'region_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'region', $(this).val(), targetdetailedElementArray, true,false)
+        selectUserDataAjaxOption('user-call-detail', 'region', $(this).val(), targetdetailedElementArray)
 
     })
 
@@ -143,7 +186,7 @@ $(document).ready(function() {
         selectAjaxOption('dashboard', 'branch', $(this).val(), targetElementArray)
         $("select[name='branch_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'branch_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'branch', $(this).val(), targetdetailedElementArray, true, false)
+        selectUserDataAjaxOption('user-call-detail', 'branch', $(this).val(), targetdetailedElementArray)
 
     })
 
@@ -151,7 +194,7 @@ $(document).ready(function() {
         selectAjaxOption('dashboard', 'call_direction', $(this).val(), targetElementArray)
         $("select[name='call_direction_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'call_direction_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray, true, false)
+        selectUserDataAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray)
 
     })
 
@@ -159,12 +202,12 @@ $(document).ready(function() {
         selectAjaxOption('dashboard', 'user', $(this).val(), targetElementArray)
         $("select[name='user_summary']").val($(this).val())
         selectAjaxOption('drop-down', 'user_summary', $(this).val(), targetSummaryElementArray, true)
-        selectAjaxOption('user-call-detail', 'user', $(this).val(), targetdetailedElementArray, true, false)
+        selectUserDataAjaxOption('user-call-detail', 'user', $(this).val(), targetdetailedElementArray)
 
     })
 
     $("input[name='call_status']").on("click", function() {
-        selectAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray, true, false)
+        selectUserDataAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray)
     })
 
     function selectAjaxOption(url, element, value, targetElement, flag = false, userDetailCall = true) {

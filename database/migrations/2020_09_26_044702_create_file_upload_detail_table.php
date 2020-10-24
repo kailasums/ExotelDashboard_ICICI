@@ -20,6 +20,7 @@ class CreateFileUploadDetailTable extends Migration
             $table->string('remark',255)->nullable(true)->default("");
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['upload_status']);
         });
     }
 

@@ -33,6 +33,11 @@ class CreateCallRecordsTable extends Migration
             $table->integer('group4');
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['agent_phone_number']);
+            $table->index(['date_time']);
+            $table->index(['group1','group2', 'group3', 'group4']);
+            $table->index(['call_status']);
+            $table->index(['created_at']);
         });
     }
 

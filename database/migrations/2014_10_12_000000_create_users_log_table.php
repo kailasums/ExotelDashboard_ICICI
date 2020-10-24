@@ -33,6 +33,7 @@ class CreateUsersLogTable extends Migration
             $table->enum('status',['success','error'])->default('success');
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['email', 'phone_number']);
         });
     }
 
