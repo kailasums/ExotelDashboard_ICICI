@@ -142,7 +142,7 @@ $(document).ready(function() {
             $(".date_diff").addClass("error text-danger");
             // setStartDate();
         } else {
-            $("#errorDate").text("");
+            $(".date_diff").text("");
             showDatatable('example', 'call-record-data', true);
             selectUserDataAjaxOption('user-call-detail', 'startDate', $("#datepickerFilter1").val(), targetdetailedElementArray)
         }
