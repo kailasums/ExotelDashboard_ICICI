@@ -338,11 +338,11 @@ class CallRecordingController extends Controller
 
 	public function _regionData($param)
 	{
-		// if (isset($param['zone'])) {
-		// 	$query = RegionMaster::where('zone_id', $param['zone']);
-		// } else {
-		// 	$query = RegionMaster::whereIn('zone_id', $param);
-		// }
+		if (isset($param['zone'])) {
+			$query = RegionMaster::where('zone_id', $param['zone']);
+		} else {
+			$query = RegionMaster::whereIn('zone_id', $param);
+		}
 		$query = RegionMaster::RegoinData();
 		$data['region'] = $query->pluck('region_name', 'id');
 		$data['regionParam'] = $query->pluck('id')->toArray();
@@ -352,11 +352,11 @@ class CallRecordingController extends Controller
 	public function _branchData($param)
 	{
 		$query = BranchMaster::BranchData();
-		// if (isset($param['region'])) {
-		// 	$query = BranchMaster::where('region_id', $param['region']);
-		// } else {
-		// 	$query = BranchMaster::whereIn('region_id', $param);
-		// }
+		if (isset($param['region'])) {
+			$query = BranchMaster::where('region_id', $param['region']);
+		} else {
+			$query = BranchMaster::whereIn('region_id', $param);
+		}
 		
 		$data['branch'] = $query->pluck('branch_code', 'id');
 		$data['branchParam'] = $query->pluck('id')->toArray();
