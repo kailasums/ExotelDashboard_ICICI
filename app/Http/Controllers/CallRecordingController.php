@@ -296,15 +296,15 @@ class CallRecordingController extends Controller
 				->whereDate('created_at', '=', Carbon::today());
 
 			if (isset($queryParam['zone']) && $queryParam['zone']) {
-				//$dataQuery = $dataQuery->where('group3', $queryParam['zone']);
+				$dataQuery = $dataQuery->where('group3', $queryParam['zone']);
 				$selectOption['zone'] = $queryParam['zone'];
 			}
 			if (isset($queryParam['region']) && $queryParam['region']) {
-				//$dataQuery = $dataQuery->where('group2', $queryParam['region']);
+				$dataQuery = $dataQuery->where('group2', $queryParam['region']);
 				$selectOption['region'] = $queryParam['region'];
 			}
 			if (isset($queryParam['branch']) && $queryParam['branch']) {
-				//$dataQuery = $dataQuery->where('group1', $queryParam['branch']);
+				$dataQuery = $dataQuery->where('group1', $queryParam['branch']);
 				$selectOption['branch'] = $queryParam['branch'];
 			}
 
@@ -359,13 +359,14 @@ class CallRecordingController extends Controller
 
 	public function _regionData($param)
 	{
+		$query = RegionMaster::RegoinData();
 		if (isset($param['zone'])) {
 			$query = RegionMaster::where('zone_id', $param['zone']);
-		} else {
-			$query = RegionMaster::whereIn('zone_id', $param);
+		// } else {
+		// 	$query = RegionMaster::whereIn('zone_id', $param);
 		}
-		$query = RegionMaster::RegoinData();
 		$data['region'] = $query->pluck('region_name', 'id');
+		
 		$data['regionParam'] = $query->pluck('id')->toArray();
 		return $data;
 	}
@@ -373,11 +374,11 @@ class CallRecordingController extends Controller
 	public function _branchData($param)
 	{
 		$query = BranchMaster::BranchData();
-		// if (isset($param['region'])) {
-		// 	$query = BranchMaster::where('region_id', $param['region']);
-		// } else {
-		// 	$query = BranchMaster::whereIn('region_id', $param);
-		// }
+		if (isset($param['region'])) {
+			$query = BranchMaster::where('region_id', $param['region']);
+		} else {
+			$query = BranchMaster::whereIn('region_id', $param);
+		}
 		$data['branch'] = $query->pluck('branch_code', 'id');
 		$data['branchParam'] = $query->pluck('id')->toArray();
 		return $data;

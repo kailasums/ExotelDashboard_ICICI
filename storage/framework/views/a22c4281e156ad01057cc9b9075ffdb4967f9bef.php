@@ -116,7 +116,7 @@
                                                             <p  style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Total Call Duration : <span style="font-weight: normal;" id="totalDurationCalls"></span></p>
                                                         </li>
                                                         <li>
-                                                            <p  style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Avg Calls : <span style="font-weight: normal;" id="avgCalls"></span></p>
+                                                            <p  style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Avg Call Duration : <span style="font-weight: normal;" id="avgCalls"></span></p>
                                                         </li>
                                                     </ul>
                                                 </div>
