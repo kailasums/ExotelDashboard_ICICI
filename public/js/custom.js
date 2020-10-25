@@ -240,20 +240,22 @@ $(document).ready(function() {
                     }
                     if (!flag) {
                         
-                        if(data.callRecords && Object.keys(JSON.parse(data.callRecords)).length  > 1  ){
+                        // if(data.callRecords && Object.keys(JSON.parse(data.callRecords)).length  > 1  ){
                             draw_chart(data.callRecords)
                             calculatePercentage(data.callRecords)
                             $("#totalCalls").text(data.totalCalls);
                             $("#totalDurationCalls").text(data.totalDurationCalls);
                             $("#avgCalls").text(data.avgCalls);
-                            $("#no-data-pie").hide();
-                            $("#pie-chart-data").show();
-                            $("#div-chartw2").show();
-                        }else{
-                            $("#no-data-pie").show();
-                            $("#div-chartw2").hide();
-                            $("#pie-chart-data").hide();
-                        }
+                            if(Object.keys(JSON.parse(data.callRecords)).length  < 1){
+                                $("#pie_chart").find("text").html("No Data Available")
+                            }
+                            
+                            // $("#no-data-pie").hide();
+                            // $("#pie-chart-data").show();
+                        // }else{
+                        //     $("#no-data-pie").show();
+                        //     $("#pie-chart-data").hide();
+                        // }
                         
                     } else {
                         
