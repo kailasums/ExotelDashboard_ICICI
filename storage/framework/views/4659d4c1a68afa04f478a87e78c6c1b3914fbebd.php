@@ -3,11 +3,11 @@
         <div class="site-login">
             <div class="login-inner-box">
                 <div class="login-screen-logo text-center">
-                    <a href="/home" > <img src="<?php echo e(URL::asset('images/logo.png')); ?>" /> </a>
+                    <a href="/home"> <img src="<?php echo e(URL::asset('images/logo.png')); ?>" /> </a>
                 </div>
-                <h1>User Login</h1>
+                <h1>Admin Login</h1>
                 <div class="login-fields">
-                    <form method="POST" action="<?php echo e(route('login')); ?>">
+                    <form method="POST" action="<?php echo e(route('admin-login')); ?>">
                         <?php echo csrf_field(); ?>
                         <div class="animated form-group field-loginform-email required">
                             <label class='control-label bmd-label-static' for='email-addr'><strong
@@ -61,25 +61,25 @@ unset($__errorArgs, $__bag); ?>
                         </div>
                         <div class="remember-me form-group field-loginform-rememberme">
                             <div class="checkbox">
-                                <input class="form-check-input" type="checkbox" name="remember" id="remember" <?php echo e(old('remember') ? 'checked' : ''); ?>>
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember" <?php echo e(old('remember') ? 'checked' : ''); ?>>
 
-                                <label class="form-check-label" for="remember">
-                                    <?php echo e(__('Remember Me')); ?>
+                            <label class="form-check-label" for="remember">
+                                <?php echo e(__('Remember Me')); ?>
 
-                                </label>
+                            </label>
                                 <p class="help-block help-block-error"></p>
 
                             </div>
                         </div>
                         <div class="form-group btn-group text-center">
-                            <button type="submit" class="btn" name="login-button">Login</button>
-                        </div>
-                        <!-- <?php if(Route::has('password.request')): ?>
+                            <button type="submit" class="btn" name="login-button">Login</button> </div>
+                            <!-- <?php if(Route::has('password.request')): ?>
                                 <a class="btn-link" href="<?php echo e(route('password.request')); ?>">
                                     <?php echo e(__('Forgot Your Password?')); ?>
 
                                 </a>
-                        <?php endif; ?> -->
+                            <?php endif; ?> -->
+
                     </form>
                 </div>
             </div>
@@ -88,5 +88,4 @@ unset($__errorArgs, $__bag); ?>
         <!-- <p class="text-center">© 2020 Tata Sky. All Rights Reserved.</p> -->
     </section>
     <?php $__env->stopSection(); ?>
-
-<?php echo $__env->make('layouts.common-auth', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/ISPCalling/resources/views/auth/login.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.common-auth', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/ISPCalling/resources/views/auth/admin-login.blade.php ENDPATH**/ ?>

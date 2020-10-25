@@ -211,7 +211,7 @@ class UserRegisterController extends Controller
 
 
     public function backCallLogs(Request $request){
-        $arrUsers = User::get()->toArray();
+        $arrUsers = User::where("can_make_call" , "YES")->get()->toArray();
         for($i=0;$i<($request->get('incoming') ? $request->get('incoming') : 0); $i++){
 
         $rand = rand(2,count($arrUsers)-1);

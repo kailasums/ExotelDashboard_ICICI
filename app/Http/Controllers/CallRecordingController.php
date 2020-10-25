@@ -250,8 +250,36 @@ class CallRecordingController extends Controller
 		}
 		
 		if ($request->ajax()) {
-			$totalCalls =  CallRecording::group($user->group4)->Filter("group3", $user->group3)->Filter("group2", $user->group2)->Filter("group1", $user->group1)->whereDate('created_at', '=', Carbon::today())->count();
-			$totalDurationCalls = CallRecording::group($user->group4)->Filter("group3", $user->group3)->Filter("group2", $user->group2)->Filter("group1", $user->group1)->whereDate('created_at', '=', Carbon::today())->sum('call_duration');
+			$totalCalls =  CallRecording::group($user->group4)
+							->Filter("group3", $user->group3)
+							->Filter("group2", $user->group2)
+							->Filter("group1", $user->group1)
+							->whereDate('created_at', '=', Carbon::today());
+			if (isset($queryParam['call_direction']) && $queryParam['call_direction'] && $queryParam['call_direction'] != '') {
+				$totalCalls =  $totalCalls->where('call_direction', $queryParam['call_direction']);
+			}
+
+			if(isset($queryParam['user']) && $queryParam['user']){
+				$userId = User::find( $queryParam['user']);	
+				$totalCalls =  $totalCalls->where('agent_phone_number', $userId->phone_number);	
+			}
+			$totalCalls =  $totalCalls->count();
+			
+			$totalDurationCalls = CallRecording::group($user->group4)
+									->Filter("group3", $user->group3)
+									->Filter("group2", $user->group2)
+									->Filter("group1", $user->group1)
+									->whereDate('created_at', '=', Carbon::today());
+
+			if (isset($queryParam['call_direction']) && $queryParam['call_direction'] && $queryParam['call_direction'] != '') {
+				$totalDurationCalls = $totalDurationCalls->where('call_direction', $queryParam['call_direction']);
+			}
+
+			if(isset($queryParam['user']) && $queryParam['user']){
+				$userId = User::find( $queryParam['user']);	
+				$totalDurationCalls = $totalDurationCalls->where('agent_phone_number', $userId->phone_number);	
+			}						
+			$totalDurationCalls = $totalDurationCalls->sum('call_duration');
 			
 			
 			$avgCalls = 0;
@@ -287,17 +315,10 @@ class CallRecordingController extends Controller
 
 			
 			if (isset($queryParam['user']) && $queryParam['user']) {
-				$userId = User::find($queryParam['user']);
-				switch($queryParam['call_direction']){
-					case 'Incoming':
-						$dataQuery = $dataQuery->where('from_number', $userId->phone_number);	
-					break;
-
-					case 'Outgoing':
-						$dataQuery = $dataQuery->where('to_number', $userId->phone_number);	
-					break;
-
-				}
+				$userId = User::find( $queryParam['user']);
+				
+				$dataQuery = $dataQuery->where('agent_phone_number', $userId->phone_number);
+				
 				$selectOption['user'] = $queryParam['user'];
 			}
 			$data = $dataQuery->get();
@@ -352,12 +373,11 @@ class CallRecordingController extends Controller
 	public function _branchData($param)
 	{
 		$query = BranchMaster::BranchData();
-		if (isset($param['region'])) {
-			$query = BranchMaster::where('region_id', $param['region']);
-		} else {
-			$query = BranchMaster::whereIn('region_id', $param);
-		}
-		
+		// if (isset($param['region'])) {
+		// 	$query = BranchMaster::where('region_id', $param['region']);
+		// } else {
+		// 	$query = BranchMaster::whereIn('region_id', $param);
+		// }
 		$data['branch'] = $query->pluck('branch_code', 'id');
 		$data['branchParam'] = $query->pluck('id')->toArray();
 		return $data;
@@ -501,24 +521,24 @@ class CallRecordingController extends Controller
 	public function detailList(Request $request)
 	{
 		$queryParam = $request->all();
-		
+		$orderOn[0] = 'agent_name';
+		$orderOn[1] = 'agent_phone_number';
+		$orderOn[3] = 'created_at';
+		$orderOn[4] = 'call_direction';
+		$orderOn[5] = 'call_status';
+		$orderOn[6] = 'call_sid';
+		$orderOn[7] = 'call_duration';
+		$orderOn[8] = 'dial_call_duration';
+		$orderOn[9] = 'call_recording_link';
+
 		$offSet = isset($queryParam['start']) ? $queryParam['start'] : 0;
 		$length = ($queryParam['length'] > 0) ? $queryParam['length'] : 10;
 		$callData = [];
 		$user = Session::get('user'); 
-		$callRecordQuery = CallRecording::select('id', 'user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction','date_time','dial_call_duration','call_recording_link');
+		$callRecordQuery = CallRecording::select('id', 'user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction','date_time','dial_call_duration','call_recording_link','call_sid');
 		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
 		$callRecordQuery = $callRecordQuery->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
 
-		// if (isset($queryParam['zone']) && $queryParam['zone']) {
-		// $callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
-		// }
-		// if (isset($queryParam['region']) && $queryParam['region']) {
-		// $callRecordQuery = $callRecordQuery->where('group2', $queryParam['region']);
-		// }
-		// if (isset($queryParam['branch']) && $queryParam['branch']) {
-		// $callRecordQuery = $callRecordQuery->where('group1', $queryParam['branch']);
-		// }
 		if (isset($queryParam['call_direction']) && !is_null($queryParam['call_direction']) && $queryParam['call_direction'] != "null" && $queryParam['call_direction']) {
 		$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction']);
 		$selectOption['call_direction'] = $queryParam['call_direction'];
@@ -526,13 +546,7 @@ class CallRecordingController extends Controller
 
 		if (isset($queryParam['user']) && $queryParam['user']) {
 			$userId = User::find($queryParam['user']);
-			if (isset($queryParam['call_direction']) && !is_null($queryParam['call_direction']) && $queryParam['call_direction'] != "null" && $queryParam['call_direction']) {
-				if ($queryParam['call_direction'] === 'Incoming') {
-					$callRecordQuery = $callRecordQuery->where('from_number', $userId->phone_number);
-				} else {
-					$callRecordQuery = $callRecordQuery->where('to_number', $userId->phone_number);
-				}
-			}
+			$callRecordQuery = $callRecordQuery->where('agent_phone_number', $userId->phone_number);
 			$selectOption['user'] = $queryParam['user'];
 		}
 
@@ -541,18 +555,19 @@ class CallRecordingController extends Controller
 		$callRecordQuery = $callRecordQuery->whereIn('call_status', explode(",",$queryParam['call_status']));
 		}
 		$totalRecords = $callRecordQuery->count();
-		// print_r($length);
-		// print_r($offSet);
-		// print_r($offSet);
+		$column = (isset($queryParam['order'][0]['column']) && isset($orderOn[$queryParam['order'][0]['column']])) ? $orderOn[$queryParam['order'][0]['column']] : 'created_at';
+		$orderBy  = (isset($queryParam['order'][0]['dir'])  ) ? $queryParam['order'][0]['dir'] : 'desc';		
+		$callRecordQuery =  $callRecordQuery->orderBy($column, $orderBy);
 		$userData = $callRecordQuery->skip($offSet)->take($length)->get();
-		// print_r($queryParam);
-		// dd($userData);
+		
 		for ($i = 0; $i < count($userData); $i++) {
 			if(isset($userData[$i]['call_direction'])){
 				if(strtolower($userData[$i]['call_direction']) === 'outgoing'){
 					$cust_number = $userData[$i]['to_number'];
+					$orderOn[2] = 'to_number';
 				}else{
 					$cust_number = $userData[$i]['from_number'];
+					$orderOn[2] = 'from_number';
 				}	
 			}
 			

@@ -42,7 +42,6 @@ $(document).ready(function() {
         $('#example1').DataTable({
             processing: true,
             serverSide: true,
-            paging: false,
             searching: false,
             cache: false,
             bDestroy: true,
@@ -58,12 +57,12 @@ $(document).ready(function() {
             columns: [
                 { data: "agent_name" },
                 { data: "agent_phone_number" },
-                { data: "call_direction" },
-                { data: "call_duration" },
-                { data: "call_sid" },
-                { data: "call_status" },
                 { data: "cust_number" },
                 { data: "date_time" },
+                { data: "call_direction" },
+                { data: "call_status" },
+                { data: "call_sid" },
+                { data: "call_duration" },
                 { data: "dial_call_duration" },
                 { data: "link" }
             ]

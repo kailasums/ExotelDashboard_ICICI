@@ -43,13 +43,6 @@ class BranchMaster extends Model
 
     public function scopeBranchData($query){
         $user = Auth::user();
-        //$query = $query->where("megazone_id",$user->group4);
-        // if(isset($user->group3)  && $user->group3 !== 0 ){
-        //     $query = $query->where("zone_id",$user->group3);
-        // }
-        if(isset($user->group2)  && $user->group2 !== 0 ){
-            $query = $query->where("id",$user->group2);
-        }
         if(isset($user->group1)  && $user->group1 !== 0 ){
             $query = $query->where("id",$user->group1);
         }
