@@ -172,6 +172,7 @@ class SendFileToProcess implements ShouldQueue
                 
             //check user exist or not
             $userRecord = [];
+            $password = '';
             if(in_array($user['Email'], $arrAllEmailIDs )){
                 $userRecord['id'] = $arrEmail[$user['Email']]['id'];
                 $userRecord['email'] = $user['Email'];
@@ -182,21 +183,6 @@ class SendFileToProcess implements ShouldQueue
                 $userRecord['id'] = '';
                 $userRecord['email'] = $user['Email'];
                 
-                if(env("IS_SEND_MAIL_REGISTRAION")  === 'YES'){
-                    try{
-                        $response = $this->senduserCreationMail($user['Email'],  $password );
-                        if(!$response){
-                            
-                            $arrTempDateEmailAddress['remark'] = 'email sending fail.';
-                            $errorFlag = true;
-                        }else{
-                            
-                        }    
-                    }catch(Exception $e){
-                        echo $e;
-                    }
-                    
-                }   
                 $userRecord['password'] = Hash::make($password);
                 $arrTempDateEmailAddress['password'] = $password;
                 //dd($arrTempDateEmailAddress); 
@@ -310,6 +296,7 @@ class SendFileToProcess implements ShouldQueue
                         $userDetails = User::where('id', $userRecord['id'])->update($userRecord);
                         $arrTempDateEmailAddress['status'] = "success";
                         $arrTempDateEmailAddress['remark'] = "";
+                        
                     }catch(Exception $e){
                         $arrTempDateEmailAddress['status'] = "error";
                         $arrTempDateEmailAddress['remark'] = $e;;
@@ -319,18 +306,32 @@ class SendFileToProcess implements ShouldQueue
                         $userDetails = User::create($userRecord);
                         $arrTempDateEmailAddress['status'] = "success";
                         $arrTempDateEmailAddress['remark'] = "";
+                        if(env("IS_SEND_MAIL_REGISTRAION")  === 'YES'){
+                            
+                            try{
+                                $response = $this->senduserCreationMail($userRecord,  $arrTempDateEmailAddress['password'] );
+                                if(!$response){
+                                    $arrTempDateEmailAddress['remark'] = 'email sending fail.';
+                                    $errorFlag = true;
+                                }    
+                                
+                            }catch(Exception $e){
+                                echo "error".$e;
+                                echo $e;
+                            }
+                        }
                     }catch(Exception $e){
                         $arrTempDateEmailAddress['status'] = "error";
                         $arrTempDateEmailAddress['remark'] = $e;;
                     } 
                 }
             }
-
             //check entry is present in user Log to update record 
             $userLog = UsersLog::where('email', $userRecord['email'])->get()->toArray();
             if(count($userLog) > 0 ){
                 $updateLogDetails = UsersLog::where('id', $userLog[0]['id'])->update($arrTempDateEmailAddress);
             }else{
+                $arrTempDateEmailAddress['file_id'] = $this->details->id;
                 $updateLogDetails = UsersLog::create($arrTempDateEmailAddress);
             }
             array_push($arrUpdateDateEmailAddress,$userRecord['email']);
@@ -350,7 +351,6 @@ class SendFileToProcess implements ShouldQueue
      }
     /**
      * addHierachyData stores and create hierarchy Data
-     * 
      */
 
     private function addHierachyData($groupData){
@@ -430,28 +430,27 @@ class SendFileToProcess implements ShouldQueue
         }    
     }
 
-    private function senduserCreationMail($email, $password){
-        
+    private function senduserCreationMail($userDetails , $password){
         
         try{
             $details = [
                 'title' => 'You are registered with our system',
-                'body' => "Hi, \n You are registered with this system. \n Your username is your email address and password is  $password"
+                'userDetails' => $userDetails
             ];
-            \Mail::to($email)->send(new \App\Mail\MyTestMail($details));
+            \Mail::to($userDetails['email'])->send(new \App\Mail\MyTestMail($details));
             return true;
         }catch(Exception $e){
             return false;
         }
         
      }
-    public function failed(Throwable $exception)
-    {
-        $fileUploadProcessingRecord = [];
-        $fileUploadProcessingRecord['upload_status'] = 'failed';
-        $fileUploadProcessingRecord['remark'] = $exception;
-        $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
-        return false;
-    }
+    // public function failed(Throwable $exception)
+    // {
+    //     $fileUploadProcessingRecord = [];
+    //     $fileUploadProcessingRecord['upload_status'] = 'failed';
+    //     $fileUploadProcessingRecord['remark'] = $exception;
+    //     $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
+    //     return false;
+    // }
 
 }

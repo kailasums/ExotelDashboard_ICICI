@@ -100,10 +100,11 @@ $(document).ready(function() {
     $('#datepickerFilter2').datepicker({ dateFormat: 'yy-mm-dd' , minDate: d,  maxDate: new Date()});
 
     function setStartDate() {
-        const EndDate = $('#datepickerFilter2').val()
-        var d = new Date(EndDate)
+        const EndDate = formatDate(new Date()); //$('#datepickerFilter2').val()        
         var StartDate = EndDate//formatDate(new Date(d.setDate(d.getDate() - 10)))
+
         $('#datepickerFilter1').val(StartDate)
+        $('#datepickerFilter2').val(EndDate)
         $('#datepickerFilter1').prop('max', EndDate)
         $('#datepickerFilter1').prop('min', StartDate)
     }
@@ -123,7 +124,7 @@ $(document).ready(function() {
 
     function formatDate(newDate) {
         var month = ('0' + (newDate.getMonth() + 1)).slice(-2)
-        var day = ('0' + (newDate.getDate() + 1)).slice(-2)
+        var day = ('0' + (newDate.getDate() )).slice(-2)
         var year = newDate.getFullYear()
         return year + '-' + month + '-' + day
     }

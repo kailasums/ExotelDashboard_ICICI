@@ -30,6 +30,7 @@ class CreateUsersLogTable extends Migration
             $table->string('group4')->nullable();
             $table->string('designation');
             $table->string('remark')->nullable();
+            $table->integer('file_id')->default(0);
             $table->enum('status',['success','error'])->default('success');
             $table->timestamps();
             $table->softDeletes();

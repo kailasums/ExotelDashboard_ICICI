@@ -241,12 +241,15 @@ class CallRecordingController extends Controller
 		$user = Session::get('user');
 		if(isset($user->group3) && $user->group3 !== 0 ){
 			$selectOption['zone'] = $user->group3;
+			$queryParam['zone_summary'] = $queryParam['zone'] = $user->group3;
 		}
 		if(isset($user->group2) && $user->group2 !== 0 ){
 			$selectOption['region'] = $user->group2;
+			$queryParam['region_summary'] = $queryParam['region'] = $user->group2;
 		}
 		if(isset($user->group1) && $user->group1 !== 0 ){
 			$selectOption['branch'] = $user->group1;
+			$queryParam['branch_summary'] = $queryParam['branch'] = $user->group1;
 		}
 		
 		if ($request->ajax()) {
@@ -280,7 +283,6 @@ class CallRecordingController extends Controller
 				$totalDurationCalls = $totalDurationCalls->where('agent_phone_number', $userId->phone_number);	
 			}						
 			$totalDurationCalls = $totalDurationCalls->sum('call_duration');
-			
 			
 			$avgCalls = 0;
 			if($totalDurationCalls) {
@@ -419,6 +421,7 @@ class CallRecordingController extends Controller
 		$user = Session::get('user');
 		$zoneData = $this->_zoneData($user->group4);
 		$zone = $zoneData['zones'];
+
 		$selectOption['call_direction_summary'] = $queryParam['call_direction_summary'];
 		if (isset($queryParam['region_summary']) && $queryParam['region_summary']) {
 			$regionData = $this->_regionData($queryParam);

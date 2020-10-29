@@ -32,7 +32,7 @@ class MyTestMail extends Mailable
     {
         try{
             return $this->subject('You are registered with our system.')
-                    ->view('emails.registeruser');
+                    ->view('emails.registeruser',["details" => $this->details]);
         }catch(Exception $e){
             dd($e);
         }

@@ -52,10 +52,10 @@ class UserRegisterController extends Controller
                         return redirect('/import-users')->with('error',trans('uploadfile.filenNameNotMatch'));
                     }
                     
-                    $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])->get()->toArray();
-                    if(count($processingFileCount) > 0 ){
-                        return redirect('/import-users')->with('error',trans('uploadfile.filePendingToUpload'));
-                    }
+                    // $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])->get()->toArray();
+                    // if(count($processingFileCount) > 0 ){
+                    //     return redirect('/import-users')->with('error',trans('uploadfile.filePendingToUpload'));
+                    // }
                     
                     $extensions = explode(",",env("FILE_EXTENSION"));
                     $result = array($fileDetails->getClientOriginalExtension());
@@ -119,10 +119,12 @@ class UserRegisterController extends Controller
     }
 
 
-    public function exportPassword(){
+    public function exportPassword(Request $request){
         try{
+            $postData = $request->all();
+            $fileId = $postData['file_id'];
             if(env("DOWNLOADPASSWORDLINK") === "YES"){
-                $sheets = UsersLog::select(['email','phone_number','password'])->get()->toArray();
+                $sheets = UsersLog::where('file_id', $fileId)->select(['email','phone_number','password'])->get()->toArray();
                 $arrImportData = [];
                 if(count($sheets) > 0 ){
                     for($i=0; $i< count($sheets); $i++){
@@ -213,11 +215,9 @@ class UserRegisterController extends Controller
     public function backCallLogs(Request $request){
         $arrUsers = User::where("can_make_call" , "YES")->get()->toArray();
         for($i=0;$i<($request->get('incoming') ? $request->get('incoming') : 0); $i++){
-
-        $rand = rand(2,count($arrUsers)-1);
-        $status = ['failed','completed','busy','no answered'];
+        $rand = rand(0,count($arrUsers)-1);
         $callLogs=[];
-        $callLogs['from_number'] = '111111111';
+        $callLogs['from_number'] = rand(11111111, 999999999999);
         $callLogs['to_number'] = $arrUsers[$rand]['phone_number'];
         $callLogs['date_time'] = Date("Y-m-d H:i:s");
         $callLogs['call_duration'] = "".rand(100,300);
@@ -225,7 +225,7 @@ class UserRegisterController extends Controller
         $callLogs['call_status'] = ($request->get('call_status')) ? $request->get('call_status') : 'busy';
         $callLogs['call_direction'] = "Incoming";
         $callLogs['call_recording_link'] = "-";
-        $callLogs['call_sid'] = "123456780scxrfdxgfdhfdhgdfhfdgdf";
+        $callLogs['call_sid'] = "1234567".rand(11111,999999999).time();
         $callLogs['agent_name'] = $arrUsers[$rand]['name'];
         $callLogs['agent_phone_number'] = $arrUsers[$rand]['phone_number'];
         $callLogs['user_id'] = $arrUsers[$rand]['id'];
@@ -233,25 +233,23 @@ class UserRegisterController extends Controller
         $callLogs['group2'] = $arrUsers[$rand]['group2'];
         $callLogs['group3'] = $arrUsers[$rand]['group3'];
         $callLogs['group4'] = $arrUsers[$rand]['group4'];
-
+        
         \App\CallRecording::create($callLogs);
         }
         
         for($i=0;$i<($request->get('outgoing') ? $request->get('outgoing') : 0); $i++){
-
-        
-            $rand = rand(2,count($arrUsers)-1);
-            $status = ['Failed','Completed','Busy','No Answer'];
+            $rand = rand(0,count($arrUsers)-1);
+            //$status = ['Failed','Completed','Busy','No Answer'];
             $callLogs=[];
             $callLogs['from_number'] = $arrUsers[$rand]['phone_number'];
-            $callLogs['to_number'] = '111111111';
+            $callLogs['to_number'] = rand(11111111, 999999999999);
             $callLogs['call_duration'] = "".rand(100,300);
             $callLogs['dail_call_duration'] = "".rand(100,300);
             $callLogs['call_status'] = ($request->get('call_status')) ? $request->get('call_status') : 'busy';
             $callLogs['call_direction'] = "Outgoing";
             $callLogs['date_time'] = Date("Y-m-d H:i:s");
             $callLogs['call_recording_link'] = "-";
-            $callLogs['call_sid'] = "123456780scxrfdxgfdhfdhgdfhfdgdf";
+            $callLogs['call_sid'] = "123456780scxrfdxg".rand(1111,99999).time();
             $callLogs['agent_name'] = $arrUsers[$rand]['name'];
             $callLogs['agent_phone_number'] = $arrUsers[$rand]['phone_number'];
             $callLogs['user_id'] = $arrUsers[$rand]['id'];
@@ -259,11 +257,10 @@ class UserRegisterController extends Controller
             $callLogs['group2'] = $arrUsers[$rand]['group2'];
             $callLogs['group3'] = $arrUsers[$rand]['group3'];
             $callLogs['group4'] = $arrUsers[$rand]['group4'];
-    
+            
             \App\CallRecording::create($callLogs);
-            }
+        }
 
-        
         return true;
     }
 
