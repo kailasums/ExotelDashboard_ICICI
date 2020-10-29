@@ -46,6 +46,7 @@
 
                                 <div class="selectType col-md-2">
                                     <div class="select">
+                                    
                                         <?php echo Form::select('zone', (object) array_merge( [''=>'Zone'], (array) $zone), '',array('class' => 'user-regions-filter','form'=>"type"));; ?>
 
                                     </div>

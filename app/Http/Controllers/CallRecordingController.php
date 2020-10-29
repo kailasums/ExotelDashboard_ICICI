@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Log;
 
 class CallRecordingController extends Controller
 {
+	/**
+	 * constructor
+	 */
 	public function __construct()
 	{
 		$this->middleware('auth')->except(['store', 'show', 'storeFromGet']);
@@ -35,7 +38,11 @@ class CallRecordingController extends Controller
 	{
 		return view('callRecord.index');
 	}
-
+	/**
+	 * get string value private function for get values in outgoing call
+	 * $str post string 
+	 * $params paramter to take value
+	 */
 	private function get_string($str, $param)
 	{
 
@@ -51,6 +58,10 @@ class CallRecordingController extends Controller
 		return $finalString;
 	}
 
+	/**
+	 * Store call records which are from incoming call diraction
+	 * $request Request Parameter to get input  
+	 */
 
 	public function storeFromGet(Request $request)
 	{
@@ -117,7 +128,7 @@ class CallRecordingController extends Controller
 	}
 
 	/**
-	 * Store a newly created resource in storage.
+	 * call record store for outgoing call .
 	 *
 	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Http\Response
@@ -204,31 +215,9 @@ class CallRecordingController extends Controller
 		return response()->json($response);
 	}
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  \App\CallRecording  $callRecording
-	 * @return \Illuminate\Http\Response
-	 */
-	public function edit(CallRecording $callRecording)
-	{
-		//
-	}
 
 	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \App\CallRecording  $callRecording
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(Request $request, CallRecording $callRecording)
-	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
+	 * method for show pie chart details .
 	 *
 	 * @param  \Illuminate\Http\Request  $request
 	 * @param  \App\CallRecording  $callRecording
@@ -346,52 +335,72 @@ class CallRecordingController extends Controller
 
 		if ($request->ajax()) {
 			$callRecords = json_encode($array);
+			// dd($zone);
 			return compact('callRecords', 'zone', 'region', 'branch', 'user', 'call_direction', 'selectOption', 'totalCalls', 'totalDurationCalls', 'avgCalls');
 		}
+		//dd($zone);
+		// dd($);
 		return view('callRecord.google-pie-chart')->with(compact('zone', 'region', 'branch', 'user', 'call_direction'));
 	}
 
+	/**
+	 * get zone data based
+	 */
 	public function _zoneData($param)
 	{
 		$query = ZoneMaster::ZoneData(); //where('megazone_id', $param);
+		$query =  $query->orderBy('zone_name', 'asc');
 		$data['zones'] = $query->pluck('zone_name', 'id');
+		
 		$data['zoneParam'] = $query->pluck('id')->toArray();
 		return $data;
 	}
-
+	/**
+	 * getregional data
+	 */
 	public function _regionData($param)
 	{
 		$query = RegionMaster::RegoinData();
 		if (isset($param['zone'])) {
-			$query = RegionMaster::where('zone_id', $param['zone']);
-		// } else {
-		// 	$query = RegionMaster::whereIn('zone_id', $param);
+			$query = $query->where('zone_id', $param['zone']);
+		} else {
+			$query = $query->whereIn('zone_id', $param);
 		}
+		$query =  $query->orderBy('region_name', 'asc');
 		$data['region'] = $query->pluck('region_name', 'id');
-		
 		$data['regionParam'] = $query->pluck('id')->toArray();
+		// dd($data);
 		return $data;
 	}
 
+	/**
+	 * get branch data 
+	 */
 	public function _branchData($param)
 	{
 		$query = BranchMaster::BranchData();
 		if (isset($param['region'])) {
-			$query = BranchMaster::where('region_id', $param['region']);
+			$query = $query->where('region_id', $param['region']);
 		} else {
-			$query = BranchMaster::whereIn('region_id', $param);
+			$query = $query->whereIn('region_id', $param);
 		}
+		$query =  $query->orderBy('branch_code', 'asc');
 		$data['branch'] = $query->pluck('branch_code', 'id');
 		$data['branchParam'] = $query->pluck('id')->toArray();
 		return $data;
 	}
 
+	/**
+	 * call redirection 
+	 */
 	public function _callDirection()
 	{
 		$call_direction = ['Incoming' => 'Incoming', 'Outgoing' => 'Outgoing'];
 		return $call_direction;
 	}
-
+	/**
+	 * users in brach 
+	 */
 	public function _userData($param)
 	{
 		if (isset($param['branch'])) {
@@ -414,7 +423,9 @@ class CallRecordingController extends Controller
 	{
 		//
 	}
-
+	/**
+	 * set dropdown option 
+	 */
 	public function dropDownOption(Request $request)
 	{
 		$queryParam = $request->all();
@@ -463,7 +474,9 @@ class CallRecordingController extends Controller
 		return $data;
 	}
 
-
+	/**
+	 * summary report 
+	 */
 	function showData(Request $request)
 	{
 		$queryParam = $request->all();
@@ -522,6 +535,9 @@ class CallRecordingController extends Controller
 		return json_encode($data);
 	}
 
+	/**
+	 * Detailed report 
+	 */
 	public function detailList(Request $request)
 	{
 		$queryParam = $request->all();

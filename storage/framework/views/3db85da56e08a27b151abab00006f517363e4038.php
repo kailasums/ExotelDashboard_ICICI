@@ -1,7 +1,4 @@
-<?php 
-	print_r($details);
 
-?>
 <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 <style>
 	
@@ -33,44 +30,39 @@
 	<!--<div style="float:left;width:600px; padding-top: 25px;">-->
 	<div>
 	
-		<p>Hi Krushna,</p>
+		<p>Hi <?php echo e($details['userDetails']['name']); ?>,</p>
 
-		Thank you for registering with Exotel ISPCalling Platform, we are happy to serve you. To begin with, please find the below login details. <br><br>
+		You have been registered on Exotel Dashboard for call logs. Please find the below login details.  <br><br>
 
 		<table border="1" style="border-collapse: collapse;">
-			<tr>
-				<td><b>NAME</b></td>
-				<td>Sachin</td>
-			</tr>
-			<tr>
-				<td><b>EMAIL</b></td>
-				<td>sachin@test.com</td>
-			</tr>
-			<tr>
-				<td><b>PASSWORD</b></td>
-				<td>test@1234</td>
-			</tr>
-			<tr>
-				<td><b>DESIGNATION</b></td>
-				<td>BM</td>
-			</tr>
 			<tr>
 				<td><b>URL</b></td>
 				<td>http://<domainname>.com</td>
 			</tr>
+			<tr>
+				<td><b>LOGIN ID</b></td>
+				<td>sachin@test.com</td>
+			</tr>
+	
+			<tr>
+				<td><b>PASSWORD</b></td>
+				<td>test@1234</td>
+			</tr>
+			
+			<tr>
+				<td><b>DESIGNATION</b></td>
+				<td>BM</td>
+			</tr>
+			
 			
 
 		</table> <br><br>
-
-		For any queries related to Exotel ISPCalling Platform, write to us at support_email.com . <br>
-		We’d love to help! <br><br>
 
         <b>Note*</b>: Please do not share your credentials with anyone <br><br>
 
 
 		Regards,<br>
-		Thanks,<br>
-		ISP Calling
+		Exotel Dashboard Team
 	</div>
 	<table style="border: 0px solid #fff;">
 			<tbody>

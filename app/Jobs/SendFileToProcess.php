@@ -187,6 +187,7 @@ class SendFileToProcess implements ShouldQueue
                 $arrTempDateEmailAddress['password'] = $password;
                 //dd($arrTempDateEmailAddress); 
             }
+            // dd($arrTempDateEmailAddress);
 
             //add or update new record in array for user 
             $userRecord['name'] = $user['Name'];
@@ -332,6 +333,7 @@ class SendFileToProcess implements ShouldQueue
                 $updateLogDetails = UsersLog::where('id', $userLog[0]['id'])->update($arrTempDateEmailAddress);
             }else{
                 $arrTempDateEmailAddress['file_id'] = $this->details->id;
+                // dd($arrTempDateEmailAddress);
                 $updateLogDetails = UsersLog::create($arrTempDateEmailAddress);
             }
             array_push($arrUpdateDateEmailAddress,$userRecord['email']);

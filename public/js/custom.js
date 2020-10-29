@@ -233,7 +233,7 @@ $(document).ready(function() {
                         
                         for (let i = 0; i < targetElement.length; i++) {
                             if (element !== targetElement[i]) {
-                                //alert(targetElement[i])
+                                // console.log(data[targetElement[i]])
                                 $("select[name='" + targetElement[i] + "'").html('')
                                 $("select[name='" + targetElement[i] + "'").html('<option value="" selected="selected">' + showName[targetElement[i]].toUpperCase() + '</option><optgroup label="items">' + createOptions(data[targetElement[i]], data.selectOption ? data.selectOption[targetElement[i]] : '', targetElement[i]) + '</optgroup>')
                             }
@@ -247,7 +247,8 @@ $(document).ready(function() {
                             $("#totalCalls").text(data.totalCalls);
                             $("#totalDurationCalls").text(data.totalDurationCalls);
                             $("#avgCalls").text(data.avgCalls);
-                            if(Object.keys(JSON.parse(data.callRecords)).length  < 1){
+                            
+                            if(Object.keys(JSON.parse(data.callRecords)).length  <= 1){
                                 $("#pie_chart").find("text").html("No Data Available")
                             }
                             
@@ -303,6 +304,7 @@ $(document).ready(function() {
             return optionString
         }
         for (const property in data) {
+            // alert(data[property]);
             let string = ''
             if (property == selectOption) {
                 string += '<option value="' + property + '" selected=selected>' + data[property] + '</option>'
