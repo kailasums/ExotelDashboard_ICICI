@@ -46,7 +46,7 @@
 
                                 <div class="selectType col-md-2">
                                     <div class="select">
-                                    
+
                                         <?php echo Form::select('zone', (object) array_merge( [''=>'Zone'], (array) $zone), '',array('class' => 'user-regions-filter','form'=>"type"));; ?>
 
                                     </div>
@@ -161,7 +161,7 @@
                                                         <label for="Completed">Busy</label>
                                                     </div>
                                                     <div class="form-group checkbox">
-                                                        <input type="checkbox" class="charecter-filter report-status-filter" name="call_status"  value="no answered" id="In Progress">
+                                                        <input type="checkbox" class="charecter-filter report-status-filter" name="call_status"  value="no answer" id="In Progress">
                                                         <label for="In Progress">No Answer</label>
                                                     </div>
                                                     <div class="form-group checkbox">

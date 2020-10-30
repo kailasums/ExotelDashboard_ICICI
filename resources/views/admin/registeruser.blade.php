@@ -99,24 +99,21 @@
                                                 <td>
                                                     <div class="actions">
                                                         <?php
-                                                            if($i === 0){
+                                                            // if($i === 0){
                                                                 if($fileUploadRecord[$i]['upload_status'] === 'failed') {
                                                                     echo $fileUploadRecord[$i]['remark'];
                                                                 }
                                                                  
                                                                 if($fileUploadRecord[$i]['upload_status'] === 'completed' || $fileUploadRecord[$i]['upload_status'] === 'completed-with-error'){
-                                                                    echo "<a style='margin:10px;' target='blank' href='/admin/export-log'>Log File</a>|";  
-                                                                    // if(env("DOWNLOADPASSWORDLINK")  === "YES"){
-                                                                    //     echo "<a style='margin:10px;' target='blank' href='/admin/export-password'>PasswordFile</a>";    
-                                                                    // }
-                                                                }
-                                                            }
-                                                            if($fileUploadRecord[$i]['upload_status'] === 'completed' || $fileUploadRecord[$i]['upload_status'] === 'completed-with-error'){
-                                                                if(env("DOWNLOADPASSWORDLINK")  === "YES"){
-                                                                    echo "<a style='margin:10px;' target='blank' href='/admin/export-password/?file_id=".$fileUploadRecord[$i]['id']."'>PasswordFile</a>";    
-                                                                }
-                                                            }
+                                                                    echo "<a style='margin:10px;' target='blank' href='".url('userLog_'.$fileUploadRecord[$i]['id'].'.xlsx')."'>Log File</a>|";  
+                                                                   //}
                                                             
+                                                                    if(env("DOWNLOADPASSWORDLINK")  === "YES"){
+                                                                        $fileName = 'userPassword_'.$fileUploadRecord[$i]['id'].'.xlsx';
+                                                                        echo "<a style='margin:10px;' target='blank' href='".url($fileName)."'>PasswordFile</a>";    
+                                                                    }
+                                                                }
+                                                            // }
                                                         ?>
                                                     </div>
                                                 </td>

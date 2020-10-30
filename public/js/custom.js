@@ -137,15 +137,24 @@ $(document).ready(function() {
 
     $('#applydatefilter').on('click', function() {
         const days = checkDateDiff($("#datepickerFilter1").val(), $('#datepickerFilter2').val());
-        if (days > 10) {
+        
+        var startDate =$("#datepickerFilter1").val();
+        var endDate = $('#datepickerFilter2').val();
+        if ((Date.parse(endDate) < Date.parse(startDate))) {
+            $(".date_diff").text("End date should be greater than Start date");
+            $(".date_diff").addClass("error text-danger");
+        }else if (days > 9) {    
             $(".date_diff").text("Date Difference is greater then 10 days");
             $(".date_diff").addClass("error text-danger");
             // setStartDate();
         } else {
-            $(".date_diff").text("");
-            showDatatable('example', 'call-record-data', true);
-            selectUserDataAjaxOption('user-call-detail', 'startDate', $("#datepickerFilter1").val(), targetdetailedElementArray)
-        }
+                $(".date_diff").text("");
+                showDatatable('example', 'call-record-data', true);
+                selectUserDataAjaxOption('user-call-detail', 'startDate', $("#datepickerFilter1").val(), targetdetailedElementArray)
+            }
+        
+        
+        
     })
 
     $("select[name='zone']").change(function() {

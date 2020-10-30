@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Rap2hpoutre\FastExcel\FastExcel;
+use File;
 use Illuminate\Support\Facades\Hash;
 
 use App\User,App\MegaZoneMaster,
@@ -115,6 +116,74 @@ class SendFileToProcess implements ShouldQueue
                 }
                 $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
                 
+                //create password file 
+                try{
+                    $sheets = UsersLog::select(['name','email', 'phone_number','designation','group1','group2','group3','group4','designation','status','remark'])->get();
+                
+                    $arrImportData = [];
+                    if(count($sheets) > 0 ){
+                        for($i=0; $i< count($sheets); $i++){
+                            $tempData = [];
+                            $tempData['Name']= $sheets[$i]['name'];
+                            $tempData['Email']= $sheets[$i]['email'];
+                            $tempData['Number'] = $sheets[$i]['phone_number'];
+                            $tempData['Group1'] = $sheets[$i]['group1'];
+                            $tempData['Group2'] = $sheets[$i]['group2'];
+                            $tempData['Group3'] = $sheets[$i]['group3'];
+                            $tempData['Group4'] = $sheets[$i]['group4'];
+                            $tempData['Designation'] = $sheets[$i]['designation'];
+                            $tempData['Status'] = $sheets[$i]['status'];
+                            $tempData['Remark'] = $sheets[$i]['remark'];
+                            array_push($arrImportData,$tempData);
+                        }
+                    }
+
+                    (new FastExcel($arrImportData))->export('userLog_'.$this->details->id.'.xlsx');
+                    // if($this->details->id > 3){
+                    //     $file_id = $this->details->id;
+                    //     File::delete('userLog_'.$file_id.'.xlsx');
+                    // }
+                    if($this->details->id > 3){
+                        $file_id = $this->details->id;
+                        $path = 'userLog_'.$file_id.'.xlsx';
+                        $file_path = public_path(substr($path, 1));
+
+                        if(File::exists($file_path)) {
+                            File::delete($file_path);
+                        }
+                        
+                        // File::delete('userPassword_'.$file_id.'.xlsx');
+                    }
+                    if(env("DOWNLOADPASSWORDLINK") === "YES"){
+                        $arrImportData = [];
+                        if(count($sheets) > 0 ){
+                            for($i=0; $i< count($sheets); $i++){
+                                $tempData = [];
+                                $tempData['Email']= $sheets[$i]['email'];
+                                #$tempData['Number'] = $sheets[$i]['phone_number'];
+                                $tempData['Password'] = $sheets[$i]['password'];
+                                array_push($arrImportData,$tempData);
+                            }
+                        }
+                        (new FastExcel($arrImportData))->export('userPassword_'.$this->details->id.'.xlsx');
+                        if($this->details->id > 3){
+                            $file_id = $this->details->id;
+                            $path = 'userPassword_'.$file_id.'.xlsx';
+                            $file_path = public_path(substr($path, 1));
+
+                            if(File::exists($file_path)) {
+                                File::delete($file_path);
+                            }
+                            
+                            // File::delete('userPassword_'.$file_id.'.xlsx');
+                        }
+                        
+                    }else{
+                        return false;
+                    }
+                }catch(Exception $e){
+                    return false;
+                }
                 return true;
             }catch(Exception $e){
                 $fileUploadProcessingRecord = [];
