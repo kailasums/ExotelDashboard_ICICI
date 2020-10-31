@@ -596,10 +596,8 @@ class CallRecordingController extends Controller
                     ->orWhere('to_number',  'like', '%'.$request['search']['value'].'%');
 			});
 			
-			//->orWhere([ 'from_number'  'like', '%'.$request['search']['value'].'%'], []]);
 		}
 
-		// 'name', 'like', '%' . Input::get('name') . '%'
 		if (isset($queryParam['user']) && $queryParam['user']) {
 			$userId = User::find($queryParam['user']);
 			$callRecordQuery = $callRecordQuery->where('agent_phone_number', $userId->phone_number);
@@ -608,7 +606,7 @@ class CallRecordingController extends Controller
 
 
 		if (isset($queryParam['call_status']) && $queryParam['call_status'] != "undefined" && $queryParam['call_status']) { 
-		$callRecordQuery = $callRecordQuery->whereIn('call_status', explode(",",$queryParam['call_status']));
+			$callRecordQuery = $callRecordQuery->whereIn('call_status', explode(",",$queryParam['call_status']));
 		}
 		$totalRecords = $callRecordQuery->count();
 		$column = (isset($queryParam['order'][0]['column']) && isset($orderOn[$queryParam['order'][0]['column']])) ? $orderOn[$queryParam['order'][0]['column']] : 'created_at';
