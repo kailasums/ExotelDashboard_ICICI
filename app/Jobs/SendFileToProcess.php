@@ -106,7 +106,7 @@ class SendFileToProcess implements ShouldQueue
 
                 $arrUpdateDateEmailAddress = [];
                 
-                $errorOverAllFlag = $this->addUserData($exportUserList,$arrEmail);
+                $errorOverAllFlag = $this->addUserData($exportUserList,$arrEmail, $this->details->id);
                 
                 $fileUploadProcessingRecord = [];// dd($fileUploadProcessingRecord);
                 if($errorOverAllFlag){
@@ -155,6 +155,7 @@ class SendFileToProcess implements ShouldQueue
                         // File::delete('userPassword_'.$file_id.'.xlsx');
                     }
                     if(env("DOWNLOADPASSWORDLINK") === "YES"){
+                        $sheets = UsersLog::select(['password','email'])->get();
                         $arrImportData = [];
                         if(count($sheets) > 0 ){
                             for($i=0; $i< count($sheets); $i++){
@@ -219,7 +220,7 @@ class SendFileToProcess implements ShouldQueue
     /**
      * Export user data 
      */
-     private function addUserData($exportUserList,$arrEmail){
+     private function addUserData($exportUserList,$arrEmail,$file_id){
         $arrUpdateDateEmailAddress = [];
         $arrAllEmailIDs = array_keys($arrEmail);
         
@@ -401,7 +402,8 @@ class SendFileToProcess implements ShouldQueue
             if(count($userLog) > 0 ){
                 $updateLogDetails = UsersLog::where('id', $userLog[0]['id'])->update($arrTempDateEmailAddress);
             }else{
-                $arrTempDateEmailAddress['file_id'] = $this->details->id;
+                $arrTempDateEmailAddress['file_id'] = $file_id;
+                // dd($arrTempDateEmailAddress);
                 // dd($arrTempDateEmailAddress);
                 $updateLogDetails = UsersLog::create($arrTempDateEmailAddress);
             }

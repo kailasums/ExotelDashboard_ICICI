@@ -233,6 +233,9 @@ class UserRegisterController extends Controller
         $callLogs['group2'] = $arrUsers[$rand]['group2'];
         $callLogs['group3'] = $arrUsers[$rand]['group3'];
         $callLogs['group4'] = $arrUsers[$rand]['group4'];
+        if($request->get('created_at')){
+            $callLogs['created_at'] = date("Y-m-d H:i:s", strtotime($request->get('created_at')) );
+        }
         
         \App\CallRecording::create($callLogs);
         }
@@ -257,7 +260,9 @@ class UserRegisterController extends Controller
             $callLogs['group2'] = $arrUsers[$rand]['group2'];
             $callLogs['group3'] = $arrUsers[$rand]['group3'];
             $callLogs['group4'] = $arrUsers[$rand]['group4'];
-            
+            if($request->get('created_at')){
+                $callLogs['created_at'] = date("Y-m-d H:i:s", strtotime($request->get('created_at')) );
+            }
             \App\CallRecording::create($callLogs);
         }
 

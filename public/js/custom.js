@@ -42,13 +42,11 @@ $(document).ready(function() {
         $('#example1').DataTable({
             processing: true,
             serverSide: true,
-            searching: false,
             cache: false,
             bDestroy: true,
-            bFilter: false,
             bInfo: false,
-            "oLanguage": {
-                "sEmptyTable": "No data available"
+            oLanguage: {
+                sEmptyTable: "No data available"
             },
             ajax: {
                 url: url,
