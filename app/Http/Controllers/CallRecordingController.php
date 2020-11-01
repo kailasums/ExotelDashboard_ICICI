@@ -512,17 +512,6 @@ class CallRecordingController extends Controller
 		// $callRecordQuery =  $callRecordQuery->where('group4', $user->group4);
 		
 		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
-		// if (isset($queryParam['zone_summary']) && $queryParam['zone_summary']) {
-		// 	$callRecordQuery =  $callRecordQuery->where('group3', $queryParam['zone_summary']);
-		// }
-		// if (isset($queryParam['region_summary']) && $queryParam['region_summary']) {
-		// 	$callRecordQuery =  $callRecordQuery->where('group2', $queryParam['region_summary']);
-		// }
-		// if (isset($queryParam['branch_summary']) && $queryParam['branch_summary']) {
-		// 	$callRecordQuery =  $callRecordQuery->where('group1', $queryParam['branch_summary']);
-		// }
-		
-		//if (isset($queryParam['call_direction_summary']) && $queryParam['call_direction_summary'] != 'undefined') {
 			
 		if (isset($queryParam['call_direction_summary']) && !is_null($queryParam['call_direction_summary']) && $queryParam['call_direction_summary'] != "null" && $queryParam['call_direction_summary']) {
 			

@@ -309,22 +309,22 @@ class SendFileToProcess implements ShouldQueue
             }
             
             if($userRecord['email'] === ''){
-                $arrTempDateEmailAddress['remark'] = 'email is not present.';
+                $arrTempDateEmailAddress['remark'] = 'Email is not present.';
                 $errorFlag = true;
             }
 
             if($userRecord['phone_number'] === ''){
-                $arrTempDateEmailAddress['remark'] = 'phoneNumber is not present.';
+                $arrTempDateEmailAddress['remark'] = 'PhoneNumber is not present.';
                 $errorFlag = true;
             }
 
             if($userRecord['designation'] === ''){
-                $arrTempDateEmailAddress['remark'] = 'designation is not present.';
+                $arrTempDateEmailAddress['remark'] = 'Designation is not present.';
                 $errorFlag = true;
             }
             
             if($userRecord['level'] === ''){
-                $arrTempDateEmailAddress['remark'] = 'level is not present.';
+                $arrTempDateEmailAddress['remark'] = 'Level is not present.';
                 $errorFlag = true;
             }
             
@@ -503,27 +503,18 @@ class SendFileToProcess implements ShouldQueue
         }    
     }
 
-    private function senduserCreationMail($userDetails , $password){
-        
+    private function senduserCreationMail($userDetails , $password){    
         try{
             $details = [
                 'title' => 'You are registered with our system',
-                'userDetails' => $userDetails
+                'userDetails' => $userDetails,
+                'password' => $password
             ];
             \Mail::to($userDetails['email'])->send(new \App\Mail\MyTestMail($details));
             return true;
         }catch(Exception $e){
             return false;
         }
-        
-     }
-    // public function failed(Throwable $exception)
-    // {
-    //     $fileUploadProcessingRecord = [];
-    //     $fileUploadProcessingRecord['upload_status'] = 'failed';
-    //     $fileUploadProcessingRecord['remark'] = $exception;
-    //     $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
-    //     return false;
-    // }
-
+    }
+     
 }

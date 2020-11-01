@@ -37,21 +37,21 @@
 		<table border="1" style="border-collapse: collapse;">
 			<tr>
 				<td><b>URL</b></td>
-				<td>http://<domainname>.com</td>
+				<td>http://65.0.130.85/login</td>
 			</tr>
 			<tr>
 				<td><b>LOGIN ID</b></td>
-				<td>sachin@test.com</td>
+				<td><?php echo e($details['userDetails']['email']); ?></td>
 			</tr>
 	
 			<tr>
 				<td><b>PASSWORD</b></td>
-				<td>test@1234</td>
+				<td> <?php echo e($details['password']); ?></td>
 			</tr>
 			
 			<tr>
 				<td><b>DESIGNATION</b></td>
-				<td>BM</td>
+				<td><?php echo e($details['userDetails']['designation']); ?></td>
 			</tr>
 			
 			

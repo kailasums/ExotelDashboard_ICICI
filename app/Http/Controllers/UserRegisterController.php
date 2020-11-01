@@ -52,10 +52,10 @@ class UserRegisterController extends Controller
                         return redirect('/import-users')->with('error',trans('uploadfile.filenNameNotMatch'));
                     }
                     
-                    // $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])->get()->toArray();
-                    // if(count($processingFileCount) > 0 ){
-                    //     return redirect('/import-users')->with('error',trans('uploadfile.filePendingToUpload'));
-                    // }
+                    $processingFileCount = FileUpload::whereIn('upload_status', ['pending', 'processing'])->get()->toArray();
+                    if(count($processingFileCount) > 0 ){
+                        return redirect('/import-users')->with('error',trans('uploadfile.filePendingToUpload'));
+                    }
                     
                     $extensions = explode(",",env("FILE_EXTENSION"));
                     $result = array($fileDetails->getClientOriginalExtension());
@@ -176,7 +176,7 @@ class UserRegisterController extends Controller
                 'public/',
                 $fileDetails,
                 env("IMPORTFILESTORAGENAME",$filename)//
-            ); // file stored at location storage/app/public/
+            );
             
             return true;
         }catch(Exception $e){

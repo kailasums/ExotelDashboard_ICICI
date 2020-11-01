@@ -139,10 +139,10 @@ $(document).ready(function() {
         var startDate =$("#datepickerFilter1").val();
         var endDate = $('#datepickerFilter2').val();
         if ((Date.parse(endDate) < Date.parse(startDate))) {
-            $(".date_diff").text("End date should be greater than Start date");
+            $(".date_diff").text("End date should be greater than or equal to Start date.");
             $(".date_diff").addClass("error text-danger");
         }else if (days > 9) {    
-            $(".date_diff").text("Date Difference is greater then 10 days");
+            $(".date_diff").text("Date Difference is greater then 10 days.");
             $(".date_diff").addClass("error text-danger");
             // setStartDate();
         } else {
