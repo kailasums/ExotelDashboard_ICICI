@@ -458,7 +458,7 @@ class CallRecordingController extends Controller
 		$zone = $zoneData['zones'];
 
 		$selectOption['call_direction_summary'] = $queryParam['call_direction_summary'];
-		if (isset($queryParam['region_summary']) && $queryParam['region_summary']) {
+		if (isset($queryParam['region_summary']) && $queryParam['region_summary'] && $queryParam['region_summary'] != 'null') {
 			$regionData = $this->_regionData($queryParam);
 			$selectOption['zone_summary'] = RegionMaster::where("id", $queryParam['region_summary'])->first()->zone_id;
 		} else {
@@ -476,7 +476,7 @@ class CallRecordingController extends Controller
 		}
 		$branch =  $branchData['branch'];
 
-		if (isset($queryParam['user_summary']) && $queryParam['user_summary']) {
+		if (isset($queryParam['user_summary']) && $queryParam['user_summary'] && $queryParam['user_summary'] !== 'null') {
 			$userId = User::find($queryParam['user_summary']);
 			$user =	$this->_userData($queryParam);
 			$selectOption['zone_summary'] = $userId->group3;

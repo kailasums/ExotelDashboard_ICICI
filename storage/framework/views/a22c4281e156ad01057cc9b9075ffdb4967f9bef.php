@@ -114,10 +114,10 @@
                                                             <p style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Total Calls : <span style="font-weight: normal;" id="totalCalls"></span></p>
                                                         </li>
                                                         <li>
-                                                            <p  style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Total Call Duration (Seconds): <span style="font-weight: normal;" id="totalDurationCalls"></span></p>
+                                                            <p  style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Total Call Duration (secs): <span style="font-weight: normal;" id="totalDurationCalls"></span></p>
                                                         </li>
                                                         <li>
-                                                            <p  style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Avg Call Duration (Seconds): <span style="font-weight: normal;" id="avgCalls"></span></p>
+                                                            <p  style="font-size: 18px;color: black;/* font-weight: bold; */font-weight: 1000;">Avg Call Duration (secs): <span style="font-weight: normal;" id="avgCalls"></span></p>
                                                         </li>
                                                     </ul>
                                                 </div>
