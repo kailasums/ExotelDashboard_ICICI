@@ -2044,7 +2044,7 @@ table .empty {
     float: left;
 }
 #piechart-graph .chart-card{
-    max-width: 790px;
+    max-width: 850px;
     width: 100%;
     margin: 0 auto;
     display: flex;
