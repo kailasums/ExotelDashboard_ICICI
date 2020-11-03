@@ -195,8 +195,7 @@
                                                 <div class="hide">
                                                     <div class="form-group selectType col-md-2">
                                                         <div class="select">
-                                                            <?php echo Form::select('zone_summary', (object) array_merge( [''=>'Select Zone'], (array) $zone), '',array('class' => 'form-control user-regions-filter','form'=>"type"));; ?>
-
+                                                            
                                                         </div>
                                                     </div>
 
@@ -204,16 +203,14 @@
 
                                                     <div class="form-group selectType col-md-2">
                                                         <div class="select">
-                                                            <?php echo Form::select('region_summary', (object) array_merge( [''=>'Select Region'], (array) $region), '',array('class' => 'form-control user-regions-filter','form'=>"type"));; ?>
-
+                                                            
                                                         </div>
                                                     </div>
 
 
                                                     <div class="form-group selectType col-md-3">
                                                         <div class="select">
-                                                            <?php echo Form::select('branch_summary', (object) array_merge( [''=>'Select Branch'], (array) $branch), '',array('class' => 'form-control user-regions-filter','form'=>"type"));; ?>
-
+                                                            
                                                         </div>
                                                     </div>
 
@@ -221,8 +218,7 @@
 
                                                     <div class="form-group selectType col-md-3">
                                                         <div class="select">
-                                                            <?php echo Form::select('user_summary', (object) array_merge( [''=>'Select User'], (array) $user), '',array('class' => 'form-control user-regions-filter','form'=>"type"));; ?>
-
+                                                            
                                                         </div>
                                                     </div>
 

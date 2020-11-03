@@ -67,12 +67,11 @@ $(document).ready(function() {
         });
     }
     const targetElementArray = ['zone', 'region', 'branch', 'user', 'call_direction']
-    const targetSummaryElementArray = ['zone', 'region', 'branch', 'call_direction', 'user', 'StartDate', 'EndDate']
+    const targetSummaryElementArray = [ 'zone', 'region', 'branch', 'call_direction', 'user',  'StartDate', 'EndDate']
     const targetdetailedElementArray = ['call_status', 'zone', 'region', 'branch', 'call_direction', 'user', 'StartDate', 'EndDate']
 
     if (window.location.pathname === '/dashboard') {
-        // $("#div-chartw2").hide();
-        // $("#no-data-pie").hide();
+
         google.load('visualization', '1', { packages: ['corechart'] })
         google.setOnLoadCallback(selectAjaxOption)
         $('#example').DataTable({"oLanguage": {
@@ -162,7 +161,7 @@ $(document).ready(function() {
         $("select[name='user']").val('')
         
         selectAjaxOption('dashboard', 'zone', $(this).val(), targetElementArray)
-        selectAjaxOption('drop-down', 'zone', $(this).val(), targetSummaryElementArray, true)
+        // selectAjaxOption('drop-down', 'zone', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray)
     })
@@ -174,7 +173,7 @@ $(document).ready(function() {
         $("select[name='user']").val('')
         
         selectAjaxOption('dashboard', 'region', $(this).val(), targetElementArray)
-        selectAjaxOption('drop-down', 'region', $(this).val(), targetSummaryElementArray, true)
+        // selectAjaxOption('drop-down', 'region', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'region', $(this).val(), targetdetailedElementArray)
 
@@ -185,14 +184,14 @@ $(document).ready(function() {
         $("select[name='call_direction']").val('')
         $("select[name='user']").val('')
         selectAjaxOption('dashboard', 'branch', $(this).val(), targetElementArray)
-        selectAjaxOption('drop-down', 'branch', $(this).val(), targetSummaryElementArray, true)
+        // selectAjaxOption('drop-down', 'branch', $(this).val(), targetSummaryElementArray, true)
         selectUserDataAjaxOption('user-call-detail', 'branch', $(this).val(), targetdetailedElementArray)
 
     })
 
     $("select[name='call_direction']").change(function() {
         selectAjaxOption('dashboard', 'call_direction', $(this).val(), targetElementArray)
-        selectAjaxOption('drop-down', 'call_direction', $(this).val(), targetSummaryElementArray, true)
+        // selectAjaxOption('drop-down', 'call_direction', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray)
 
@@ -200,7 +199,7 @@ $(document).ready(function() {
 
     $("select[name='user']").change(function() {
         selectAjaxOption('dashboard', 'user', $(this).val(), targetElementArray)
-        selectAjaxOption('drop-down', 'user', $(this).val(), targetSummaryElementArray, true)
+        // selectAjaxOption('drop-down', 'user', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'user', $(this).val(), targetdetailedElementArray)
 
@@ -232,6 +231,7 @@ $(document).ready(function() {
                             if (element !== targetElement[i]) {
                                 // console.log(data[targetElement[i]])
                                 $("select[name='" + targetElement[i] + "'").html('')
+                                // alert(targetElement[i]);
                                 $("select[name='" + targetElement[i] + "'").html('<option value="" selected="selected">' + showName[targetElement[i]] + '</option><optgroup label="items">' + createOptions(data[targetElement[i]], data.selectOption ? data.selectOption[targetElement[i]] : '', targetElement[i]) + '</optgroup>')
                             }
                         }
@@ -295,6 +295,8 @@ $(document).ready(function() {
     }
 
     function createOptions(data, selectOption, key) {
+        // alert(selectOption);
+        // alert(JSON.stringify(data));
         let optionString = ''
         if (data && data.length === 0) {
             optionString = '<option value="' + 0 + '">' + 'No Data Found' + '</option>'

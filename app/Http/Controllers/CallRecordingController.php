@@ -230,15 +230,15 @@ class CallRecordingController extends Controller
 		$user = Session::get('user');
 		if(isset($user->group3) && $user->group3 !== 0 ){
 			$selectOption['zone'] = $user->group3;
-			$queryParam['zone'] = $queryParam['zone'] = $user->group3;
+			$queryParam['zone'] =  $user->group3;
 		}
 		if(isset($user->group2) && $user->group2 !== 0 ){
 			$selectOption['region'] = $user->group2;
-			$queryParam['region'] = $queryParam['region'] = $user->group2;
+			$queryParam['region'] = $user->group2;
 		}
 		if(isset($user->group1) && $user->group1 !== 0 ){
 			$selectOption['branch'] = $user->group1;
-			$queryParam['branch'] = $queryParam['branch'] = $user->group1;
+			$queryParam['branch'] = $user->group1;
 		}
 		
 		if ($request->ajax()) {
@@ -249,25 +249,31 @@ class CallRecordingController extends Controller
 							->whereDate('created_at', '=', Carbon::today());
 
 			if (isset($queryParam['zone']) && $queryParam['zone']) {
+				//echo $queryParam['zone'] . "-";
 				$totalCalls = $totalCalls->where('group3', $queryParam['zone']);
 				$selectOption['zone'] = $queryParam['zone'];
 			}
 			if (isset($queryParam['region']) && $queryParam['region']) {
+				//echo ($queryParam['region']. "-");
 				$totalCalls = $totalCalls->where('group2', $queryParam['region']);
 				$selectOption['region'] = $queryParam['region'];
 			}
 			if (isset($queryParam['branch']) && $queryParam['branch']) {
+				// echo ($queryParam['branch']);
 				$totalCalls = $totalCalls->where('group1', $queryParam['branch']);
 				$selectOption['branch'] = $queryParam['branch'];
 			}
 			if (isset($queryParam['call_direction']) && $queryParam['call_direction'] && $queryParam['call_direction'] != '') {
+				// echo $queryParam['call_direction'];
 				$totalCalls =  $totalCalls->where('call_direction', $queryParam['call_direction']);
 			}
 
 			if(isset($queryParam['user']) && $queryParam['user']){
+				// echo $queryParam['user'];
 				$userId = User::find( $queryParam['user']);	
 				$totalCalls =  $totalCalls->where('agent_phone_number', $userId->phone_number);	
 			}
+			// echo $totalCalls->toSql();exit();
 			$totalCalls =  $totalCalls->count();
 			
 			$totalDurationCalls = CallRecording::group($user->group4)
@@ -362,8 +368,6 @@ class CallRecordingController extends Controller
 			// dd($zone);
 			return compact('callRecords', 'zone', 'region', 'branch', 'user', 'call_direction', 'selectOption', 'totalCalls', 'totalDurationCalls', 'avgCalls');
 		}
-		//dd($zone);
-		// dd($);
 		return view('callRecord.google-pie-chart')->with(compact('zone', 'region', 'branch', 'user', 'call_direction'));
 	}
 
