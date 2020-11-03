@@ -156,6 +156,11 @@ $(document).ready(function() {
     })
 
     $("select[name='zone']").change(function() {
+        $("select[name='region']").val('')
+        $("select[name='branch']").val('')
+        $("select[name='call_direction']").val('')
+        $("select[name='user']").val('')
+        
         selectAjaxOption('dashboard', 'zone', $(this).val(), targetElementArray)
         // $("select[name='zone']").val($(this).val())
         // $("select[name='region']").val($("select[name='region']").val())
@@ -184,6 +189,11 @@ $(document).ready(function() {
     //     //}, 1000)
     // })
     $("select[name='region']").change(function() {
+        
+        $("select[name='branch']").val('')
+        $("select[name='call_direction']").val('')
+        $("select[name='user']").val('')
+        
         selectAjaxOption('dashboard', 'region', $(this).val(), targetElementArray)
         // $("select[name='region']").val($(this).val())
         // $("select[name='zone']").val($("select[name='zone']").val())
@@ -195,6 +205,9 @@ $(document).ready(function() {
     })
 
     $("select[name='branch']").change(function() {
+        
+        $("select[name='call_direction']").val('')
+        $("select[name='user']").val('')
         selectAjaxOption('dashboard', 'branch', $(this).val(), targetElementArray)
         // $("select[name='branch']").val($(this).val())
         // $("select[name='zone']").val($("select[name='zone']").val())
@@ -206,7 +219,6 @@ $(document).ready(function() {
 
     $("select[name='call_direction']").change(function() {
         selectAjaxOption('dashboard', 'call_direction', $(this).val(), targetElementArray)
-        // $("select[name='call_direction']").val($(this).val())
         selectAjaxOption('drop-down', 'call_direction', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray)
@@ -215,7 +227,6 @@ $(document).ready(function() {
 
     $("select[name='user']").change(function() {
         selectAjaxOption('dashboard', 'user', $(this).val(), targetElementArray)
-        // $("select[name='user']").val($(this).val())
         selectAjaxOption('drop-down', 'user', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'user', $(this).val(), targetdetailedElementArray)
