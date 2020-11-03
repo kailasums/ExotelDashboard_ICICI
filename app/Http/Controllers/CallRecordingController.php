@@ -525,15 +525,16 @@ class CallRecordingController extends Controller
 			$queryParam['branch_summary'] = $queryParam['branch'] = $user->group1;
 		}
 		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
-		if (isset($queryParam['zone_summary']) && $queryParam['zone_summary']) {
-			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
+		
+		if (isset($queryParam['zone_summary']) && $queryParam['zone_summary'] && ($queryParam['zone_summary'] != 'null')) {
+			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone_summary']);
 			$selectOption['zone_summary'] = $queryParam['zone_summary'];
 		}
-		if (isset($queryParam['region_summary']) && $queryParam['region_summary']) {
+		if (isset($queryParam['region_summary']) && $queryParam['region_summary'] && ($queryParam['region_summary'] != 'null')) {
 			$callRecordQuery = $callRecordQuery->where('group2', $queryParam['region_summary']);
 			$selectOption['region_summary'] = $queryParam['region_summary'];
 		}
-		if (isset($queryParam['branch_summary']) && $queryParam['branch_summary']) {
+		if (isset($queryParam['branch_summary']) && $queryParam['branch_summary'] && ($queryParam['branch_summary'] != 'null')) {
 			$callRecordQuery = $callRecordQuery->where('group1', $queryParam['branch_summary']);
 			$selectOption['branch_summary'] = $queryParam['branch_summary'];
 		}
@@ -545,9 +546,8 @@ class CallRecordingController extends Controller
 			$callRecordQuery = $callRecordQuery->where('user_id', $queryParam['user_summary']);
 		}
 		$callRecordQuery = $callRecordQuery->groupBy('agent_phone_number', 'user_id', 'agent_name', 'call_status');
-		//$callRecordQuery =  $callRecordQuery->orderBy('created_at', 'desc');
 		$callRecordData = $callRecordQuery->get();
-
+		
 		$callRecordNumber = $callRecordData->keyBy('agent_phone_number')->toArray();
 		$callRecords = [];
 		$userIdData = '';
@@ -594,9 +594,48 @@ class CallRecordingController extends Controller
 		$length = ($queryParam['length'] > 0) ? $queryParam['length'] : 10;
 		$callData = [];
 		$user = Session::get('user'); 
+		
 		$callRecordQuery = CallRecording::select('id', 'user_id', 'agent_name', 'agent_phone_number', 'from_number', 'to_number', 'call_duration', 'call_status', 'call_direction','date_time','dial_call_duration','call_recording_link','call_sid');
-		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
 		$callRecordQuery = $callRecordQuery->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
+		//$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
+		$user = Session::get('user');
+		if(isset($user->group3) && $user->group3 !== 0 ){
+			$selectOption['zone'] = $user->group3;
+			$queryParam['zone_summary'] = $queryParam['zone'] = $user->group3;
+		}
+		if(isset($user->group2) && $user->group2 !== 0 ){
+			$selectOption['region'] = $user->group2;
+			$queryParam['region_summary'] = $queryParam['region'] = $user->group2;
+		}
+		if(isset($user->group1) && $user->group1 !== 0 ){
+			$selectOption['branch'] = $user->group1;
+			$queryParam['branch_summary'] = $queryParam['branch'] = $user->group1;
+		}
+		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
+		
+		if (isset($queryParam['zone']) && $queryParam['zone'] && ($queryParam['zone'] != 'null')) {
+			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
+			$selectOption['zone'] = $queryParam['zone'];
+		}
+		if (isset($queryParam['region']) && $queryParam['region'] && ($queryParam['region'] != 'null')) {
+			$callRecordQuery = $callRecordQuery->where('group2', $queryParam['region']);
+			$selectOption['region'] = $queryParam['region'];
+		}
+		if (isset($queryParam['branch']) && $queryParam['branch'] && ($queryParam['branch'] != 'null')) {
+			$callRecordQuery = $callRecordQuery->where('group1', $queryParam['branch']);
+			$selectOption['branch'] = $queryParam['branch'];
+		}
+
+		// if (isset($queryParam['call_direction']) && !is_null($queryParam['call_direction']) && $queryParam['call_direction'] != "null" && $queryParam['call_direction_summary']) {	
+		// 	$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction']);
+		// }
+		// if (isset($queryParam['user']) && $queryParam['user']) {
+		// 	$callRecordQuery = $callRecordQuery->where('user_id', $queryParam['user']);
+		// }
+		//$callRecordQuery = $callRecordQuery->groupBy('agent_phone_number', 'user_id', 'agent_name', 'call_status');
+		
+		
+		//$callRecordQuery = $callRecordQuery->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
 
 		if (isset($queryParam['call_direction']) && !is_null($queryParam['call_direction']) && $queryParam['call_direction'] != "null" && $queryParam['call_direction']) {
 		$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction']);
