@@ -67,7 +67,7 @@ $(document).ready(function() {
         });
     }
     const targetElementArray = ['zone', 'region', 'branch', 'user', 'call_direction']
-    const targetSummaryElementArray = ['zone', 'region', 'branch', 'call_direction', 'user', 'StartDate', 'EndDate']
+    const targetSummaryElementArray = ['zone_summary', 'region_summary', 'branch_summary', 'call_direction_summary', 'user_summary', 'StartDate', 'EndDate']
     const targetdetailedElementArray = ['call_status', 'zone', 'region', 'branch', 'call_direction', 'user', 'StartDate', 'EndDate']
 
     if (window.location.pathname === '/dashboard') {
@@ -157,10 +157,10 @@ $(document).ready(function() {
 
     $("select[name='zone']").change(function() {
         selectAjaxOption('dashboard', 'zone', $(this).val(), targetElementArray)
-        // $("select[name='zone']").val($(this).val())
-        // $("select[name='region']").val($("select[name='region']").val())
-        // $("select[name='branch']").val($("select[name='branch']").val())
-        selectAjaxOption('drop-down', 'zone', $(this).val(), targetSummaryElementArray, true)
+        $("select[name='zone_summary']").val($(this).val())
+        $("select[name='region_summary']").val($("select[name='region']").val())
+        $("select[name='branch_summary']").val($("select[name='branch']").val())
+        selectAjaxOption('drop-down', 'zone_summary', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray)
 
@@ -170,12 +170,12 @@ $(document).ready(function() {
         //}, 1000)
     })
 
-    // $("select[name='zone']").change(function() {
+    // $("select[name='zone_summary']").change(function() {
     //     alert("11")
     //     $("select[name='zone']").val($(this).val()); 
     //     // selectAjaxOption('pie-chart', 'zone', $(this).val(), targetElementArray)
-    //     // $("select[name='zone']").val($(this).val())
-    //     // selectAjaxOption('drop-down', 'zone', $(this).val(), targetSummaryElementArray, true)
+    //     // $("select[name='zone_summary']").val($(this).val())
+    //     // selectAjaxOption('drop-down', 'zone_summary', $(this).val(), targetSummaryElementArray, true)
     //     // selectAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray, true, false)
 
     //     //setTimeout(function() {
@@ -185,10 +185,10 @@ $(document).ready(function() {
     // })
     $("select[name='region']").change(function() {
         selectAjaxOption('dashboard', 'region', $(this).val(), targetElementArray)
-        // $("select[name='region']").val($(this).val())
-        // $("select[name='zone']").val($("select[name='zone']").val())
-        // $("select[name='branch']").val($("select[name='branch']").val())
-        selectAjaxOption('drop-down', 'region', $(this).val(), targetSummaryElementArray, true)
+        $("select[name='region_summary']").val($(this).val())
+        $("select[name='zone_summary']").val($("select[name='zone']").val())
+        $("select[name='branch_summary']").val($("select[name='branch']").val())
+        selectAjaxOption('drop-down', 'region_summary', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'region', $(this).val(), targetdetailedElementArray)
 
@@ -196,18 +196,18 @@ $(document).ready(function() {
 
     $("select[name='branch']").change(function() {
         selectAjaxOption('dashboard', 'branch', $(this).val(), targetElementArray)
-        // $("select[name='branch']").val($(this).val())
-        // $("select[name='zone']").val($("select[name='zone']").val())
-        // $("select[name='region']").val($("select[name='region']").val())
-        selectAjaxOption('drop-down', 'branch', $(this).val(), targetSummaryElementArray, true)
+        $("select[name='branch_summary']").val($(this).val())
+        $("select[name='zone_summary']").val($("select[name='zone']").val())
+        $("select[name='region_summary']").val($("select[name='region']").val())
+        selectAjaxOption('drop-down', 'branch_summary', $(this).val(), targetSummaryElementArray, true)
         selectUserDataAjaxOption('user-call-detail', 'branch', $(this).val(), targetdetailedElementArray)
 
     })
 
     $("select[name='call_direction']").change(function() {
         selectAjaxOption('dashboard', 'call_direction', $(this).val(), targetElementArray)
-        // $("select[name='call_direction']").val($(this).val())
-        selectAjaxOption('drop-down', 'call_direction', $(this).val(), targetSummaryElementArray, true)
+        $("select[name='call_direction_summary']").val($(this).val())
+        selectAjaxOption('drop-down', 'call_direction_summary', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'call_direction', $(this).val(), targetdetailedElementArray)
 
@@ -215,8 +215,8 @@ $(document).ready(function() {
 
     $("select[name='user']").change(function() {
         selectAjaxOption('dashboard', 'user', $(this).val(), targetElementArray)
-        // $("select[name='user']").val($(this).val())
-        selectAjaxOption('drop-down', 'user', $(this).val(), targetSummaryElementArray, true)
+        $("select[name='user_summary']").val($(this).val())
+        selectAjaxOption('drop-down', 'user_summary', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'user', $(this).val(), targetdetailedElementArray)
 
@@ -248,7 +248,7 @@ $(document).ready(function() {
                             if (element !== targetElement[i]) {
                                 // console.log(data[targetElement[i]])
                                 $("select[name='" + targetElement[i] + "'").html('')
-                                $("select[name='" + targetElement[i] + "'").html('<option value="" selected="selected">' + showName[targetElement[i]] + '</option><optgroup label="items">' + createOptions(data[targetElement[i]], data.selectOption ? data.selectOption[targetElement[i]] : '', targetElement[i]) + '</optgroup>')
+                                $("select[name='" + targetElement[i] + "'").html('<option value="" selected="selected">' + showName[targetElement[i]].toUpperCase() + '</option><optgroup label="items">' + createOptions(data[targetElement[i]], data.selectOption ? data.selectOption[targetElement[i]] : '', targetElement[i]) + '</optgroup>')
                             }
                         }
                     }

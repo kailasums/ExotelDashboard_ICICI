@@ -230,15 +230,15 @@ class CallRecordingController extends Controller
 		$user = Session::get('user');
 		if(isset($user->group3) && $user->group3 !== 0 ){
 			$selectOption['zone'] = $user->group3;
-			$queryParam['zone_summary'] = $queryParam['zone'] = $user->group3;
+			$queryParam['zone'] = $queryParam['zone'] = $user->group3;
 		}
 		if(isset($user->group2) && $user->group2 !== 0 ){
 			$selectOption['region'] = $user->group2;
-			$queryParam['region_summary'] = $queryParam['region'] = $user->group2;
+			$queryParam['region'] = $queryParam['region'] = $user->group2;
 		}
 		if(isset($user->group1) && $user->group1 !== 0 ){
 			$selectOption['branch'] = $user->group1;
-			$queryParam['branch_summary'] = $queryParam['branch'] = $user->group1;
+			$queryParam['branch'] = $queryParam['branch'] = $user->group1;
 		}
 		
 		if ($request->ajax()) {
@@ -457,43 +457,43 @@ class CallRecordingController extends Controller
 		$zoneData = $this->_zoneData($user->group4);
 		$zone = $zoneData['zones'];
 
-		$selectOption['call_direction_summary'] = $queryParam['call_direction_summary'];
-		if (isset($queryParam['region_summary']) && $queryParam['region_summary'] && $queryParam['region_summary'] != 'null') {
+		$selectOption['call_direction'] = $queryParam['call_direction'];
+		if (isset($queryParam['region']) && $queryParam['region'] && $queryParam['region'] != 'null') {
 			$regionData = $this->_regionData($queryParam);
-			$selectOption['zone_summary'] = RegionMaster::where("id", $queryParam['region_summary'])->first()->zone_id;
+			$selectOption['zone'] = RegionMaster::where("id", $queryParam['region'])->first()->zone_id;
 		} else {
 			$regionData = $this->_regionData($zoneData['zoneParam']);
 		}
 		$region =  $regionData['region'];
 
-		if (isset($queryParam['branch_summary']) && $queryParam['branch_summary']) {
+		if (isset($queryParam['branch']) && $queryParam['branch']) {
 			$branchData = $this->_branchData($queryParam);
-			$selectOption['region_summary'] = BranchMaster::where("id", $queryParam['branch_summary'])->first()->region_id;
-			$selectOption['zone_summary'] = RegionMaster::where("id",	$selectOption['region_summary'])->first()->zone_id;
-			$selectOption['call_direction_summary'] = $queryParam['call_direction_summary'];
+			$selectOption['region'] = BranchMaster::where("id", $queryParam['branch'])->first()->region_id;
+			$selectOption['zone'] = RegionMaster::where("id",	$selectOption['region'])->first()->zone_id;
+			$selectOption['call_direction'] = $queryParam['call_direction'];
 		} else {
 			$branchData = $this->_branchData($regionData['regionParam']);
 		}
 		$branch =  $branchData['branch'];
 
-		if (isset($queryParam['user_summary']) && $queryParam['user_summary'] && $queryParam['user_summary'] !== 'null') {
-			$userId = User::find($queryParam['user_summary']);
+		if (isset($queryParam['user']) && $queryParam['user'] && $queryParam['user'] !== 'null') {
+			$userId = User::find($queryParam['user']);
 			$user =	$this->_userData($queryParam);
-			$selectOption['zone_summary'] = $userId->group3;
-			$selectOption['region_summary'] = $userId->group2;
-			$selectOption['branch_summary'] = $userId->group1;
-			$selectOption['user_summary'] = $queryParam['user_summary'];
-			$selectOption['call_direction_summary'] = $queryParam['call_direction_summary'];
+			$selectOption['zone'] = $userId->group3;
+			$selectOption['region'] = $userId->group2;
+			$selectOption['branch'] = $userId->group1;
+			$selectOption['user'] = $queryParam['user'];
+			$selectOption['call_direction'] = $queryParam['call_direction'];
 		} else {
 			$user =	$this->_userData($branchData['branchParam']);
 		}
 		$call_direction = $this->_callDirection();
 
-		$data['zone_summary'] = $zone;
-		$data['region_summary'] = $region;
-		$data['branch_summary'] = $branch;
-		$data['user_summary'] = $user;
-		$data['call_direction_summary'] = $call_direction;
+		$data['zone'] = $zone;
+		$data['region'] = $region;
+		$data['branch'] = $branch;
+		$data['user'] = $user;
+		$data['call_direction'] = $call_direction;
 		$data['selectOption'] = $selectOption;
 		return $data;
 	}
@@ -514,36 +514,36 @@ class CallRecordingController extends Controller
 		$user = Session::get('user');
 		if(isset($user->group3) && $user->group3 !== 0 ){
 			$selectOption['zone'] = $user->group3;
-			$queryParam['zone_summary'] = $queryParam['zone'] = $user->group3;
+			$queryParam['zone'] = $queryParam['zone'] = $user->group3;
 		}
 		if(isset($user->group2) && $user->group2 !== 0 ){
 			$selectOption['region'] = $user->group2;
-			$queryParam['region_summary'] = $queryParam['region'] = $user->group2;
+			$queryParam['region'] = $queryParam['region'] = $user->group2;
 		}
 		if(isset($user->group1) && $user->group1 !== 0 ){
 			$selectOption['branch'] = $user->group1;
-			$queryParam['branch_summary'] = $queryParam['branch'] = $user->group1;
+			$queryParam['branch'] = $queryParam['branch'] = $user->group1;
 		}
 		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
 		
-		if (isset($queryParam['zone_summary']) && $queryParam['zone_summary'] && ($queryParam['zone_summary'] != 'null')) {
-			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone_summary']);
-			$selectOption['zone_summary'] = $queryParam['zone_summary'];
+		if (isset($queryParam['zone']) && $queryParam['zone'] && ($queryParam['zone'] != 'null')) {
+			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
+			$selectOption['zone'] = $queryParam['zone'];
 		}
-		if (isset($queryParam['region_summary']) && $queryParam['region_summary'] && ($queryParam['region_summary'] != 'null')) {
-			$callRecordQuery = $callRecordQuery->where('group2', $queryParam['region_summary']);
-			$selectOption['region_summary'] = $queryParam['region_summary'];
+		if (isset($queryParam['region']) && $queryParam['region'] && ($queryParam['region'] != 'null')) {
+			$callRecordQuery = $callRecordQuery->where('group2', $queryParam['region']);
+			$selectOption['region'] = $queryParam['region'];
 		}
-		if (isset($queryParam['branch_summary']) && $queryParam['branch_summary'] && ($queryParam['branch_summary'] != 'null')) {
-			$callRecordQuery = $callRecordQuery->where('group1', $queryParam['branch_summary']);
-			$selectOption['branch_summary'] = $queryParam['branch_summary'];
+		if (isset($queryParam['branch']) && $queryParam['branch'] && ($queryParam['branch'] != 'null')) {
+			$callRecordQuery = $callRecordQuery->where('group1', $queryParam['branch']);
+			$selectOption['branch'] = $queryParam['branch'];
 		}
 
-		if (isset($queryParam['call_direction_summary']) && !is_null($queryParam['call_direction_summary']) && $queryParam['call_direction_summary'] != "null" && $queryParam['call_direction_summary']) {	
-			$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction_summary']);
+		if (isset($queryParam['call_direction']) && !is_null($queryParam['call_direction']) && $queryParam['call_direction'] != "null" && $queryParam['call_direction']) {	
+			$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction']);
 		}
-		if (isset($queryParam['user_summary']) && $queryParam['user_summary']) {
-			$callRecordQuery = $callRecordQuery->where('user_id', $queryParam['user_summary']);
+		if (isset($queryParam['user']) && $queryParam['user']) {
+			$callRecordQuery = $callRecordQuery->where('user_id', $queryParam['user']);
 		}
 		$callRecordQuery = $callRecordQuery->groupBy('agent_phone_number', 'user_id', 'agent_name', 'call_status');
 		$callRecordData = $callRecordQuery->get();
@@ -601,15 +601,15 @@ class CallRecordingController extends Controller
 		$user = Session::get('user');
 		if(isset($user->group3) && $user->group3 !== 0 ){
 			$selectOption['zone'] = $user->group3;
-			$queryParam['zone_summary'] = $queryParam['zone'] = $user->group3;
+			$queryParam['zone'] = $queryParam['zone'] = $user->group3;
 		}
 		if(isset($user->group2) && $user->group2 !== 0 ){
 			$selectOption['region'] = $user->group2;
-			$queryParam['region_summary'] = $queryParam['region'] = $user->group2;
+			$queryParam['region'] = $queryParam['region'] = $user->group2;
 		}
 		if(isset($user->group1) && $user->group1 !== 0 ){
 			$selectOption['branch'] = $user->group1;
-			$queryParam['branch_summary'] = $queryParam['branch'] = $user->group1;
+			$queryParam['branch'] = $queryParam['branch'] = $user->group1;
 		}
 		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
 		
@@ -626,7 +626,7 @@ class CallRecordingController extends Controller
 			$selectOption['branch'] = $queryParam['branch'];
 		}
 
-		// if (isset($queryParam['call_direction']) && !is_null($queryParam['call_direction']) && $queryParam['call_direction'] != "null" && $queryParam['call_direction_summary']) {	
+		// if (isset($queryParam['call_direction']) && !is_null($queryParam['call_direction']) && $queryParam['call_direction'] != "null" && $queryParam['call_direction']) {	
 		// 	$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction']);
 		// }
 		// if (isset($queryParam['user']) && $queryParam['user']) {
