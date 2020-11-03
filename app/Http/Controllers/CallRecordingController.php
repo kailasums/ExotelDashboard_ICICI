@@ -511,10 +511,34 @@ class CallRecordingController extends Controller
 		$callRecordQuery = CallRecording::select('user_id', 'agent_name', 'agent_phone_number', 	DB::raw('COUNT(call_status) as call_status_count'), 'call_status',	DB::raw('SUM(call_duration) as sum_call_status'))->whereBetween('created_at', [Carbon::parse($queryParam['StartDate'])->format('Y-m-d') . " 00:00:00", Carbon::parse($queryParam['EndDate'])->format('Y-m-d') . " 23:59:59"]);
 		// $callRecordQuery =  $callRecordQuery->where('group4', $user->group4);
 		
+		$user = Session::get('user');
+		if(isset($user->group3) && $user->group3 !== 0 ){
+			$selectOption['zone'] = $user->group3;
+			$queryParam['zone_summary'] = $queryParam['zone'] = $user->group3;
+		}
+		if(isset($user->group2) && $user->group2 !== 0 ){
+			$selectOption['region'] = $user->group2;
+			$queryParam['region_summary'] = $queryParam['region'] = $user->group2;
+		}
+		if(isset($user->group1) && $user->group1 !== 0 ){
+			$selectOption['branch'] = $user->group1;
+			$queryParam['branch_summary'] = $queryParam['branch'] = $user->group1;
+		}
 		$callRecordQuery = $callRecordQuery->Filter('group4',$user->group4)->Filter('group3',$user->group3)->Filter('group2',$user->group2)->Filter('group1',$user->group1);
-			
-		if (isset($queryParam['call_direction_summary']) && !is_null($queryParam['call_direction_summary']) && $queryParam['call_direction_summary'] != "null" && $queryParam['call_direction_summary']) {
-			
+		if (isset($queryParam['zone_summary']) && $queryParam['zone_summary']) {
+			$callRecordQuery = $callRecordQuery->where('group3', $queryParam['zone']);
+			$selectOption['zone_summary'] = $queryParam['zone_summary'];
+		}
+		if (isset($queryParam['region_summary']) && $queryParam['region_summary']) {
+			$callRecordQuery = $callRecordQuery->where('group2', $queryParam['region_summary']);
+			$selectOption['region_summary'] = $queryParam['region_summary'];
+		}
+		if (isset($queryParam['branch_summary']) && $queryParam['branch_summary']) {
+			$callRecordQuery = $callRecordQuery->where('group1', $queryParam['branch_summary']);
+			$selectOption['branch_summary'] = $queryParam['branch_summary'];
+		}
+
+		if (isset($queryParam['call_direction_summary']) && !is_null($queryParam['call_direction_summary']) && $queryParam['call_direction_summary'] != "null" && $queryParam['call_direction_summary']) {	
 			$callRecordQuery = $callRecordQuery->where('call_direction', $queryParam['call_direction_summary']);
 		}
 		if (isset($queryParam['user_summary']) && $queryParam['user_summary']) {
