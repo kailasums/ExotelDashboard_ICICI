@@ -162,32 +162,11 @@ $(document).ready(function() {
         $("select[name='user']").val('')
         
         selectAjaxOption('dashboard', 'zone', $(this).val(), targetElementArray)
-        // $("select[name='zone']").val($(this).val())
-        // $("select[name='region']").val($("select[name='region']").val())
-        // $("select[name='branch']").val($("select[name='branch']").val())
         selectAjaxOption('drop-down', 'zone', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray)
-
-        //setTimeout(function() {
-        //var user_id = $("input[name='user-detail']").val()
-        //userDetailTable('user-call-detail', '', user_id)
-        //}, 1000)
     })
 
-    // $("select[name='zone']").change(function() {
-    //     alert("11")
-    //     $("select[name='zone']").val($(this).val()); 
-    //     // selectAjaxOption('pie-chart', 'zone', $(this).val(), targetElementArray)
-    //     // $("select[name='zone']").val($(this).val())
-    //     // selectAjaxOption('drop-down', 'zone', $(this).val(), targetSummaryElementArray, true)
-    //     // selectAjaxOption('user-call-detail', 'zone', $(this).val(), targetdetailedElementArray, true, false)
-
-    //     //setTimeout(function() {
-    //     //var user_id = $("input[name='user-detail']").val()
-    //     //userDetailTable('user-call-detail', '', user_id)
-    //     //}, 1000)
-    // })
     $("select[name='region']").change(function() {
         
         $("select[name='branch']").val('')
@@ -195,9 +174,6 @@ $(document).ready(function() {
         $("select[name='user']").val('')
         
         selectAjaxOption('dashboard', 'region', $(this).val(), targetElementArray)
-        // $("select[name='region']").val($(this).val())
-        // $("select[name='zone']").val($("select[name='zone']").val())
-        // $("select[name='branch']").val($("select[name='branch']").val())
         selectAjaxOption('drop-down', 'region', $(this).val(), targetSummaryElementArray, true)
         showDatatable('example', 'call-record-data', true);
         selectUserDataAjaxOption('user-call-detail', 'region', $(this).val(), targetdetailedElementArray)
@@ -209,9 +185,6 @@ $(document).ready(function() {
         $("select[name='call_direction']").val('')
         $("select[name='user']").val('')
         selectAjaxOption('dashboard', 'branch', $(this).val(), targetElementArray)
-        // $("select[name='branch']").val($(this).val())
-        // $("select[name='zone']").val($("select[name='zone']").val())
-        // $("select[name='region']").val($("select[name='region']").val())
         selectAjaxOption('drop-down', 'branch', $(this).val(), targetSummaryElementArray, true)
         selectUserDataAjaxOption('user-call-detail', 'branch', $(this).val(), targetdetailedElementArray)
 
