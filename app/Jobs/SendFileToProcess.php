@@ -137,7 +137,7 @@ class SendFileToProcess implements ShouldQueue
                             array_push($arrImportData,$tempData);
                         }
                     }
-
+                    echo 'userLog_'.$this->details->id.'.xlsx';
                     (new FastExcel($arrImportData))->export('userLog_'.$this->details->id.'.xlsx');
                     // if($this->details->id > 3){
                     //     $file_id = $this->details->id;
@@ -166,6 +166,7 @@ class SendFileToProcess implements ShouldQueue
                                 array_push($arrImportData,$tempData);
                             }
                         }
+                        echo 'userPassword_'.$this->details->id.'.xlsx';
                         (new FastExcel($arrImportData))->export('userPassword_'.$this->details->id.'.xlsx');
                         if($this->details->id > 3){
                             $file_id = $this->details->id;

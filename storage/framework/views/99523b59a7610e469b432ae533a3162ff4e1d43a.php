@@ -31,7 +31,7 @@
                         </div>
                         <div class="attribute-set-form">
 
-                            <form id="upload-csv-file-form" action="/admin/upload-file"
+                            <form id="upload-csv-file-form" action="<?php echo url('/admin/upload-file');?>"
                                 method="post" enctype="multipart/form-data">
                                 <?php echo e(@csrf_field()); ?>
 
