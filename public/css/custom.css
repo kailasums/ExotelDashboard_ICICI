@@ -27,6 +27,7 @@
     content: '\0041';
 }
 
+audio { width: 100px; }
 .icn-cross:before {
     content: '\0042';
 }
