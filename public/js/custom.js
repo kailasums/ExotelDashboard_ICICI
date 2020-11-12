@@ -93,8 +93,8 @@ $(document).ready(function() {
     }
     d = new Date();
     d.setMonth(d.getMonth() - 3); 
-    $('#datepickerFilter1').datepicker({ dateFormat: 'yy-mm-dd' , minDate: d,  maxDate: new Date()});
-    $('#datepickerFilter2').datepicker({ dateFormat: 'yy-mm-dd' , minDate: d,  maxDate: new Date()});
+    $('#datepickerFilter1').datepicker({ dateFormat: 'dd-mm-yy' , minDate: d,  maxDate: new Date()});
+    $('#datepickerFilter2').datepicker({ dateFormat: 'dd-mm-yy' , minDate: d,  maxDate: new Date()});
 
     function setStartDate() {
         const EndDate = formatDate(new Date()); //$('#datepickerFilter2').val()        
@@ -138,10 +138,10 @@ $(document).ready(function() {
         var startDate =$("#datepickerFilter1").val();
         var endDate = $('#datepickerFilter2').val();
         if ((Date.parse(endDate) < Date.parse(startDate))) {
-            $(".date_diff").text("End date should be greater than or equal to Start date.");
+            $(".date_diff").text("End Date should be greater than or equal to Start Date.");
             $(".date_diff").addClass("error text-danger");
         }else if (days > 9) {    
-            $(".date_diff").text("Date Difference is greater then 10 days.");
+            $(".date_diff").text("Date difference should be less than or equal to 10 days ");
             $(".date_diff").addClass("error text-danger");
             // setStartDate();
         } else {

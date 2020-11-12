@@ -49,10 +49,10 @@
 				<td> {{ $details['password'] }}</td>
 			</tr>
 			
-			<tr>
+			{{-- <tr>
 				<td><b>DESIGNATION</b></td>
 				<td>{{ $details['userDetails']['designation']}}</td>
-			</tr>
+			</tr> --}}
 			
 			
 

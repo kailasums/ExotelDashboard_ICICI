@@ -17,5 +17,5 @@ return [
     'confirmPasswordFail' => "Confirm Password does not matches New Password. Please type correct password.",
     'newPasswordCurrentPasswordSame'=>"New Password cannot be same as your current password. Please choose a different password.",
     "mainPasswordNotMatch"=>"Your current password does not matches with the password you provided. Please try again.",
-    "passwordMatchString"=>"The password should be 8-15 characters long, must contain 1 number, 1 capital letter,1 special character"
+    "passwordMatchString"=>"The password should be 8-15 characters long, must contain atleast 1 number, 1 capital letter,1 special character"
 ];

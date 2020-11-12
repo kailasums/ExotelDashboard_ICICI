@@ -71,7 +71,7 @@ class SendFileToProcess implements ShouldQueue
                 if(count($diff) > 0 ){
                     $fileUploadProcessingRecord = [];
                     $fileUploadProcessingRecord['upload_status'] = 'failed';
-                    $fileUploadProcessingRecord['remark'] = join(",",$diff).' not present in Hierarchy.';
+                    $fileUploadProcessingRecord['remark'] = join(",",$diff).' not present in hierarchy List worksheet.';
                     $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
                     return false;
                 }
@@ -91,7 +91,7 @@ class SendFileToProcess implements ShouldQueue
                 if(count($diff) > 0 ){
                     $fileUploadProcessingRecord = [];
                     $fileUploadProcessingRecord['upload_status'] = 'failed';
-                    $fileUploadProcessingRecord['remark'] = join(",",$diff).' not present in users List.';
+                    $fileUploadProcessingRecord['remark'] = join(",",$diff).' not present in users List worksheet.';
                     $userDetails = FileUpload::where('id', $this->details->id)->update($fileUploadProcessingRecord);
                     return false;
                 }
@@ -309,22 +309,22 @@ class SendFileToProcess implements ShouldQueue
             }
             
             if($userRecord['email'] === ''){
-                $arrTempDateEmailAddress['remark'] = 'Email is not present.';
+                $arrTempDateEmailAddress['remark'] = 'Missing Email id .';
                 $errorFlag = true;
             }
 
             if($userRecord['phone_number'] === ''){
-                $arrTempDateEmailAddress['remark'] = 'PhoneNumber is not present.';
+                $arrTempDateEmailAddress['remark'] = 'Missing Phone Number.';
                 $errorFlag = true;
             }
 
             if($userRecord['designation'] === ''){
-                $arrTempDateEmailAddress['remark'] = 'Designation is not present.';
+                $arrTempDateEmailAddress['remark'] = 'Missing Designation.';
                 $errorFlag = true;
             }
             
             if($userRecord['level'] === ''){
-                $arrTempDateEmailAddress['remark'] = 'Level is not present.';
+                $arrTempDateEmailAddress['remark'] = 'Incorrect Groups mapped to this Designation.';
                 $errorFlag = true;
             }
             
@@ -351,10 +351,10 @@ class SendFileToProcess implements ShouldQueue
             if(count($usersCheckDuplicate) > 0 ){
                 $errorFlag = true;
                 if($usersCheckDuplicate[0]['email']  === $userRecord['email']){
-                    $arrTempDateEmailAddress['remark'] = 'Email is already exist.';
+                    $arrTempDateEmailAddress['remark'] = 'Email id already exists.';
                 }
                 if($usersCheckDuplicate[0]['phone_number']  === $userRecord['phone_number']){
-                    $arrTempDateEmailAddress['remark'] = 'Phone Number is already exist.';
+                    $arrTempDateEmailAddress['remark'] = 'Phone Number already exists.';
                 }
             }
 
@@ -382,7 +382,7 @@ class SendFileToProcess implements ShouldQueue
                             try{
                                 $response = $this->senduserCreationMail($userRecord,  $arrTempDateEmailAddress['password'] );
                                 if(!$response){
-                                    $arrTempDateEmailAddress['remark'] = 'email sending fail.';
+                                    $arrTempDateEmailAddress['remark'] = 'Email sending failed.';
                                     $errorFlag = true;
                                 }    
                                 

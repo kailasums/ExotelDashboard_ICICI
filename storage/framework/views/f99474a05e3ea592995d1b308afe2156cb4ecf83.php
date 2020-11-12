@@ -9,6 +9,8 @@
     <title><?php echo isset($title) ? $title : '' ?> </title>
     <link rel="shortcut icon" href="images/favicon.png" type="image/ico" />
     <link href="<?php echo e(asset('css/backend_bootstrap.css')); ?>" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
 
 
     <link href="<?php echo e(asset('css/fileinput.css')); ?>" rel="stylesheet">

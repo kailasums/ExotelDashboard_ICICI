@@ -30,7 +30,7 @@
                         </div>
                         <div class="attribute-set-form">
 
-                            <form id="upload-csv-file-form" action="/admin/upload-file"
+                            <form id="upload-csv-file-form" action="<?php echo url('/admin/upload-file');?>"
                                 method="post" enctype="multipart/form-data">
                                 {{@csrf_field()}}
                                 <div class="form-group csv-file-attachment left-form field-importusers-csvfilepath"

@@ -13,8 +13,8 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'levelFailed'=> "User doesn't have permission to login",
+    'failed' => 'Incorrect Login Id or Password , Please try again.',
+    'levelFailed'=> "You do not have access for the portal. Please contact admin.",
     'roleFailed'=> 'You are not authorized to login with this role',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 

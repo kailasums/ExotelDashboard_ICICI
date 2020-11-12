@@ -219,14 +219,14 @@
 
                                                     <div class="form-group selectType col-md-2">
                                                         <div class="select">
-                                                            {!! Form::select('call_direction_summary', (object) array_merge( [''=>'Select Direction'], (array) $call_direction), '',array('class' => 'form-control user-regions-filter','form'=>"type")); !!}
+                                                            {{-- {!! Form::select('call_direction_summary', (object) array_merge( [''=>'Select Direction'], (array) $call_direction), '',array('class' => 'form-control user-regions-filter','form'=>"type")); !!} --}}
                                                         </div>
                                                     </div>
 
                                                     <input type="hidden" name="user-detail" id="userIdHidden" value="" />
                                                     <div class="form-group selectType col-md-2">
                                                         <div class="select">
-                                                            <!-- {!! Form::select('call_status', (Object)[''=>'Select Call Status','completed'=>'Completed','failed'=>'Failed','busy'=>'Busy','No Answer'=>'No Answer'], '',array('class' => 'form-control user-regions-filter','form'=>"type")); !!} -->
+                                                            {{-- <!-- {!! Form::select('call_status', (Object)[''=>'Select Call Status','completed'=>'Completed','failed'=>'Failed','busy'=>'Busy','No Answer'=>'No Answer'], '',array('class' => 'form-control user-regions-filter','form'=>"type")); !!} --> --}}
                                                         </div>
                                                     </div>
                                                 </div>

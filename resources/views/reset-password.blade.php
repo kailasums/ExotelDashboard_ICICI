@@ -37,7 +37,7 @@
 				</div>	
 
 				<div class="animated form-group field-admin-newpassword required">
-					<label class='control-label bmd-label-static' for='email-addr'><strong class='mandatory'>*</strong> New Password</label><input type="password" id="new-password" class="form-control" name="new-password" aria-required="true">
+					<label class='control-label bmd-label-static' for='email-addr'><strong class='mandatory'>*</strong> New Password</label><input type="password" id="new-password" class="form-control" name="new-password" aria-required="true"> <!-- <a href="#" data-toggle="tooltip" data-placement="top" title="The password should be 8-15 characters long, must contain 1 number, 1 capital letter,1 special character"><i class="fa fa-info" aria-hidden="true"></i></a> --> 
 					<div class='error invite-via-email-response-error' style='width:100%'><p class="help-block help-block-error"></p></div>
 				</div>
 
@@ -62,4 +62,9 @@
     </section>
 @endsection
 
+<script>
+$(document).ready(function(){
+  $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 
