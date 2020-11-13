@@ -140,7 +140,7 @@ class SendFileToProcess implements ShouldQueue
                     $path = public_path('upload/');
 
    
-                    (new FastExcel($arrImportData))->export('storage/app/public/userLog_'.$this->details->id.'.xlsx');
+                    (new FastExcel($arrImportData))->export('userLog_'.$this->details->id.'.xlsx');
                     
                     if($this->details->id > 3){
                         $file_id = $this->details->id;
@@ -166,7 +166,7 @@ class SendFileToProcess implements ShouldQueue
                             }
                         }
                         echo 'userPassword_'.$this->details->id.'.xlsx';
-                        (new FastExcel($arrImportData))->export('upload/userPassword_'.$this->details->id.'.xlsx');
+                        (new FastExcel($arrImportData))->export('userPassword_'.$this->details->id.'.xlsx');
                         if($this->details->id > 3){
                             $file_id = $this->details->id;
                             $path = 'userPassword_'.$file_id.'.xlsx';
