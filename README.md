@@ -1,4 +1,4 @@
-# ISPCalling
+# ExotelDashboard_ICICI
 
 # installation Guide 
 # apache2 installation 
@@ -72,7 +72,7 @@ npm -v
 npm install 
 
 # git clone in /var/www/html 
- git clone https://github.com/smartdevsolutions20/ISPCalling.git
+ git clone https://github.com/kailasums/ExotelDashboard_ICICI.git
 
 # composer install 
 composer install 
