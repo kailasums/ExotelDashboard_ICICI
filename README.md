@@ -86,4 +86,4 @@ composer install
  
 # update the flag which level is not allowed to login 
 # If facing issue in file upload 
-#  php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider"
+#  php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" 
