@@ -8,7 +8,7 @@
                 <div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#w5-collapse"><span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
-                        <span class="icon-bar"></span></button><a class="navbar-brand" href="/dashboard"><img src="images/logo.png" alt=""></a></div>
+                        <span class="icon-bar"></span></button><a class="navbar-brand" href="/dashboard"><img src="{{URL::asset('images/logo.png')}}" alt=""></a></div>
                 <div id="w5-collapse" class="collapse navbar-collapse">
                     <ul id="w6" class="navbar-nav navbar-right nav">
                         <li class="nav-item dropdown">

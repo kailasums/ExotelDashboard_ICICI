@@ -3,7 +3,7 @@ $(document).ready(function() {
     function showDatatable(element, urlParam, flag) {
         
         $.ajax({
-            url: flag ? createUrlParam(urlParam, targetSummaryElementArray) : urlParam,
+            url: baseURL + (flag ? createUrlParam(urlParam, targetSummaryElementArray) : urlParam),
             success: function(data, textStatus, jqXHR) {
                 var table_data = JSON.parse(data)
                 var table = $('#' + element).DataTable({
@@ -49,7 +49,7 @@ $(document).ready(function() {
                 sEmptyTable: "No data available"
             },
             ajax: {
-                url: url,
+                url: baseURL + url,
                 type: "GET"
             },
             columns: [
@@ -212,7 +212,7 @@ $(document).ready(function() {
     function selectAjaxOption(url, element, value, targetElement, flag = false, userDetailCall = true) {
         if (url) {
             
-            url = createUrlParam(url, targetElement)
+            url = createUrlParam(baseURL + url, targetElement)
             $.ajax({
                 url: url,
                 method: 'GET',

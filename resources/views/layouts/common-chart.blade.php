@@ -21,7 +21,7 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css"/>
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src = "http://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js" defer ></script>
+    <script src = "https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js" defer ></script>
 </head>
 
 <body>
@@ -35,7 +35,7 @@
     <script src="{{URL::asset('js/tether.min.js')}}"></script>
     <script src="{{URL::asset('js/bootstrap-material-design.iife.min.js')}}"></script>
     <script src="{{URL::asset('js/jquery.slimscroll.js')}}"></script>
-    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js""></script>
+    <script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js""></script>
     <script type="text/javascript" src="{{URL::asset('js/custom.js')}}"></script>
 </body>
 

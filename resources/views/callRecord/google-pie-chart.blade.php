@@ -1,4 +1,7 @@
 @extends('layouts.common-chart')
+<script>
+var baseURL = '<?php echo URL::to("/"); ?>'
+</script>
 @section('content')
 <div class="wrap">
     <header id="header">
@@ -8,14 +11,14 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span></button>
-                    <a class="navbar-brand" href="/dashboard"><img src="images/logo.png" alt=""></a>
+                    <a class="navbar-brand" href="/dashboard"><img src="{{URL::asset('images/logo.png')}}" alt=""></a>
                 </div>
                 <div id="w5-collapse" class="collapse navbar-collapse">
                     <ul id="w6" class="navbar-nav navbar-right nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icn-user"></i>Welcome {{ Auth::user()->name }}</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/reset-password"><i class="icn-key"></i>Change password</a>
+                                <a class="dropdown-item" href="<?php echo URL::to('/reset-password')?>"><i class="icn-key"></i>Change password</a>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

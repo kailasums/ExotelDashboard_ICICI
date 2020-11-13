@@ -41,10 +41,10 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <?php
                                     if(Auth::user()->is_admin  === "YES") {
-                                        echo '<a class="dropdown-item" href="/import-users"><i
+                                        echo '<a class="dropdown-item" href="'.URL::to('/import-users').'"><i
                                             class="icn-import-users"></i>Import Users</a>';
                                     }else{
-                                        echo '<a class="dropdown-item" href="/dashboard"><i
+                                        echo '<a class="dropdown-item" href="'.URL::to('/dashboard').'"><i
                                             class="icn-import-users"></i>Dashboard</a>';
                                     }
                                 ?>
