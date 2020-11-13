@@ -140,13 +140,7 @@ class SendFileToProcess implements ShouldQueue
                     $path = public_path('upload/');
 
    
-
-                    if(!File::isDirectory($path)){
-                
-                        File::makeDirectory($path, 0777, true, true);
-                
-                    }
-                    (new FastExcel($arrImportData))->export('upload/userLog_'.$this->details->id.'.xlsx');
+                    (new FastExcel($arrImportData))->export('storage/app/public/userLog_'.$this->details->id.'.xlsx');
                     
                     if($this->details->id > 3){
                         $file_id = $this->details->id;
@@ -409,8 +403,6 @@ class SendFileToProcess implements ShouldQueue
                 $updateLogDetails = UsersLog::where('id', $userLog[0]['id'])->update($arrTempDateEmailAddress);
             }else{
                 $arrTempDateEmailAddress['file_id'] = $file_id;
-                // dd($arrTempDateEmailAddress);
-                // dd($arrTempDateEmailAddress);
                 $updateLogDetails = UsersLog::create($arrTempDateEmailAddress);
             }
             array_push($arrUpdateDateEmailAddress,$userRecord['email']);
