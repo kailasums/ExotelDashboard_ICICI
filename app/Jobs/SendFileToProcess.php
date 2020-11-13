@@ -137,13 +137,17 @@ class SendFileToProcess implements ShouldQueue
                             array_push($arrImportData,$tempData);
                         }
                     }
-                    echo __DIR__;
-                    echo __DIR__.'userLog_'.$this->details->id.'.xlsx';
-                    (new FastExcel($arrImportData))->export(__DIR__.'userLog_'.$this->details->id.'.xlsx');
-                    // if($this->details->id > 3){
-                    //     $file_id = $this->details->id;
-                    //     File::delete('userLog_'.$file_id.'.xlsx');
-                    // }
+                    $path = public_path('upload/');
+
+   
+
+                    if(!File::isDirectory($path)){
+                
+                        File::makeDirectory($path, 0777, true, true);
+                
+                    }
+                    (new FastExcel($arrImportData))->export('upload/userLog_'.$this->details->id.'.xlsx');
+                    
                     if($this->details->id > 3){
                         $file_id = $this->details->id;
                         $path = 'userLog_'.$file_id.'.xlsx';
@@ -168,7 +172,7 @@ class SendFileToProcess implements ShouldQueue
                             }
                         }
                         echo 'userPassword_'.$this->details->id.'.xlsx';
-                        (new FastExcel($arrImportData))->export('userPassword_'.$this->details->id.'.xlsx');
+                        (new FastExcel($arrImportData))->export('upload/userPassword_'.$this->details->id.'.xlsx');
                         if($this->details->id > 3){
                             $file_id = $this->details->id;
                             $path = 'userPassword_'.$file_id.'.xlsx';

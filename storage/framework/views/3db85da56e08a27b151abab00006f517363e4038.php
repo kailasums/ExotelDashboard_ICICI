@@ -49,10 +49,7 @@
 				<td> <?php echo e($details['password']); ?></td>
 			</tr>
 			
-			<tr>
-				<td><b>DESIGNATION</b></td>
-				<td><?php echo e($details['userDetails']['designation']); ?></td>
-			</tr>
+			
 			
 			
 
